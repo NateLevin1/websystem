@@ -18,6 +18,9 @@ body {
 .black {
     color:black;
 }
+.white {
+    color:white;
+}
 
 .bold {
     font-weight: bold;
@@ -64,8 +67,14 @@ body {
 }
 
 .centered {
-    padding:20% 10%;
+    /* padding:20% 5%; */
+    margin: 20% 5%;
 }
+
+.absolute {
+    position:absolute;
+}
+
 /* END GENERAL */
 
 
@@ -111,6 +120,50 @@ body {
 
 
 /* END FORMS */
+
+/* LOADING */
+.spinner {
+    height:96px;
+    width:96px;
+    display:block;
+    position: absolute;
+    top:30%;
+    left:50%;
+    margin-left:-48px;
+    margin-top:-48px;
+    border: 10px solid rgba(150, 150, 150, 0.2);
+    border-radius: 50%;
+    border-top-color: rgb(150,150,150);
+    animation: rotate 1s 0s infinite ease-in-out alternate;
+}
+@keyframes rotate {
+    0%{transform: rotate(0);}
+    100% {transform: rotate(360deg);}
+}
+.spinner-text {
+    position: absolute;
+    top:50%;
+    width: 100%;
+    text-align:center;
+}
+/* END LOADING */
+
+/* DESKTOP */
+.icon {
+    cursor: pointer;
+    width:7em;
+    display:block;
+    margin:auto;
+}
+.clickable {
+    cursor: pointer;
+}
+.icon-container {
+    max-width:7em;
+    text-align:center;
+}
+/* END DESKTOP */
+
 
 
 /* 

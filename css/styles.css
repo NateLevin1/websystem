@@ -5,6 +5,7 @@ body {
     color:white;
     font-family: 'Lato', sans-serif;
     animation: bg-anim 30s infinite;
+    overflow:hidden;
 }
 
 @keyframes bg-anim {
@@ -161,6 +162,34 @@ body {
 .icon-container {
     max-width:7em;
     text-align:center;
+}
+
+.window {
+    background-color:white;
+    z-index:1;
+    resize:both;
+    width:20em;
+    height:20em;
+    border:2px solid black;
+}
+
+.window-header {
+    background-color:black;
+    cursor:move;
+}
+
+.resize {
+    position:absolute;
+    width:0.7em;
+    height:0.7em;
+    background-color:grey;
+    right:0em;
+    bottom:0em;
+    opacity: 0;
+    cursor: se-resize;
+}
+.resize:active {
+    cursor: nwse-resize;
 }
 /* END DESKTOP */
 

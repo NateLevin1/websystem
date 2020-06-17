@@ -1,9 +1,13 @@
 {
     "cSpell.words": [
         "Konqueror",
+        "Resizer",
         "callout",
         "dialogbox",
         "dialogboxcontainer",
-        "elnum"
+        "elmnt",
+        "elnum",
+        "nwse",
+        "windowfactory"
     ]
 }

@@ -73,6 +73,7 @@ function fadeAndRemove(element, start=false) {
 }
 
 function startDesktop() {
+    
     // spinner/loader
     let spinner = document.createElement("div");
     spinner.classList.add("spinner");
@@ -102,40 +103,4 @@ function startDesktop() {
             // alert("Folder "+clickedOn.id+" clicked!");
         };
     }
-}
-
-function createFolder(x, y, name) {
-    let newFolderContainer = document.createElement("div");
-    newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder");
-    newFolderContainer.style.top = y+"em";
-    newFolderContainer.style.left = x+"em";
-    newFolderContainer.id = name;
-    document.body.appendChild(newFolderContainer);
-
-    // img
-    let newFolder = document.createElement("img");
-    newFolder.src = "assets/folder.png";
-    newFolder.classList.add("icon");
-    newFolderContainer.appendChild(newFolder);
-
-    // text
-    let text = document.createElement("a");
-    text.classList.add("white", "sans-serif");
-    text.innerText = name;
-    newFolderContainer.appendChild(text);
-}
-
-class FileViewer {
-    openFolder(open) {
-        var win = new Window(100,100,open);
-    }
-}
-
-class Window {
-    constructor(width, height, title) {
-        console.group("New Window Info for title "+title);
-        console.log("Title of new window: "+title+".\nWidth of new window: "+width+".\nHeight of new window: "+height+".");
-        console.groupEnd();
-    }
-
 }

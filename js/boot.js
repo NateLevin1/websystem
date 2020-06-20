@@ -42,9 +42,11 @@ function boot() {
 
         // create onclick of create button
         createButton.onclick = ()=>{
-            localStorage.setItem("name", newAccountName.value);
-            //dialogboxcontainer.remove();
             fadeAndRemove(dialogboxcontainer, true);
+            // Set Name
+            localStorage.setItem("name", newAccountName.value);
+            // Set Filesystem
+            localStorage.setItem('files', '[usr]{Documents,Applications,Downloads} [Documents]{WebSystem} [Applications]{} [Downloads]{} [WebSystem]{file::logo.png}');
         }
 
         dialogboxcontainer.appendChild(dialogbox);
@@ -73,15 +75,19 @@ function fadeAndRemove(element, start=false) {
 }
 
 function startDesktop() {
-    
+
+    // load screen cover
+    var openBG = document.createElement("div");
+    openBG.classList.add("screen-cover", "loading", "load-fade", "unselectable");
+    document.body.appendChild(openBG);
     // spinner/loader
     let spinner = document.createElement("div");
-    spinner.classList.add("spinner");
+    spinner.classList.add("spinner", "loading", "load-fade", "unselectable");
     document.body.appendChild(spinner);
 
     // text container
     let welcomeTextContainer = document.createElement("div");
-    welcomeTextContainer.classList.add("spinner-text");
+    welcomeTextContainer.classList.add("spinner-text", "loading", "load-fade", "unselectable");
 
     // actual text
     let welcomeText = document.createElement("h1");
@@ -90,17 +96,50 @@ function startDesktop() {
     welcomeTextContainer.appendChild(welcomeText);
     document.body.appendChild(welcomeTextContainer);
 
-    /* SHOW DESKTOP */
-    createFolder("1","1","Documents");
-    createFolder("1","8","Applications");
+    /* FILE SYSTEM WORKER */
+    if(window.Worker) {
+        var filesystem = new Worker('js/filesystem.js');
 
-    var folders = document.getElementsByClassName("desktop-folder");
-    for(var elnum = 0; elnum < folders.length; elnum++) {
-        let clickedOn = folders[elnum];
-        clickedOn.onclick = (event)=>{
-            var n = new FileViewer;
-            n.openFolder(clickedOn.id);
-            // alert("Folder "+clickedOn.id+" clicked!");
-        };
+        filesystem.postMessage("load");
+        filesystem.postMessage(localStorage.getItem("files"));
+        //localStorage.setItem("files", "[usr]{Documents,Applications} [Documents]{School Work} [Applications]{}");
+        filesystem.onmessage = (event) => {
+            let data = event.data;
+            var yPos = 1;
+            data.forEach(element => {
+                // get what is on desktop
+                if(element.name == "usr") {
+                    element.subFolders.forEach(el =>{
+                        createDesktopFolder("1",yPos.toString(), el);
+                yPos += 8;
+                    });
+                    
+                }
+                // console.log(element.name);
+                files[element.name] = element.subFolders;
+                //console.log("Folders are "+files[element.name]+"For name "+element.name+".");
+            });
+        }
+    } else {
+        
     }
+
+    setTimeout(()=>{
+        let faders = document.querySelectorAll(".load-fade");
+        faders.forEach(element =>{
+            element.classList.remove("load-fade");
+            setTimeout(()=>{
+                element.remove();
+            }, 300);
+        });
+    }, 500)
+    
 }
+
+var files = {};
+localStorage.clear();
+// * Debug
+// [usr]{Documents,Applications} [Documents]{School Work, Other Stuff} [Applications]{} [School Work]{} [Other Stuff]{}
+//console.log(localStorage.getItem('files'));
+//localStorage('files', localStorage.getItem('files');
+// localStorage.getItem('files')

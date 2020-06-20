@@ -136,6 +136,7 @@ body {
     border-radius: 50%;
     border-top-color: rgb(150,150,150);
     animation: rotate 1s 0s infinite ease-in-out alternate;
+    z-index:2;
 }
 @keyframes rotate {
     0%{transform: rotate(0);}
@@ -146,6 +147,21 @@ body {
     top:50%;
     width: 100%;
     text-align:center;
+    z-index:2;
+}
+.screen-cover {
+    position:absolute;
+    z-index:1;
+    background-color:black;
+    width:100%;
+    height:100%;
+}
+.loading {
+    opacity:0;
+    transition: opacity 0.3s;
+}
+.load-fade {
+    opacity:1;
 }
 /* END LOADING */
 
@@ -163,6 +179,9 @@ body {
     max-width:7em;
     text-align:center;
 }
+.icon-selected {
+    background-color:rgba(0, 153, 255, 0.562);
+}
 
 .window {
     background-color:white;
@@ -171,6 +190,16 @@ body {
     width:20em;
     height:20em;
     border:2px solid black;
+    left:3em;
+    top:3em;
+    opacity:0;
+    
+}
+.window-fast {
+    transition: opacity 0.15s;
+}
+.window-slow {
+    transition: opacity 0.3s;
 }
 
 .window-header {
@@ -190,6 +219,17 @@ body {
 }
 .resize:active {
     cursor: nwse-resize;
+}
+
+.close {
+    position:absolute;
+    right:0;
+    top:0;
+    margin-top:0.2em;
+    width:1em;
+    height:0.9em;
+    background-color:red;
+    text-align:center;
 }
 /* END DESKTOP */
 

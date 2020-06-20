@@ -3,6 +3,12 @@ document.onclick = (event)=>{
     if(event.target == document.querySelector("html")) { 
         clearSelected();
     } // clicked anywhere
+
+    
+    // document.body.querySelectorAll(".context-menu").forEach((element)=>{
+    //     //console.log("Removing element..");
+    //     document.body.removeChild(element);
+    // }); // TODO
 }
 
 function clearSelected() {

@@ -46,7 +46,7 @@ function boot() {
             // Set Name
             localStorage.setItem("name", newAccountName.value);
             // Set Filesystem
-            localStorage.setItem('files', '[usr]{Documents,Applications,Downloads} [Documents]{WebSystem} [Applications]{} [Downloads]{} [WebSystem]{file::logo.png}');
+            localStorage.setItem('files', '[usr]{Documents,Applications,Downloads} [Documents]{WebSystem} [Applications]{file::Calculator.app} [Downloads]{} [WebSystem]{file::logo.png}');
         }
 
         dialogboxcontainer.appendChild(dialogbox);

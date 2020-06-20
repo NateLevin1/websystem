@@ -186,7 +186,7 @@ body {
 .window {
     background-color:white;
     z-index:1;
-    resize:both;
+    /*resize:both; Doesn't work */
     width:20em;
     height:20em;
     border:2px solid black;
@@ -232,6 +232,8 @@ body {
     text-align:center;
 }
 /* END DESKTOP */
+
+/* FILE SYSTEM */
 .file-back-container {
     display:inline;
     margin-right:0.2em;
@@ -246,8 +248,21 @@ body {
 .file-back:active {
     filter: invert(80%);
 }
-/* FILE SYSTEM */
 
+.context-menu {
+    width:5em;
+    height:10em;
+    background-color:white;
+    border:5px solid black;
+    z-index:4;
+    transition: all 0.3s;
+}
+.invisible {
+    opacity:0;
+}
+.visible {
+    opacity:1;
+}
 /* END FILE SYSTEM */
 
 /* 

@@ -7,6 +7,7 @@ class FileViewer {
         this.folderList = [open];
         this.currentFile = open;
 
+        // Back Button
         let back = document.createElement("div");
         back.classList.add("file-back-container", "unselectable", "no-move");
 
@@ -20,20 +21,19 @@ class FileViewer {
         this.back = back;
         this.back.onclick = ()=>{this.goBackParent();};
 
+        // Previous list
         if(!previous) {
             this.win.setTitle(open);
         } else {
             this.win.setTitle(previous.join(" -> ")+" -> "+open);
             this.previous = [...previous,open];
         }
-        var positions = [1,2];
-        if(files[open]) { // has something
-            files[open].forEach(element =>{
-                this.createFolder(...positions,element,this.window, "black", false);
-                positions[0] += 8;
-            });
-        }
+        this.displayFolders(open);
         
+        // Right click menu
+        this.window.oncontextmenu = (e)=>{
+            this.rightClick(e);
+        }
     }
     openFolder(open, previous=undefined) {
         this.currentFile = open;
@@ -46,12 +46,27 @@ class FileViewer {
             this.win.setTitle(open);
             
         }
+        
+        this.displayFolders(open);
 
+        // Right click menu
+        this.window.oncontextmenu = (e)=>{
+            this.rightClick(e);
+        }
+    }
+    displayFolders(open) {
         var positions = [1,2];
         if(files[open]) { // has something
             files[open].forEach(element =>{
                 if(element.startsWith("file::")) { // is file
-                    this.createFile(...positions,element.substring(6, element.length),this.window, "black", false);
+                    if(element.endsWith(".png")||element.endsWith(".jpg")||element.endsWith(".jpeg")) {
+                        this.createFile(...positions,element.substring(6, element.length),this.window, "black", false, "image");
+                    } else if(element.endsWith("app")) {
+                        this.createFile(...positions,element.substring(6, element.length-4),this.window, "black", false, "app");
+                    } else {
+                        console.log(element);
+                    }
+                    
                 } else { // is folder
                     this.createFolder(...positions,element,this.window, "black", false);
                 }
@@ -114,7 +129,14 @@ class FileViewer {
         newFileContainer.appendChild(text);
     
         newFileContainer.ondblclick = (event)=>{
-            alert("Opened File "+newFileContainer.id+"!");
+            if(filetype == "app") {
+                if(name == "Calculator") {
+                    makeCalculator();
+                }
+            } else {
+                alert("Opened File "+newFileContainer.id+"!");
+            }
+            
         };
     }
     getWindow() {
@@ -125,6 +147,19 @@ class FileViewer {
         this.previous.pop();
         this.previous.pop();
         this.openFolder(files["parent-"+this.currentFile]);
+    }
+    rightClick(event) {
+        /*event.preventDefault();
+        console.log("Right click!");
+        let contextMenu = document.createElement("div");
+        contextMenu.classList.add("context-menu", "absolute", "invisible");
+        contextMenu.style.top = event.clientY+"px";
+        contextMenu.style.left = event.clientX+"px";
+
+        document.body.appendChild(contextMenu);
+        contextMenu.classList.remove("invisible");
+        //contextMenu.classList.add("visible");*/
+        // TODO Do this
     }
 }
 

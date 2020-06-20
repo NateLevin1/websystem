@@ -49,7 +49,6 @@ onmessage = (event) => {
                     });
                     if(indexOfSub != -1) {
                         files[indexOfSub].parentFolder = element[1];
-                        console.log("Parent of "+files[indexOfSub].name+" is "+files[indexOfSub].parentFolder);
                     } else {
                         console.error("There was an issue processing your files. Could not find parent of folder "+subs[index]);
                     }

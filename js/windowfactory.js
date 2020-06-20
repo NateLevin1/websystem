@@ -1,7 +1,19 @@
 class Window {
-    constructor(width, height, title) {
+    /**
+     * Constructor
+     * @param {Minimum Width} width 
+     * @param {Minimum Height} height 
+     * @param {Title of window} title 
+     * @param {Default Width} defaultWidth 
+     * @param {Default Height} defaultHeight 
+     * @param {Default X Position} x 
+     * @param {Default Y Position} y 
+     */
+    constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3) {
         let window = document.createElement("div");
         window.classList.add("window", "absolute", "window-slow");
+        window.style.top = y+"em";
+        window.style.left = x+"em";
 
         let header = document.createElement("div");
         header.classList.add("window-header", "unselectable");
@@ -42,7 +54,7 @@ class Window {
         }, 10);
         
 
-        configureElement(window, header, resize, close, 30, 30, 100, 100);
+        configureElement(window, header, resize, close, defaultWidth, defaultHeight, width, height);
 
         this.window = window;
         this.window.header = header;
@@ -71,8 +83,12 @@ class Window {
       this.window.titleText.innerText = newTitle;
     }
 
+    setBackgroundColor(color) {
+      this.window.style.backgroundColor = color;
+    }
+
 }
-// from W3Schools
+
 /**
  * Make window able to be dragged and resized.
  * @param {Window} elmnt 

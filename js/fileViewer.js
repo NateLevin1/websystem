@@ -4,6 +4,21 @@ class FileViewer {
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
+        this.folderList = [open];
+        this.currentFile = open;
+
+        let back = document.createElement("div");
+        back.classList.add("file-back-container", "unselectable", "no-move");
+
+        let backImg = document.createElement("img");
+        backImg.classList.add("file-back");
+        backImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTMuMDI1IDFsLTIuODQ3IDIuODI4IDYuMTc2IDYuMTc2aC0xNi4zNTR2My45OTJoMTYuMzU0bC02LjE3NiA2LjE3NiAyLjg0NyAyLjgyOCAxMC45NzUtMTF6Ii8+PC9zdmc+";
+        back.appendChild(backImg);
+
+        this.header.insertBefore(back, win.getHeaderText());
+
+        this.back = back;
+        this.back.onclick = ()=>{this.goBackParent();};
 
         if(!previous) {
             this.win.setTitle(open);
@@ -21,6 +36,7 @@ class FileViewer {
         
     }
     openFolder(open, previous=undefined) {
+        this.currentFile = open;
         this.win.clear();
         if(previous || this.previous) {
             let old = previous ? previous : this.previous;
@@ -103,6 +119,12 @@ class FileViewer {
     }
     getWindow() {
         return this.window;
+    }
+
+    goBackParent() {
+        this.previous.pop();
+        this.previous.pop();
+        this.openFolder(files["parent-"+this.currentFile]);
     }
 }
 

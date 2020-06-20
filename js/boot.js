@@ -115,9 +115,8 @@ function startDesktop() {
                     });
                     
                 }
-                // console.log(element.name);
                 files[element.name] = element.subFolders;
-                //console.log("Folders are "+files[element.name]+"For name "+element.name+".");
+                files["parent-"+element.name] = element.parentFolder;
             });
         }
     } else {
@@ -137,8 +136,9 @@ function startDesktop() {
 }
 
 var files = {};
-localStorage.clear();
+
 // * Debug
+//localStorage.clear();
 // [usr]{Documents,Applications} [Documents]{School Work, Other Stuff} [Applications]{} [School Work]{} [Other Stuff]{}
 //console.log(localStorage.getItem('files'));
 //localStorage('files', localStorage.getItem('files');

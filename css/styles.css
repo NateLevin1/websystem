@@ -232,12 +232,28 @@ body {
     text-align:center;
 }
 /* END DESKTOP */
+.file-back-container {
+    display:inline;
+    margin-right:0.2em;
+    cursor: pointer;
+}
+.file-back {
+    filter: invert(100%);
+    transform: scaleX(-1);
+    width:1em;
+    transition: filter 0.1s;
+}
+.file-back:active {
+    filter: invert(80%);
+}
+/* FILE SYSTEM */
 
-
+/* END FILE SYSTEM */
 
 /* 
 REFERENCES:
 
 Cursor: https://www.w3schools.com/cssref/tryit.asp?filename=trycss_cursor
+SVG Arrow: https://iconmonstr.com/arrow-20-svg/
 
 */

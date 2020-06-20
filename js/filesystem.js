@@ -11,21 +11,57 @@ onmessage = (event) => {
         resultRegex.forEach((element) => {
             let folderObject = {};
             folderObject.name = element[1];
+            folderObject.parentFolder;
+            // folderObject.subFolders = [];
+            // folderObject.loading = true;
+            // element[0] = element[0].substring(element[0].indexOf("]"), element[0].length);
+            // let subs = element[0].match(/,*[\w :.]+/g);
+            // if(subs) {
+            //     subs.forEach((element, index)=>{
+            //         if(element.startsWith(",")) {
+            //             subs[index] = subs[index].substring(1, subs[index].length);
+            //         }
+            //     });
+            //     folderObject.subFolders.push(...subs);
+            // }
+            
+            files.push(folderObject);
+        });
+
+        resultRegex.forEach((element,index) => {
+            let folderObject = files[index];
             folderObject.subFolders = [];
             folderObject.loading = true;
             element[0] = element[0].substring(element[0].indexOf("]"), element[0].length);
             let subs = element[0].match(/,*[\w :.]+/g);
             if(subs) {
-                subs.forEach((element, index)=>{
-                    if(element.startsWith(",")) {
+                subs.forEach((elem, index)=>{
+                    if(elem.startsWith(",")) {
                         subs[index] = subs[index].substring(1, subs[index].length);
                     }
+                    // for each subfolder, set its parent to the current folder
+                    if(!subs[index].startsWith("file::")) { // only folders can have parents
+                        let indexOfSub = -1;
+                    files.forEach((el, ind)=>{
+                        if(el.name == subs[index]) { // if the file's name is the current subfolder's name
+                            indexOfSub = ind;
+                        }
+                    });
+                    if(indexOfSub != -1) {
+                        files[indexOfSub].parentFolder = element[1];
+                        console.log("Parent of "+files[indexOfSub].name+" is "+files[indexOfSub].parentFolder);
+                    } else {
+                        console.error("There was an issue processing your files. Could not find parent of folder "+subs[index]);
+                    }
+                    // find index of folder named subs[index] in files
+                    // set value parentFolder of that index of files to element[1]
+                    }
+                    
                 });
                 folderObject.subFolders.push(...subs);
             }
-            
-            files.push(folderObject);
         });
+
         postMessage(files);
         // ! Below has been deprecated
         // resultRegex = Array.from(resultRegex);

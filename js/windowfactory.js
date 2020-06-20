@@ -9,13 +9,25 @@ class Window {
         let titleText = document.createElement("a");
         titleText.innerText = title;
 
+        // let back = document.createElement("div");
+        // back.classList.add("file-back-container", "unselectable", "no-move");
+
+        // let backImg = document.createElement("img");
+        // backImg.classList.add("file-back");
+        // backImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTMuMDI1IDFsLTIuODQ3IDIuODI4IDYuMTc2IDYuMTc2aC0xNi4zNTR2My45OTJoMTYuMzU0bC02LjE3NiA2LjE3NiAyLjg0NyAyLjgyOCAxMC45NzUtMTF6Ii8+PC9zdmc+";
+        
+
+
         let close = document.createElement("div");
-        close.classList.add("close", "unselectable");
+        close.classList.add("close", "unselectable", "no-move");
         
         let resize = document.createElement("div");
         resize.classList.add("resize");
 
         // put it all together
+        // back.appendChild(backImg);
+        // header.appendChild(back);
+
         header.appendChild(titleText);
         header.appendChild(close);
 
@@ -43,6 +55,10 @@ class Window {
 
     getHeader() {
       return this.window.header;
+    }
+    
+    getHeaderText() {
+      return this.window.titleText;
     }
 
     clear() {
@@ -84,7 +100,7 @@ function configureElement(elmnt, header, resizeElement, close, defaultWidth, def
     function dragMouseDown(e) {
       e = e || window.event;
       e.preventDefault();
-      if(e.target != close) {
+      if(!e.target.classList.contains("no-move")) {
         // get the mouse cursor position at startup:
         pos3 = e.clientX;
         pos4 = e.clientY;
@@ -92,13 +108,16 @@ function configureElement(elmnt, header, resizeElement, close, defaultWidth, def
         // call a function whenever the cursor moves:
         document.onmousemove = elementDrag;
       } else {
-        // close window
-        elmnt.classList.remove("window-slow");
-        elmnt.classList.add("window-fast");
-        elmnt.style.opacity = "0";
-        setTimeout(()=>{
-          elmnt.remove();
-        }, 150)
+        if(e.target == close) {
+          // close window
+          elmnt.classList.remove("window-slow");
+          elmnt.classList.add("window-fast");
+          elmnt.style.opacity = "0";
+          setTimeout(()=>{
+            elmnt.remove();
+          }, 150);
+        }
+        
         
       }
       

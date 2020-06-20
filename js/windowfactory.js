@@ -1,8 +1,8 @@
 class Window {
     /**
      * Constructor
-     * @param {Minimum Width} width 
-     * @param {Minimum Height} height 
+     * @param {Minimum Width (px)} width 
+     * @param {Minimum Height (px)} height 
      * @param {Title of window} title 
      * @param {Default Width} defaultWidth 
      * @param {Default Height} defaultHeight 
@@ -62,7 +62,7 @@ class Window {
     }
 
     getWindow() {
-        return this.window;
+      return this.window;
     }
 
     getHeader() {
@@ -71,6 +71,14 @@ class Window {
     
     getHeaderText() {
       return this.window.titleText;
+    }
+
+    getWindowWidth() {
+      return this.window.style.width;
+    }
+
+    getWindowHeight() {
+      return this.window.style.height;
     }
 
     clear() {

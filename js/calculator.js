@@ -1,5 +1,5 @@
 class Calculator {
-    // ? Sometimes caculator gets wrong value
+    // ? Sometimes calculator gets wrong value
     constructor() {
         this.operation = "";
         this.lastNumber = "";

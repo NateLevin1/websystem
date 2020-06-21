@@ -10,7 +10,7 @@ class Window {
      * @param {Default Y Position} y 
      */
     constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3) {
-        let window = document.createElement("div");
+      let window = document.createElement("div");
         window.classList.add("window", "absolute", "window-slow");
         window.style.top = y+"em";
         window.style.left = x+"em";
@@ -59,6 +59,25 @@ class Window {
         this.window = window;
         this.window.header = header;
         this.window.titleText = titleText;
+
+        // Focus/Unfocus
+        this.dispatchFocus(); // when new window is opened focus by default
+
+        this.window.onmousedown = ()=>{
+          this.dispatchFocus();
+        }
+
+        document.addEventListener('window-focus', (event)=>{
+          if(this.focused()) {
+            if(event.window == this.window) {
+              this.giveFocus();
+            } else {
+              this.removeFocus();
+            }
+          } else {
+            this.removeFocus();
+          }
+        });
     }
 
     getWindow() {
@@ -95,6 +114,28 @@ class Window {
       this.window.style.backgroundColor = color;
     }
 
+    focused() {
+      return this.hasFocus;
+    }
+
+    giveFocus() {
+      this.hasFocus = true;
+      this.window.style.zIndex = 10;
+    }
+
+    removeFocus() {
+      this.hasFocus = false;
+      if(this.window.style.zIndex > 2) {
+        this.window.style.zIndex -= 1;
+      }
+    }
+
+    dispatchFocus() {
+      this.giveFocus(); // give opened window focus
+      focusEvent.window = this.window;
+      document.dispatchEvent(focusEvent);
+    }
+
 }
 
 /**
@@ -119,7 +160,6 @@ function configureElement(elmnt, header, resizeElement, close, defaultWidth, def
       // otherwise, move the DIV from anywhere inside the DIV: 
       elmnt.onmousedown = dragMouseDown;
     }
-    
     resizeElement.onmousedown = resize;
     function dragMouseDown(e) {
       e = e || window.event;
@@ -186,3 +226,7 @@ function configureElement(elmnt, header, resizeElement, close, defaultWidth, def
         }
     }
   }
+
+
+// FOCUS EVENT
+var focusEvent = new Event('window-focus');

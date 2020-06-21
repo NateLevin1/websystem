@@ -1,8 +1,10 @@
 class Calculator {
+    // ? Sometimes caculator gets wrong value
     constructor() {
         this.operation = "";
-        this.lastNumber = 0;
-        this.currentNumber = 0;
+        this.lastNumber = "";
+        this.currentNumber = "";
+        this.oldFontSize = "";
 
         let win = new Window(117, 262, "Calculator", 20,35,20,2.2);
         this.window = win.getWindow();
@@ -20,7 +22,8 @@ class Calculator {
         new CSSClass("calc-modifier", "background-color: rgba(255, 159, 12, 0.8);");
         new CSSClass("calc-modifier:active", "background-color: rgba(255, 159, 12, 1);");
         new CSSClass("calc-0", "border-right:none;");
-        new CSSClass("calc-0-2", "border-left:none;");
+        new CSSClass("calc-0-2", "border-left:none;", "color: rgba(0,0,0,0);");
+
         let screenContainer = document.createElement("div");
         screenContainer.classList.add("calc-screen-container");
 
@@ -28,6 +31,7 @@ class Calculator {
         screenContainer.appendChild(screen);
         screen.innerHTML = "0";
         screen.classList.add("calc-screen");
+        this.fitText(screen);
         
         this.window.appendChild(screenContainer);
 
@@ -64,21 +68,25 @@ class Calculator {
         let clear = document.createElement("div");
         clear.classList.add("calc-button", "unselectable", "clickable");
         clear.innerHTML = "AC";
+        clear.title = "All Clear (or press c)";
         row1.appendChild(clear);
 
         let negate = document.createElement("div");
         negate.classList.add("calc-button", "unselectable", "clickable");
         negate.innerHTML = "+/-";
+        negate.title = "Negate the sign of the current value (or press shift-minus)";
         row1.appendChild(negate);
 
         let percent = document.createElement("div");
         percent.classList.add("calc-button", "unselectable", "clickable");
         percent.innerHTML = "%";
+        percent.title = "Percent (or press %)";
         row1.appendChild(percent);
 
         let divide = document.createElement("div");
         divide.classList.add("calc-button", "calc-modifier", "unselectable", "clickable");
         divide.innerHTML = "/";
+        divide.title = "Divide (or press /)";
         row1.appendChild(divide);
 
 
@@ -102,6 +110,7 @@ class Calculator {
         let multiply = document.createElement("div");
         multiply.classList.add("calc-button", "calc-modifier", "unselectable", "clickable");
         multiply.innerHTML = "x";
+        multiply.title = "Multiply (or press x or *)";
         row2.appendChild(multiply);
 
 
@@ -126,6 +135,7 @@ class Calculator {
         let subtract = document.createElement("div");
         subtract.classList.add("calc-button", "calc-modifier", "unselectable", "clickable");
         subtract.innerHTML = "-";
+        subtract.title = "Subtract (or press -)"
         row3.appendChild(subtract);
 
 
@@ -148,6 +158,7 @@ class Calculator {
         let add = document.createElement("div");
         add.classList.add("calc-button", "calc-modifier", "unselectable", "clickable");
         add.innerHTML = "+";
+        add.title = "Add (or press +)"
         row4.appendChild(add);
 
 
@@ -158,17 +169,19 @@ class Calculator {
         row5.appendChild(zero);
         let zero2 = document.createElement("div");
         zero2.classList.add("calc-button", "calc-0-2", "unselectable", "clickable");
-        zero2.innerHTML = "";
+        zero2.innerHTML = "0";
         row5.appendChild(zero2);
 
         let decimal = document.createElement("div");
         decimal.classList.add("calc-button", "unselectable", "clickable");
         decimal.innerHTML = ".";
+        decimal.title = "Add a decimal point (or press .)";
         row5.appendChild(decimal);
 
         let equals = document.createElement("div");
         equals.classList.add("calc-button", "calc-modifier", "unselectable", "clickable");
         equals.innerHTML = "=";
+        equals.title = "Equal (or press enter or =)";
         row5.appendChild(equals);
         
         // button click
@@ -178,22 +191,190 @@ class Calculator {
             }
         });
         this.screen = screen;
+
+
+        // KEYBOARD SHORTCUTS
+        document.addEventListener("keydown", event => {
+            if(this.win.focused()) { // only count if focused
+                let key = event.key;
+                this.pressButton(key);
+                if(key == "c"||key == "C") {
+                    if((event.ctrlKey||event.metaKey)) { // tried to copy/paste
+                        event.preventDefault();
+                        navigator.clipboard.writeText(this.currentNumber);
+                    } else { // tried to clear
+                        this.pressButton("AC");
+                    }
+                }
+                else if(key == "Enter") {
+                    this.pressButton("=");
+                }
+                else if(key == "_") {
+                    this.pressButton("+/-");
+                }
+                else if(key == "*") {
+                    this.pressButton("x");
+                }
+            }
+          });
     }
     updateScreen(text="") {
         if(text) {
             this.screen.innerHTML = text;
+        } else {
+            this.screen.innerHTML = this.currentNumber;
         }
+        this.fitText(this.screen);
     }
     pressButton(button) {
         if(button.isNumber()) {
-            
+            this.currentNumber += button;
+            this.updateScreen();
             //console.log(parseInt(button));
         } else {
-            console.log(button +' is not a number.')
+            if(button == ".") { // TODO change to switch statement
+                if(!this.currentNumber.includes(".")) {
+                    if(this.currentNumber == "") {
+                        this.currentNumber = 0;
+                    }
+                    this.currentNumber += button;
+                }
+                this.updateScreen();
+            }
+            else if(button == "+") {
+                this.setOperation("+");
+            }
+            else if(button == "-") {
+                this.setOperation("-");
+            }
+            else if(button == "x") {
+                this.setOperation("x");
+            }
+            else if(button == "/") {
+                this.setOperation("/");
+            }
+            else if(button == "=") {
+                this.getAnswer();
+            }
+            else if(button == "AC") {
+                this.operation = "";
+                this.lastNumber = "";
+                this.currentNumber = "";
+                this.updateScreen("0");
+            } else if(button == "+/-") {
+                this.currentNumber = (parseFloat(this.currentNumber)*-1).toString();
+                this.updateScreen();
+            } else if(button == "%") {
+                this.currentNumber = (parseFloat(this.currentNumber)/100).toString();
+                this.updateScreen();
+            }
+            //console.log(button +' is not a number.');
         }
     }
+
+    getAnswer() {
+        let last = parseFloat(this.lastNumber);
+        let current = parseFloat(this.currentNumber);
+        switch(this.operation) {
+            case "+":
+                this.currentNumber = last+current;
+                break;
+            case "-":
+                this.currentNumber = last-current;
+                break;
+            case "x":
+                this.currentNumber = last*current;
+                break;
+            case "/":
+                this.currentNumber = last/current;
+                break;
+            default:
+                break;
+        }
+        this.currentNumber = (this.currentNumber).toString();
+        this.updateScreen();
+    }
+
+    setOperation(operation) {
+        if(this.currentNumber) {
+            this.lastPressed = this.currentNumber;
+        }
+        
+        if(!this.currentNumber || isNaN(this.currentNumber)) {
+            this.currentNumber = this.lastPressed;
+        }
+        if(this.operation != "") {
+            this.getAnswer();
+            var old = this.currentNumber;
+        }
+        
+        
+        this.operation = operation;
+        this.lastNumber = this.currentNumber;
+        
+        this.currentNumber = "";
+        if(old) {
+            this.updateScreen(old);
+        } else {
+            this.updateScreen(this.lastNumber);
+        }
+        this.resetScreen();
+    }
+
+    resetScreen() {
+        var oldScreenContent = this.screen.innerHTML;
+        this.screen.innerHTML = "";
+        setTimeout(()=>{
+            this.screen.innerHTML = oldScreenContent;
+        }, 100);
+    }
+
+
+    /**
+    * Fit text to div (from https://github.com/ricardobrg/fitText/)
+    * @param {Element to select (changed from link above to not be id based)} outputSelector 
+    */
+    fitText(output) {
+        // max font size in pixels
+        if(!this.oldFontSize) {
+            this.oldFontSize = parseFloat(getComputedStyle(output).fontSize);
+        }
+        output.style.fontSize = this.oldFontSize;
+        const maxFontSize = this.oldFontSize;
+        // get the DOM output element by its selector
+        let outputDiv = output;
+        // get element's width
+        let width = outputDiv.clientWidth;
+        // get content's width
+        let contentWidth = outputDiv.scrollWidth;
+        // get fontSize
+        let fontSize = parseInt(window.getComputedStyle(outputDiv, null).getPropertyValue('font-size'),10);
+        // if content's width is bigger then elements width - overflow
+        if (contentWidth > width){
+            fontSize = Math.ceil(fontSize * width/contentWidth,10);
+            fontSize =  fontSize > maxFontSize  ? fontSize = maxFontSize  : fontSize - 1;
+            outputDiv.style.fontSize = fontSize+'px';   
+        }else{
+            // content is smaller then width... let's resize in 1 px until it fits 
+            while (contentWidth === width && fontSize < maxFontSize){
+                fontSize = Math.ceil(fontSize) + 1;
+                fontSize = fontSize > maxFontSize  ? fontSize = maxFontSize  : fontSize;
+                outputDiv.style.fontSize = fontSize+'px';   
+                // update widths
+                width = outputDiv.clientWidth;
+                contentWidth = outputDiv.scrollWidth;
+                if (contentWidth > width){
+                    outputDiv.style.fontSize = fontSize-1+'px'; 
+                }
+            }
+        }
+    }
+
+
 }
 
 function makeCalculator() {
     new Calculator;
 }
+
+appImagePaths["Calculator"] = "assets/calc.png";

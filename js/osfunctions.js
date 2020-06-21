@@ -12,3 +12,5 @@ String.prototype.isNumber = function () {
     return !isNaN(parseFloat(this));
 }
 
+// appImagePaths: Add the name of the app to its prototype, equaling the path to the icon
+var appImagePaths = {};

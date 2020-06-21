@@ -116,8 +116,14 @@ class FileViewer {
         let newFile = document.createElement("img");
         if(filetype=="image") {
             newFile.src = "assets/image.png";
+        } else if(filetype=="app"){
+            if(appImagePaths[name]) {
+                newFile.src = appImagePaths[name];
+            } else {
+                newFile.src = "assets/unknown.png";
+            }
         } else {
-            newFile.src = "assets/unknown.png";
+            
         }
         newFile.classList.add("icon", "unselectable");
         newFileContainer.appendChild(newFile);

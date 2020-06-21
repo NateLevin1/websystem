@@ -229,50 +229,60 @@ class Calculator {
     pressButton(button) {
         if(button.isNumber()) {
             this.currentNumber += button;
+            while(this.currentNumber.startsWith("0") && this.currentNumber != "0") {
+                this.currentNumber = this.currentNumber.substring(1, this.currentNumber.length);
+            }
             this.updateScreen();
-            //console.log(parseInt(button));
         } else {
-            if(button == ".") { // TODO change to switch statement
-                if(!this.currentNumber.includes(".")) {
-                    if(this.currentNumber == "") {
-                        this.currentNumber = 0;
+            switch(button) {
+                case ".":
+                    if(!this.currentNumber.includes(".")) {
+                        if(this.currentNumber == "") {
+                            this.currentNumber = 0;
+                        }
+                        this.currentNumber += button;
                     }
-                    this.currentNumber += button;
-                }
-                this.updateScreen();
+                    this.updateScreen();
+                    break;
+                case "+":
+                    this.setOperation("+");
+                    break;
+                case "-":
+                    this.setOperation("-");
+                    break;
+                case "x":
+                    this.setOperation("x");
+                    break;
+                case "/":
+                    this.setOperation("/");
+                    break;
+                case "=":
+                    this.getAnswer();
+                    break;
+                case "AC":
+                    this.operation = "";
+                    this.lastNumber = "";
+                    this.currentNumber = "";
+                    this.updateScreen("0");
+                    break;
+                case "+/-":
+                    this.currentNumber = (parseFloat(this.currentNumber)*-1).toString();
+                    this.updateScreen();
+                    break;
+                case "%":
+                    this.currentNumber = (parseFloat(this.currentNumber)/100).toString();
+                    this.updateScreen();
+                    break;
+                default:
+                    break;
             }
-            else if(button == "+") {
-                this.setOperation("+");
-            }
-            else if(button == "-") {
-                this.setOperation("-");
-            }
-            else if(button == "x") {
-                this.setOperation("x");
-            }
-            else if(button == "/") {
-                this.setOperation("/");
-            }
-            else if(button == "=") {
-                this.getAnswer();
-            }
-            else if(button == "AC") {
-                this.operation = "";
-                this.lastNumber = "";
-                this.currentNumber = "";
-                this.updateScreen("0");
-            } else if(button == "+/-") {
-                this.currentNumber = (parseFloat(this.currentNumber)*-1).toString();
-                this.updateScreen();
-            } else if(button == "%") {
-                this.currentNumber = (parseFloat(this.currentNumber)/100).toString();
-                this.updateScreen();
-            }
-            //console.log(button +' is not a number.');
         }
     }
 
     getAnswer() {
+        if(!this.currentNumber) {
+            this.currentNumber = "0";
+        }
         let last = parseFloat(this.lastNumber);
         let current = parseFloat(this.currentNumber);
         switch(this.operation) {
@@ -364,7 +374,7 @@ class Calculator {
                 width = outputDiv.clientWidth;
                 contentWidth = outputDiv.scrollWidth;
                 if (contentWidth > width){
-                    outputDiv.style.fontSize = fontSize-1+'px'; 
+                    outputDiv.style.fontSize = fontSize-1+'px';
                 }
             }
         }

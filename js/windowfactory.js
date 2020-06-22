@@ -251,3 +251,10 @@ class Window {
 var focusEvent = new Event('window-focus');
 // Called on the window when it gets resized
 var resizeEvent = new Event('window-resize');
+
+
+// * /* GLOBAL WINDOW THINGS */
+// Right Click Menu
+var rightClickMenu = document.createElement("div");
+rightClickMenu.classList.add("right-click", "right-click-fast", "unselectable", "absolute");
+document.body.appendChild(rightClickMenu);

@@ -6,7 +6,7 @@ class FileViewer {
         this.win = win;
         this.folderList = [open];
         this.currentFile = open;
-
+        this.setUpListeners();
         // Back Button
         let back = document.createElement("div");
         back.classList.add("file-back-container", "unselectable", "no-move");
@@ -30,10 +30,12 @@ class FileViewer {
         }
         this.displayFolders(open);
         
-        // Right click menu
-        this.window.oncontextmenu = (e)=>{
-            this.rightClick(e);
-        }
+        // right click menu
+        this.rightClickMenu = rightClickMenu;
+
+        // this.window.oncontextmenu = (e)=>{
+        //     this.rightClick(e);
+        // }
     }
     openFolder(open, previous=undefined) {
         this.currentFile = open;
@@ -169,7 +171,63 @@ class FileViewer {
         //contextMenu.classList.add("visible");*/
         // TODO add right click support
     }
+    setUpListeners() {
+        this.window.addEventListener('contextmenu', (event)=>{
+            if(!this.rightClickMenu.className.includes("right-click-invisible")) {
+                event.preventDefault();
+                console.log("Right Click!");
+                this.rightClickTimer = 0;
+                this.rightClickInterval = setInterval(()=>{
+                    this.rightClickTimer += 50;
+                }, 50);
+                // show menu
+                this.rightClickMenu.classList.add("right-click-visible");
+                
+                // set position
+                this.rightClickMenu.style.top = event.clientY+"px";
+                this.rightClickMenu.style.left = event.clientX+"px";
+            
+                
+                var pointerHandle = function pointerUpEventHandler(event) {
+                    // stop timer
+                    clearInterval(this.rightClickInterval);
+                    // get timer
+                    if(this.rightClickTimer > 200) {
+                        this.rightClickMenu.classList.add("right-click-slow");
+                        this.rightClickMenu.classList.add("right-click-invisible");
+                        this.rightClickMenu.classList.remove("right-click-visible");
+                        setTimeout(()=>{
+                            this.rightClickMenu.classList.remove("right-click-invisible");
+                            this.rightClickMenu.classList.remove("right-click-slow");
+                        }, 400);
+                    } else {
+                        // remove on click
+                        var removeOnClick = function removeOnceClicked() {
+                            // ? Make below a function
+                            this.rightClickMenu.classList.add("right-click-slow");
+                            this.rightClickMenu.classList.add("right-click-invisible");
+                            this.rightClickMenu.classList.remove("right-click-visible");
+                            setTimeout(()=>{
+                                this.rightClickMenu.classList.remove("right-click-invisible");
+                                this.rightClickMenu.classList.remove("right-click-slow");
+                            }, 400);
+                            document.body.removeEventListener('pointerdown', removeOnClick, false);
+                        }.bind(this);
+
+                        document.body.addEventListener('pointerdown', removeOnClick, false);
+                    }
+                    // remove listener
+                    document.body.removeEventListener('pointerup', pointerHandle, false);
+                }.bind(this);
+
+                document.body.addEventListener('pointerup', pointerHandle, false);
+            }
+        });
+    }
+    
+    
 }
+
 
 function createDesktopFolder(x, y, name, appendee=document.body, color="white") {
     let newFolderContainer = document.createElement("div");

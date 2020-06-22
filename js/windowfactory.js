@@ -255,6 +255,49 @@ var resizeEvent = new Event('window-resize');
 
 // * /* GLOBAL WINDOW THINGS */
 // Right Click Menu
+class RightClickMenu {
+  /**
+   * Adds an element to the menu. IDs are recommended.
+   * Example usage:
+   * RightClickMenu.addToMenu("Menu Item", ".window"); // will only show up when a window has been right clicked
+   * 
+   * Note that you might need to add a class to your window to be able to reference it.
+   * @param {The element to be appended to the menu. If a string uses default element.} element 
+   * @param {A DOM Selector representing where/when the element should be appended. Blank means anywhere right click is used.} usage 
+   */
+  static addToMenu(element, usage="") {
+    if(!this.usages) {
+      this.usages = {};
+    }
+    if(typeof element == "string") {
+      var text = element;
+      element = document.createElement("div");
+      element.innerText = text;
+      element.classList.add("right-click-menu-member");
+    }
+    if (!this.usages[usage]) {
+      this.usages[usage] = [];
+    }
+    this.usages[usage].push(element);
+    //rightClickMenu.appendChild(element);
+  }
+  static appendAllSelectedChildren(selector) {
+    let elements = this.usages[selector];
+    elements.forEach((element) => {
+      rightClickMenu.appendChild(element);
+    });
+  }
+  /**
+   * In the form:
+   * {
+   * selector: [element, element2],
+   * selector2: [element3],
+   * ...
+   * }
+   */
+  
+  
+}
 var rightClickMenu = document.createElement("div");
 rightClickMenu.classList.add("right-click", "right-click-fast", "unselectable", "absolute");
 document.body.appendChild(rightClickMenu);

@@ -32,10 +32,8 @@ class FileViewer {
         
         // right click menu
         this.rightClickMenu = rightClickMenu;
-
-        // this.window.oncontextmenu = (e)=>{
-        //     this.rightClick(e);
-        // }
+        this.window.classList.add("file-viewer-context-getter");
+        RightClickMenu.addToMenu("Menu Item", ".file-viewer-context-getter")
     }
     openFolder(open, previous=undefined) {
         this.currentFile = open;
@@ -50,11 +48,6 @@ class FileViewer {
         }
         
         this.displayFolders(open);
-
-        // Right click menu
-        this.window.oncontextmenu = (e)=>{
-            this.rightClick(e);
-        }
     }
     displayFolders(open) {
         var positions = [1,2];
@@ -158,24 +151,10 @@ class FileViewer {
         this.previous.pop();
         this.openFolder(folders["parent-"+this.currentFile]);
     }
-    rightClick(event) {
-        /*event.preventDefault();
-        console.log("Right click!");
-        let contextMenu = document.createElement("div");
-        contextMenu.classList.add("context-menu", "absolute", "invisible");
-        contextMenu.style.top = event.clientY+"px";
-        contextMenu.style.left = event.clientX+"px";
-
-        document.body.appendChild(contextMenu);
-        contextMenu.classList.remove("invisible");
-        //contextMenu.classList.add("visible");*/
-        // TODO add right click support
-    }
     setUpListeners() {
         this.window.addEventListener('contextmenu', (event)=>{
+            event.preventDefault();
             if(!this.rightClickMenu.className.includes("right-click-invisible")) {
-                event.preventDefault();
-                console.log("Right Click!");
                 this.rightClickTimer = 0;
                 this.rightClickInterval = setInterval(()=>{
                     this.rightClickTimer += 50;
@@ -186,7 +165,8 @@ class FileViewer {
                 // set position
                 this.rightClickMenu.style.top = event.clientY+"px";
                 this.rightClickMenu.style.left = event.clientX+"px";
-            
+                
+                RightClickMenu.appendAllSelectedChildren(".file-viewer-context-getter");
                 
                 var pointerHandle = function pointerUpEventHandler(event) {
                     // stop timer

@@ -257,6 +257,18 @@ body {
 .right-click-slow {
     transition:opacity 0.4s;
 }
+
+.right-click-menu-member {
+    width:4em;
+    border:0.2em solid rgb(59, 59, 59);
+    background-color: rgb(136, 136, 136);
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+    padding: 0.1em 0.1em;
+}
+.right-click-menu-member:hover {
+    background-color:rgb(69, 121, 216);
+}
 /* END DESKTOP */
 
 /* FILE SYSTEM */

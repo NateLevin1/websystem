@@ -179,6 +179,7 @@ class FileViewer {
                         setTimeout(()=>{
                             this.rightClickMenu.classList.remove("right-click-invisible");
                             this.rightClickMenu.classList.remove("right-click-slow");
+                            this.rightClickMenu.innerHTML = "";
                         }, 400);
                     } else {
                         // remove on click
@@ -190,6 +191,7 @@ class FileViewer {
                             setTimeout(()=>{
                                 this.rightClickMenu.classList.remove("right-click-invisible");
                                 this.rightClickMenu.classList.remove("right-click-slow");
+                                this.rightClickMenu.innerHTML = "";
                             }, 400);
                             document.body.removeEventListener('pointerdown', removeOnClick, false);
                         }.bind(this);

@@ -1,6 +1,6 @@
 class FileViewer {
     openFolderWindow(open, previous=undefined) {
-        let win = new Window(100,100,open);
+        let win = new Window(100, 100, open);
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -56,8 +56,8 @@ class FileViewer {
     }
     displayFolders(open) {
         var positions = [1,2];
-        if(files[open]) { // has something
-            files[open].forEach(element =>{
+        if(folders[open]) { // has something
+            folders[open].forEach(element =>{
                 if(element.startsWith("file::")) { // is file
                     if(element.endsWith(".png")||element.endsWith(".jpg")||element.endsWith(".jpeg")) {
                         this.createFile(...positions,element.substring(6, element.length),this.window, "black", false, "image");
@@ -139,6 +139,8 @@ class FileViewer {
                 if(name == "Calculator") {
                     makeCalculator();
                 }
+            } else if(filetype == "image") {
+                new ImageViewer(name);
             } else {
                 alert("Opened File "+newFileContainer.id+"!");
             }
@@ -152,7 +154,7 @@ class FileViewer {
     goBackParent() {
         this.previous.pop();
         this.previous.pop();
-        this.openFolder(files["parent-"+this.currentFile]);
+        this.openFolder(folders["parent-"+this.currentFile]);
     }
     rightClick(event) {
         /*event.preventDefault();
@@ -165,7 +167,7 @@ class FileViewer {
         document.body.appendChild(contextMenu);
         contextMenu.classList.remove("invisible");
         //contextMenu.classList.add("visible");*/
-        // TODO Do this
+        // TODO add right click support
     }
 }
 

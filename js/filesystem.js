@@ -1,6 +1,6 @@
 // web worker
 var loading;
-var deprecatedGetFileData = /\[([^\]]+)\]{([ \w+]*)([,* \w+]*)}/gi;
+//var deprecatedGetFileData = /\[([^\]]+)\]{([ \w+]*)([,* \w+]*)}/gi;
 var getFileData = /\[([^\]]+)\]{(?:[\w,:. ]*)*}/gi;
 onmessage = (event) => {
     let data = event.data;

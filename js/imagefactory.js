@@ -1,8 +1,13 @@
 class Base64Image {
     // Base64 -> Image Tag
+    /**
+     * fromBase64(str)
+     * Converts a base64 string to an img tag.
+     * Returns an img tag with proper src.
+     * @param {A string which represents an image in base64.} str 
+     */
     fromBase64(str) {
         // make sure it is in proper form
-        console.log("Str for fromBase64: "+str);
         if(str.startsWith("data:image/png;base64,")) { 
             let img = document.createElement("img");
             img.src = str;
@@ -22,8 +27,7 @@ class Base64Image {
     /**
      * Take URL and convert to base64.
      * ! Note that this will not be useful unless the image at the url has no access control allow origin checks.
-     * ! This function is specifically for app creators that have their own servers or that want to use images hosted on websystem's servers
-     * ! so they can save localStorage space.
+     * ! This function is not very useful in production but s kept because it may be useful to somebody
      * @param {URL to image} url 
      * @param {Callback to run when finished} callback
      */

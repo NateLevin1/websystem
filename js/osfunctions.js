@@ -14,3 +14,11 @@ String.prototype.isNumber = function () {
 
 // appImagePaths: Add the name of the app to its prototype, equaling the path to the icon
 var appImagePaths = {};
+
+// 1em. Calculates the value in pixels of 1 em. Useful for many things. Notably, offsets where pixels are required but ems are given, and vice versa
+// to convert pixels to em, do: pixels/em
+var emDiv = document.createElement("div");
+emDiv.style.width = "1em";
+document.body.appendChild(emDiv);
+var em = emDiv.clientWidth; // this is the useful property
+document.body.removeChild(emDiv);

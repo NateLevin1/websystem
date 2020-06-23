@@ -114,6 +114,12 @@ class Window {
       this.window.style.backgroundColor = color;
     }
 
+    // Makes a string for the window. Useful for needing a key for an object which is the window.
+    makeString() {
+      this.uniqueId = "window-"+Math.random();
+      return this.uniqueId;
+    }
+
     focused() {
       return this.hasFocus;
     }
@@ -263,9 +269,10 @@ class RightClickMenu {
    * 
    * Note that you might need to add a class to your window to be able to reference it.
    * @param {The element to be appended to the menu. If a string uses default element.} element 
-   * @param {A DOM Selector representing where/when the element should be appended. Blank means anywhere right click is used.} usage 
+   * @param {A window instance representing where to use the menu item.} usage 
+   * @param {A callback to run when the element is clicked} callback
    */
-  static addToMenu(element, usage="") {
+  static addToMenu(element, usage, callback) {
     if(!this.usages) {
       this.usages = {};
     }
@@ -279,20 +286,29 @@ class RightClickMenu {
       this.usages[usage] = [];
     }
     this.usages[usage].push(element);
-    //rightClickMenu.appendChild(element);
+
+    element.addEventListener("right-click-select", ()=>{
+      callback();
+    });
   }
+
+  // Appends all of the right click menu items by the selector
   static appendAllSelectedChildren(selector) {
     let elements = this.usages[selector];
     elements.forEach((element) => {
       rightClickMenu.appendChild(element);
+      this.rightClickHeight += element.offsetHeight/em;
+      this.rightClickMenu.style.height = this.rightClickHeight+"em";
+      
     });
   }
 
-  static addRightClickForWindow(window, appendSelector) {
+
+  static addRightClickForWindow(clickWindow, generatedWindow) {
     if(!this.rightClickMenu) {
       this.rightClickMenu = rightClickMenu;
     }
-    window.addEventListener('contextmenu', (event)=>{
+    clickWindow.addEventListener('contextmenu', (event)=>{
       event.preventDefault();
       if(!this.rightClickMenu.className.includes("right-click-invisible")) {
           this.rightClickTimer = 0;
@@ -306,9 +322,20 @@ class RightClickMenu {
           this.rightClickMenu.style.top = event.clientY+"px";
           this.rightClickMenu.style.left = event.clientX+"px";
           
-          RightClickMenu.appendAllSelectedChildren(appendSelector);
+          this.rightClickHeight = 0;
+          this.rightClickMenu.style.height = "0em";
+
+          RightClickMenu.appendAllSelectedChildren(generatedWindow);
           
           var pointerHandle = function pointerUpEventHandler(event) {
+              // run callback of clicked
+              let children = this.rightClickMenu.children;
+              children = Array.from(children);
+              children.forEach((element)=>{
+                if(isHover(element)) {
+                  element.dispatchEvent(rightClickSelect)
+                }
+              });
               // stop timer
               clearInterval(this.rightClickInterval);
               // get timer
@@ -324,6 +351,14 @@ class RightClickMenu {
               } else {
                   // remove on click
                   var removeOnClick = function removeOnceClicked() {
+                      // run callback of clicked
+                      let children = this.rightClickMenu.children;
+                      children = Array.from(children);
+                      children.forEach((element)=>{
+                        if(isHover(element)) {
+                          element.dispatchEvent(rightClickSelect)
+                        }
+                      });
                       // ? Make below a function
                       this.rightClickMenu.classList.add("right-click-slow");
                       this.rightClickMenu.classList.add("right-click-invisible");
@@ -352,3 +387,9 @@ class RightClickMenu {
 var rightClickMenu = document.createElement("div");
 rightClickMenu.classList.add("right-click", "right-click-fast", "unselectable", "absolute");
 document.body.appendChild(rightClickMenu);
+
+// EVENTS
+
+// Called when an element is selected from a right click.
+// Handled internally- runs callback given in addToMenu function.
+var rightClickSelect = new Event("right-click-select");

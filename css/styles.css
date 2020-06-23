@@ -240,14 +240,14 @@ body {
     z-index:100;
 }
 .right-click-visible {
-    width:4em;
+    width:6em;
     height:8em;
     border:0.2em solid black;
     opacity:1;
 }
 .right-click-invisible {
     opacity:0;
-    width:4em;
+    width:6em;
     height:8em;
     border:0.2em solid black;
 }
@@ -259,7 +259,7 @@ body {
 }
 
 .right-click-menu-member {
-    width:4em;
+    width: 6em;
     border:0.2em solid rgb(59, 59, 59);
     background-color: rgb(136, 136, 136);
     box-sizing: border-box;

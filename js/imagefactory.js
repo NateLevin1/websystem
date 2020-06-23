@@ -64,7 +64,7 @@ class Base64Image {
         })
     }
 
-    // from https://stackoverflow.com/a/40289667/13608595 
+    // from https://stackoverflow.com/a/40289667/
     blobToBase64(blob, callback) {
         var reader = new FileReader();
         reader.onload = function() {

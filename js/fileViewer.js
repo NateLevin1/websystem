@@ -6,7 +6,6 @@ class FileViewer {
         this.win = win;
         this.folderList = [open];
         this.currentFile = open;
-        this.setUpListeners();
         // Back Button
         let back = document.createElement("div");
         back.classList.add("file-back-container", "unselectable", "no-move");
@@ -30,10 +29,14 @@ class FileViewer {
         }
         this.displayFolders(open);
         
+        this.generatedWindow = this.win.makeString();
+
         // right click menu
         this.rightClickMenu = rightClickMenu;
         this.window.classList.add("file-viewer-context-getter");
-        RightClickMenu.addToMenu("Menu Item", ".file-viewer-context-getter")
+        RightClickMenu.addToMenu("Add Folder", this.generatedWindow, ()=>{this.makeNewFolder()});
+        RightClickMenu.addToMenu("Upload Files", this.generatedWindow, ()=>{this.uploadNewFile()});
+        RightClickMenu.addRightClickForWindow(this.window, this.generatedWindow);
     }
     openFolder(open, previous=undefined) {
         this.currentFile = open;
@@ -150,9 +153,6 @@ class FileViewer {
         this.previous.pop();
         this.previous.pop();
         this.openFolder(folders["parent-"+this.currentFile]);
-    }
-    setUpListeners() {
-        RightClickMenu.addRightClickForWindow(this.window, ".file-viewer-context-getter");
     }
 }
 

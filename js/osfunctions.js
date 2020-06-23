@@ -22,3 +22,9 @@ emDiv.style.width = "1em";
 document.body.appendChild(emDiv);
 var em = emDiv.clientWidth; // this is the useful property
 document.body.removeChild(emDiv);
+
+// isHover(element)
+// Check if an element is being hovered. Used internally for right click menu
+// though is available for its various uses.
+// From this answer: https://stackoverflow.com/a/14800287/ 
+const isHover = e => e.parentElement.querySelector(':hover') === e;

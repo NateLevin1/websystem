@@ -287,14 +287,65 @@ class RightClickMenu {
       rightClickMenu.appendChild(element);
     });
   }
-  /**
-   * In the form:
-   * {
-   * selector: [element, element2],
-   * selector2: [element3],
-   * ...
-   * }
-   */
+
+  static addRightClickForWindow(window, appendSelector) {
+    if(!this.rightClickMenu) {
+      this.rightClickMenu = rightClickMenu;
+    }
+    window.addEventListener('contextmenu', (event)=>{
+      event.preventDefault();
+      if(!this.rightClickMenu.className.includes("right-click-invisible")) {
+          this.rightClickTimer = 0;
+          this.rightClickInterval = setInterval(()=>{
+              this.rightClickTimer += 50;
+          }, 50);
+          // show menu
+          this.rightClickMenu.classList.add("right-click-visible");
+          
+          // set position
+          this.rightClickMenu.style.top = event.clientY+"px";
+          this.rightClickMenu.style.left = event.clientX+"px";
+          
+          RightClickMenu.appendAllSelectedChildren(appendSelector);
+          
+          var pointerHandle = function pointerUpEventHandler(event) {
+              // stop timer
+              clearInterval(this.rightClickInterval);
+              // get timer
+              if(this.rightClickTimer > 200) {
+                  this.rightClickMenu.classList.add("right-click-slow");
+                  this.rightClickMenu.classList.add("right-click-invisible");
+                  this.rightClickMenu.classList.remove("right-click-visible");
+                  setTimeout(()=>{
+                      this.rightClickMenu.classList.remove("right-click-invisible");
+                      this.rightClickMenu.classList.remove("right-click-slow");
+                      this.rightClickMenu.innerHTML = "";
+                  }, 400);
+              } else {
+                  // remove on click
+                  var removeOnClick = function removeOnceClicked() {
+                      // ? Make below a function
+                      this.rightClickMenu.classList.add("right-click-slow");
+                      this.rightClickMenu.classList.add("right-click-invisible");
+                      this.rightClickMenu.classList.remove("right-click-visible");
+                      setTimeout(()=>{
+                          this.rightClickMenu.classList.remove("right-click-invisible");
+                          this.rightClickMenu.classList.remove("right-click-slow");
+                          this.rightClickMenu.innerHTML = "";
+                      }, 400);
+                      document.body.removeEventListener('pointerdown', removeOnClick, false);
+                  }.bind(this);
+
+                  document.body.addEventListener('pointerdown', removeOnClick, false);
+              }
+              // remove listener
+              document.body.removeEventListener('pointerup', pointerHandle, false);
+          }.bind(this);
+
+          document.body.addEventListener('pointerup', pointerHandle, false);
+      }
+    });
+  }
   
   
 }

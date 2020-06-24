@@ -56,7 +56,7 @@ class Base64Image {
      * @param {The instance of the file from input type=file} fileInstance 
      * @param {A callback which is ran when it is done. Callback should have 1 parameter which is the base64 string} callback 
      */
-    fileToBase64(fileInstance, callback) {
+    static fileToBase64(fileInstance, callback) {
         var file = fileInstance.files[0];
         var a = new Base64Image;
         a.blobToBase64(file, (base)=>{

@@ -164,11 +164,11 @@ class FileViewer {
             }
             // First, add a new empty folder to the end.
             let currentFolders = localStorage.getItem('folders');
-            localStorage.setItem('folders', " "+currentFolders+"["+name+"]{}");
+            localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
             // Next, add a new subfolder of the current directory.
             currentFolders = localStorage.getItem('folders');
             localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
-            // Finally, add the properties to folders[] so they will display
+            // Finally, add the properties to folders{} so they will display
             folders[name] = [];
             folders["parent-"+name] = this.currentFolder;
             folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
@@ -182,7 +182,37 @@ class FileViewer {
     }
 
     uploadNewFile() {
+        let fileUpload = document.createElement("input");
+        fileUpload.type = "file";
+        fileUpload.click();
+        var fileUploadEvent = function namelessName() {
+            var file = fileUpload.files[0];
 
+            // First, add the file as a sub file of the parent.
+            let currentFolders = localStorage.getItem('folders');
+            localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+file.name+","));
+            // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
+            // ! NOT IMPLEMENTED YET
+            var currentFiles = localStorage.getItem('files');
+            var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+            if(extension == ".png") {
+                var data = Base64Image.fileToBase64(fileUpload, (filedata)=>{
+                    localStorage.setItem('files', currentFiles+"["+file.name+"]{"+filedata+"}");
+                    // add data to file
+                    files[file.name] = filedata;
+                });
+            }
+            
+            // Finally, add the file to folders{} so it will display
+            folders[this.currentFolder].unshift("file::"+file.name); // ? push? It looks different after the page has been reloaded if push is used
+            // And update the screen.
+            this.previous.pop();
+            this.openFolder(this.currentFolder);
+            fileUpload.removeEventListener('change', fileUploadEvent, false);
+        }.bind(this);
+
+        fileUpload.addEventListener('change', fileUploadEvent, false);
+        
     }
 }
 

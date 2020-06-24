@@ -30,8 +30,8 @@ class ImageViewer {
     addListeners() {
         this.window.classList.add("unselectable");
         this.window.addEventListener('window-resize', (event)=>{
-            let windowWidth = this.window.style.width
-            this.img.style.width = (windowWidth.substring(0,windowWidth.indexOf("p")))+"px";
+            let windowWidth = this.win.getWidth();
+            this.img.style.width = windowWidth+"px";
         });
     }
 }

@@ -244,8 +244,31 @@ class Window {
           }
           elmnt.dispatchEvent(resizeEvent);
       }
-}
-
+    }
+    /**
+     * Returns the width of the window in pixels.
+     */
+    getWidth() {
+      return this.window.clientWidth;
+    }
+    /**
+     * Returns the height of the window in pixels.
+     */
+    getHeight() {
+      return this.window.clientHeight;
+    }
+    /**
+     * Returns the width of the window in em.
+     */
+    getWidthInEm() {
+      return this.window.clientWidth/em;
+    }
+    /**
+     * Returns the height of the window in em.
+     */
+    getHeightInEm() {
+      return this.window.clientHeight/em;
+    }
 }
 
 

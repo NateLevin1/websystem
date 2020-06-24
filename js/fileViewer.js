@@ -192,7 +192,6 @@ class FileViewer {
             let currentFolders = localStorage.getItem('folders');
             localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+file.name+","));
             // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
-            // ! NOT IMPLEMENTED YET
             var currentFiles = localStorage.getItem('files');
             var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
             if(extension == ".png") {

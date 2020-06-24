@@ -301,21 +301,26 @@ class Calculator {
             default:
                 break;
         }
+        this.lastNumber = "";
+        this.operation = "";
         this.currentNumber = (this.currentNumber).toString();
         this.updateScreen();
     }
 
     setOperation(operation) {
+        // sets the current number if no previous was clicked
+        if(!this.currentNumber) {
+            this.currentNumber = this.lastPressed;
+        }
+
         if(this.currentNumber) {
             this.lastPressed = this.currentNumber;
         }
         
-        if(!this.currentNumber || isNaN(this.currentNumber)) {
-            this.currentNumber = this.lastPressed;
-        }
         if(this.operation != "") {
             this.getAnswer();
             var old = this.currentNumber;
+            console.log("Got answer because operation is set. lastPressed = "+this.lastPressed);
         }
         
         

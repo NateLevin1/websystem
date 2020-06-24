@@ -5,7 +5,7 @@ class FileViewer {
         this.header = win.getHeader();
         this.win = win;
         this.folderList = [open];
-        this.currentFile = open;
+        this.currentFolder = open;
         // Back Button
         let back = document.createElement("div");
         back.classList.add("file-back-container", "unselectable", "no-move");
@@ -39,7 +39,7 @@ class FileViewer {
         RightClickMenu.addRightClickForWindow(this.window, this.generatedWindow);
     }
     openFolder(open, previous=undefined) {
-        this.currentFile = open;
+        this.currentFolder = open;
         this.win.clear();
         if(previous || this.previous) {
             let old = previous ? previous : this.previous;
@@ -152,7 +152,37 @@ class FileViewer {
     goBackParent() {
         this.previous.pop();
         this.previous.pop();
-        this.openFolder(folders["parent-"+this.currentFile]);
+        this.openFolder(folders["parent-"+this.currentFolder]);
+    }
+
+    // FOLDER/FILE CREATION
+    makeNewFolder() {
+        try { // safety
+            let name = prompt("Please enter a name for the folder.").toString(); // ! SHOW FAKE FOLDER, ADD NAME WITH INPUT ELEMENT
+            while((name.includes(",")||name.startsWith("file::")||!name||Object.keys(folders).includes(name))) { // illegal names
+                name = prompt("Error: Folder name cannot:\n1. Be the name of an existing folder\n2. Contain a comma\n3. Start with file::\n\nPlease enter a name for the folder.").toString();
+            }
+            // First, add a new empty folder to the end.
+            let currentFolders = localStorage.getItem('folders');
+            localStorage.setItem('folders', " "+currentFolders+"["+name+"]{}");
+            // Next, add a new subfolder of the current directory.
+            currentFolders = localStorage.getItem('folders');
+            localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
+            // Finally, add the properties to folders[] so they will display
+            folders[name] = [];
+            folders["parent-"+name] = this.currentFolder;
+            folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
+            // And update the screen.
+            this.previous.pop();
+            this.openFolder(this.currentFolder);
+        } catch(e) {
+            console.error("There was an issue in processing the folder creation. Error:");
+            throw e;
+        }
+    }
+
+    uploadNewFile() {
+
     }
 }
 

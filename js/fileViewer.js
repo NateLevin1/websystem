@@ -6,6 +6,7 @@ class FileViewer {
         this.win = win;
         this.folderList = [open];
         this.currentFolder = open;
+
         // Back Button
         let back = document.createElement("div");
         back.classList.add("file-back-container", "unselectable", "no-move");
@@ -27,7 +28,18 @@ class FileViewer {
             this.win.setTitle(previous.join(" -> ")+" -> "+open);
             this.previous = [...previous,open];
         }
+
+        // Folder Display
+        // ! Add custom scrollbar
         this.displayFolders(open);
+        var oldWindowWidth = this.win.getWidthInEm();
+        this.window.addEventListener('window-resize', ()=>{
+            if(this.win.getWidthInEm() > oldWindowWidth+7||this.win.getWidthInEm() < oldWindowWidth-7) {
+                this.realignFolders(); // update folder display. Could be faster by just updating positions
+                oldWindowWidth = this.win.getWidthInEm();
+            }
+        });
+
         
         this.generatedWindow = this.win.makeString();
 
@@ -39,6 +51,7 @@ class FileViewer {
         RightClickMenu.addRightClickForWindow(this.window, this.generatedWindow);
     }
     openFolder(open, previous=undefined) {
+        this.folderReferenceList = [];
         this.currentFolder = open;
         this.win.clear();
         if(previous || this.previous) {
@@ -47,29 +60,48 @@ class FileViewer {
             this.previous = [...old, open];
         } else {
             this.win.setTitle(open);
-            
         }
         
         this.displayFolders(open);
     }
+    realignFolders() {
+        var list = this.folderReferenceList;
+        var windowWidth = this.win.getWidthInEm();
+        var positions = [1,2];
+        list.forEach((element)=>{
+            element.style.left = positions[0]+"em";
+            element.style.top = positions[1]+"em";
+
+            positions[0] += 8;
+            if(positions[0] > windowWidth-7) {
+                positions[1] += 8;
+                positions[0] = 1;
+            }
+        });
+    }
     displayFolders(open) {
+        this.folderReferenceList = [];
+        var windowWidth = this.win.getWidthInEm();
         var positions = [1,2];
         if(folders[open]) { // has something
             folders[open].forEach(element =>{
                 if(element.startsWith("file::")) { // is file
                     if(element.endsWith(".png")||element.endsWith(".jpg")||element.endsWith(".jpeg")) {
-                        this.createFile(...positions,element.substring(6, element.length),this.window, "black", false, "image");
+                        this.folderReferenceList.push(this.createFile(...positions,element.substring(6, element.length),this.window, "black", false, "image"));
                     } else if(element.endsWith("app")) {
-                        this.createFile(...positions,element.substring(6, element.length-4),this.window, "black", false, "app");
+                        this.folderReferenceList.push(this.createFile(...positions,element.substring(6, element.length-4),this.window, "black", false, "app"));
                     } else {
+                        console.error("Error: Could not find file extension of file:");
                         console.log(element);
                     }
-                    
                 } else { // is folder
-                    this.createFolder(...positions,element,this.window, "black", false);
+                    this.folderReferenceList.push(this.createFolder(...positions,element,this.window, "black", false));
                 }
                 positions[0] += 8;
-                // TODO Add y value increase
+                if(positions[0] > windowWidth-7) {
+                    positions[1] += 8;
+                    positions[0] = 1;
+                }
             });
         }
     }
@@ -101,6 +133,8 @@ class FileViewer {
                 this.openFolder(newFolderContainer.id);
             }
         };
+
+        return newFolderContainer; // allows for adding to this.folderReferenceList
     }
     createFile(x, y, name, appendee=document.body, color="white", newWindow=true, filetype="image") {
         let newFileContainer = document.createElement("div");
@@ -144,6 +178,8 @@ class FileViewer {
             }
             
         };
+
+        return newFileContainer; // allows for adding to this.folderReferenceList
     }
     getWindow() {
         return this.window;

@@ -2,6 +2,8 @@
 const express = require('express');
 const request = require('request');
 const hash = require('js-sha256');
+const bodyParser = require('body-parser');
+const router = express.Router();
 
 const app = express();
 
@@ -10,8 +12,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// USERNAMES+PASSWORD HANDLING
 
+
+// * USERNAMES+PASSWORD HANDLING
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+
+// app.use("/set/", router);
+
+// router.post('handle',(req, res) => {
+//   console.log(req.body);
+//   res.send("200: OKAY");
+// });
 // set username and password
 // app.get(/set\/up\/[^/]+\//, (req,res) =>{
 //   let data = req.path.substring(8, req.path.length);
@@ -27,7 +39,7 @@ app.use((req, res, next) => {
 
 // PROXY
 app.get(/p\/https*:\/\/.+\//, (req, res) => { // request, response, error
-let realRequest = req.path.substring(2, req.path.length);
+let realRequest = req.path.substring(3, req.path.length);
   request(
     { url: realRequest },
     (err, response, body) => {

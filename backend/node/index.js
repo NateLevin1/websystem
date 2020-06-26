@@ -1,6 +1,7 @@
 // Adapted with love from https://github.com/15Dkatz/beat-cors-server 
 const express = require('express');
 const request = require('request');
+const hash = require('js-sha256');
 
 const app = express();
 
@@ -9,8 +10,24 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get(/https*:\/\/.+\//, (req, res) => { // request, response, error
-let realRequest = req.path.substring(1, req.path.length);
+// USERNAMES+PASSWORD HANDLING
+
+// set username and password
+// app.get(/set\/up\/[^/]+\//, (req,res) =>{
+//   let data = req.path.substring(8, req.path.length);
+
+// });
+// app.get(/data\/[^\/]+/, (req, res) =>{
+//   let data = req.path.substring(6, req.path.length);
+//   console.log(hash.sha256.hmac("username", "password"));
+//   res.send("200: OKAY");
+// });
+
+
+
+// PROXY
+app.get(/p\/https*:\/\/.+\//, (req, res) => { // request, response, error
+let realRequest = req.path.substring(2, req.path.length);
   request(
     { url: realRequest },
     (err, response, body) => {

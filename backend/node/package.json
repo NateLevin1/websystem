@@ -1,7 +1,7 @@
 {
-  "name": "beat-cors-proxy",
+  "name": "websystem-backend",
   "version": "1.0.0",
-  "description": "Get past CORS and load websites that have restrictions, like facebook and google.",
+  "description": "The backend for the WebSystem site.",
   "main": "index.js",
   "scripts": {
     "start": "node ./"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "js-sha256": "^0.9.0",
     "request": "^2.88.0"
   }
 }

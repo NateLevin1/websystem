@@ -1,10 +1,10 @@
 # websystem
-Websystem is a web-based operating system taking advantage of WebAssembly, WebWorkers, and other emerging web technologies.
+Websystem is a web-based operating system taking advantage of WebAssembly, WebWorkers, IndexedDB, and other emerging web technologies.
 
   - Fully Customizable File System
   - Rapid and Easy App Development
   - Integrated IDE and Shell
-  - Files are Saved Locally Through LocalStorage
+  - Files are Saved Locally Through IndexedDB
 
 ### Tech
 Websystem uses WebWorkers to enable multithreading and gets the best performance out of the browser. WebAssembly is used to speed up calculations and improve user experience.

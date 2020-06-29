@@ -1,5 +1,4 @@
 class Calculator {
-    // ? Sometimes calculator gets wrong value
     constructor() {
         this.operation = "";
         this.lastNumber = "";
@@ -393,3 +392,4 @@ function makeCalculator() {
 }
 
 appImagePaths["Calculator"] = "assets/calc.png";
+makeFunctions["Calculator"] = ()=>{ makeCalculator(); };

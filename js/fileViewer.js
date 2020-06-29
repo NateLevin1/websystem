@@ -155,7 +155,7 @@ class FileViewer {
                 newFile.src = "assets/unknown.png";
             }
         } else {
-            
+            newFile.src = "assets/unknown.png";
         }
         newFile.classList.add("icon", "unselectable");
         newFileContainer.appendChild(newFile);
@@ -168,9 +168,12 @@ class FileViewer {
     
         newFileContainer.ondblclick = (event)=>{
             if(filetype == "app") {
-                if(name == "Calculator") {
-                    makeCalculator();
+                try {
+                    makeFunctions[name]();
+                } catch(e) {
+                    console.error("No function was provided for making the app named "+name+".");
                 }
+                
             } else if(filetype == "image") {
                 new ImageViewer(name);
             } else {

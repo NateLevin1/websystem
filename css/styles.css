@@ -169,6 +169,7 @@ body {
 .icon {
     cursor: pointer;
     width:7em;
+    height:5em;
     display:block;
     margin:auto;
 }
@@ -238,6 +239,7 @@ body {
     background-color: rgb(223, 223, 223);
     opacity:0;
     z-index:100;
+    box-shadow: 0 0.5em 0.5em rgba(0,0,0,0.2); /* Box Shadow */
 }
 .right-click-visible {
     width:6em;

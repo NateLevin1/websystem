@@ -28,3 +28,17 @@ document.body.removeChild(emDiv);
 // though is available for its various uses.
 // From this answer: https://stackoverflow.com/a/14800287/ 
 const isHover = e => e.parentElement.querySelector(':hover') === e;
+
+// makeFunctions
+// The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
+makeFunctions = {};
+
+// ! DEBUG ONLY
+// ! THIS SHOULD BE REMOVED FOR RELEASE
+function jsonEscapeNewlines(source) {
+    source = source.toString();
+    source = source.replace(/(?:\r\n|\r|\n)/g, '\\n');
+    source = source.replace(/"/g, "\\\"");
+    console.log(source);
+}
+

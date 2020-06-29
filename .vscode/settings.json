@@ -3,18 +3,33 @@
         "Konqueror",
         "Resizer",
         "Unfocus",
+        "allapps",
         "appendee",
+        "applist",
+        "appstore",
         "callout",
+        "cssurls",
         "dialogbox",
         "dialogboxcontainer",
         "elmnt",
         "elnum",
         "filedata",
+        "hrefs",
         "imagefactory",
+        "jsons",
+        "jssrces",
+        "localstorage",
         "nwse",
         "osfunctions",
+        "popularapps",
+        "recentapps",
+        "srces",
+        "subfile",
         "subfolder's",
         "websystem's",
         "windowfactory"
+    ],
+    "cSpell.ignoreWords": [
+        "imagesrc"
     ]
 }

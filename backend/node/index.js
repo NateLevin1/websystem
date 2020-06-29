@@ -4,6 +4,10 @@ const request = require('request');
 const hash = require('js-sha256');
 const bodyParser = require('body-parser');
 const router = express.Router();
+const allapps = require("./jsons/apps.json");
+const popularapps = require("./jsons/popular.json");
+const recentapps = require("./jsons/recent.json");
+
 
 const app = express();
 
@@ -35,9 +39,19 @@ app.use((req, res, next) => {
 //   res.send("200: OKAY");
 // });
 
+// * APP STORE
+app.get(/applist\/popular/, (req, res) =>{ // popular list
+  res.json(popularapps);
+});
+app.get(/applist\/recent/, (req, res) =>{ // recent list
+  res.json(recentapps);
+});
+app.get(/applist\/search/, (req, res) =>{ // search list
+  // ? Search on server instead of client?
+  res.json(allapps);
+});
 
-
-// PROXY
+// * PROXY
 app.get(/p\/https*:\/\/.+\//, (req, res) => { // request, response, error
 let realRequest = req.path.substring(3, req.path.length);
   request(

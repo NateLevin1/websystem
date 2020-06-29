@@ -1,0 +1,6 @@
+POST https://example.com
+Content-Type: application/json
+
+{
+    "a":"b"
+}

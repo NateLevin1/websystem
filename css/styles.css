@@ -180,8 +180,38 @@ body {
     max-width:7em;
     text-align:center;
 }
-.icon-selected {
-    background-color:rgba(0, 153, 255, 0.562);
+.icon-container img {
+    border: 2px solid rgba(0, 0, 0, 0);
+}
+
+.icon-container div {
+    display:inline-block;
+    max-height:2.55em;
+    max-width:100%;
+    overflow: hidden;
+    border: 2px solid rgba(0, 0, 0, 0);
+    /* white-space: nowrap; Adds ellipsis but constrains to one line.
+    text-overflow: ellipsis; */
+}
+.icon-selected img {
+    background-color:rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.411);
+    z-index:1;
+}
+.icon-selected div {
+    background-color:rgba(0, 89, 221, 1);
+    border: 2px solid rgba(0, 89, 221, 1);
+
+    color:white;
+    border-radius:4px;
+    z-index:0;
+    display:inline-block;
+}
+
+.icon-rename div {
+    background-color:rgba(0, 119, 255, 0.658);
+    padding-left:3px;
+    padding-right:3px;
 }
 
 .window {
@@ -194,7 +224,7 @@ body {
     left:3em;
     top:3em;
     opacity:0;
-    
+    overflow: hidden;
 }
 .window-fast {
     transition: opacity 0.15s;
@@ -206,6 +236,10 @@ body {
 .window-header {
     background-color:black;
     cursor:move;
+
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .resize {
@@ -236,22 +270,26 @@ body {
     width:0; /* Hack because display changes opacity for some reason */
     height:0;
     border:0;
-    background-color: rgb(223, 223, 223);
+    background-color: rgba(255, 255, 255, 0.95);
     opacity:0;
     z-index:100;
     box-shadow: 0 0.5em 0.5em rgba(0,0,0,0.2); /* Box Shadow */
+    color: black;
+    font-size:0.95em;
 }
 .right-click-visible {
-    width:6em;
+    width:10em;
     height:8em;
     border:0.2em solid black;
+    border-radius: 0.3em;
     opacity:1;
 }
 .right-click-invisible {
     opacity:0;
-    width:6em;
+    width:10em;
     height:8em;
     border:0.2em solid black;
+    border-radius: 0.3em;
 }
 .right-click-fast {
     transition:opacity 0.15s;
@@ -261,15 +299,23 @@ body {
 }
 
 .right-click-menu-member {
-    width: 6em;
-    border:0.2em solid rgb(59, 59, 59);
-    background-color: rgb(136, 136, 136);
     box-sizing: border-box;
-    transition: background-color 0.3s;
-    padding: 0.1em 0.1em;
+    transition: background-color 0.1s, color 0.1s;
+    padding: 0.1em 0.5em;
+    margin:0.2em 0;
 }
 .right-click-menu-member:hover {
-    background-color:rgb(69, 121, 216);
+    background-color:rgba(0, 89, 221, 1);
+    color:white;
+}
+.right-click-menu-member-no-hover {
+    width: 10em;
+    box-sizing: border-box;
+    transition: background-color 0.1s, color 0.1s;
+    height:0.15em;
+    margin:0.3em 0;
+    background-color:rgba(0, 0, 0, 0.12);
+    border:none;
 }
 /* END DESKTOP */
 

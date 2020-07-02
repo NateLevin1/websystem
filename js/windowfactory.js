@@ -292,7 +292,7 @@ class RightClickMenu {
    * 
    * Note that you might need to add a class to your window to be able to reference it.
    * @param {The element to be appended to the menu. If a string uses default element.} element 
-   * @param {A window instance representing where to use the menu item.} usage 
+   * @param {An element instance (or instances with an array) representing where to use the menu item.} usage 
    * @param {A callback to run when the element is clicked} callback
    */
   static addToMenu(element, usage, callback) {
@@ -305,32 +305,79 @@ class RightClickMenu {
       element.innerText = text;
       element.classList.add("right-click-menu-member");
     }
-    if (!this.usages[usage]) {
-      this.usages[usage] = [];
+    if(typeof usage == "object") { // multiple usages, use foreach.
+      usage.forEach((use)=>{
+        if (!this.usages[use]) {
+          this.usages[use] = [];
+        }
+        this.usages[use].push(element);
+      });
+    } else {
+      if (!this.usages[usage]) {
+        this.usages[usage] = [];
+      }
+      this.usages[usage].push(element);
     }
-    this.usages[usage].push(element);
+    
 
     element.addEventListener("right-click-select", ()=>{
       callback();
     });
   }
 
+  static addLineToMenu(usage) {
+    var element = document.createElement("hr");
+    element.classList.add("right-click-menu-member-no-hover");
+    if(typeof usage == "object") { // multiple usages, use foreach.
+      usage.forEach((use)=>{
+        if (!this.usages[use]) {
+          this.usages[use] = [];
+        }
+        this.usages[use].push(element);
+      });
+    } else {
+      if (!this.usages[usage]) {
+        this.usages[usage] = [];
+      }
+      this.usages[usage].push(element);
+    }
+  }
+
   // Appends all of the right click menu items by the selector
   static appendAllSelectedChildren(selector) {
     let elements = this.usages[selector];
     elements.forEach((element) => {
-      rightClickMenu.appendChild(element);
-      this.rightClickHeight += element.offsetHeight/em;
-      this.rightClickMenu.style.height = this.rightClickHeight+"em";
-      
+        rightClickMenu.appendChild(element);
+        this.rightClickHeight += outerHeight(element)/em;
+    });
+    this.rightClickMenu.style.height = this.rightClickHeight+"em";
+  }
+
+  static addRightClickForClass(classString, generatedString, parent) {
+    var elements = parent.querySelectorAll(classString);
+    elements.forEach((element)=>{
+      RightClickMenu.addContextMenuListener(element, generatedString);
+      element.classList.add("right-click-added");
     });
   }
 
+  static updateRightClickForClass(classString, generatedString, parent) {
+    var elements = parent.querySelectorAll(classString);
+    elements.forEach((element)=>{
+      if(!element.classList.contains("right-click-added")) {
+        RightClickMenu.addContextMenuListener(element, generatedString);
+      }
+    });
+  }
 
   static addRightClickForWindow(clickWindow, generatedWindow) {
     if(!this.rightClickMenu) {
       this.rightClickMenu = rightClickMenu;
     }
+    RightClickMenu.addContextMenuListener(clickWindow, generatedWindow);
+  }
+  
+  static addContextMenuListener(clickWindow, generatedWindow) {
     clickWindow.addEventListener('contextmenu', (event)=>{
       event.preventDefault();
       if(!this.rightClickMenu.className.includes("right-click-invisible")) {
@@ -344,10 +391,10 @@ class RightClickMenu {
           // set position
           this.rightClickMenu.style.top = event.clientY+"px";
           this.rightClickMenu.style.left = event.clientX+"px";
-          
           this.rightClickHeight = 0;
           this.rightClickMenu.style.height = "0em";
 
+          this.rightClickMenu.innerHTML = "";
           RightClickMenu.appendAllSelectedChildren(generatedWindow);
           
           var pointerHandle = function pointerUpEventHandler(event) {
@@ -356,7 +403,7 @@ class RightClickMenu {
               children = Array.from(children);
               children.forEach((element)=>{
                 if(isHover(element)) {
-                  element.dispatchEvent(rightClickSelect)
+                  element.dispatchEvent(rightClickSelect);
                 }
               });
               // stop timer
@@ -404,7 +451,6 @@ class RightClickMenu {
       }
     });
   }
-  
   
 }
 var rightClickMenu = document.createElement("div");

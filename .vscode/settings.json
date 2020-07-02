@@ -12,6 +12,7 @@
         "debugtesting",
         "dialogbox",
         "dialogboxcontainer",
+        "ellerts",
         "elmnt",
         "elnum",
         "filedata",

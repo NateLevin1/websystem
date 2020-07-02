@@ -29,6 +29,11 @@ class FileViewer {
             this.previous = [...previous,open];
         }
 
+        // background (for right click menu) cannot be inside display folders function or will be needlessly created and overwritten
+        this.background = document.createElement("div");
+        this.background.style.width = "100%";
+        this.background.style.height = "calc(100% - 1em)";
+
         // Folder Display
         // ! Add custom scrollbar
         this.displayFolders(open);
@@ -41,14 +46,52 @@ class FileViewer {
         });
 
         
+        
         this.generatedWindow = this.win.makeString();
 
         // right click menu
         this.rightClickMenu = rightClickMenu;
-        this.window.classList.add("file-viewer-context-getter");
-        RightClickMenu.addToMenu("Add Folder", this.generatedWindow, ()=>{this.makeNewFolder()});
-        RightClickMenu.addToMenu("Upload Files", this.generatedWindow, ()=>{this.uploadNewFile()});
-        RightClickMenu.addRightClickForWindow(this.window, this.generatedWindow);
+
+        // icon right click
+        RightClickMenu.addToMenu("Open", this.generatedWindow+"-folder", ()=>{ // required?
+            var selected = document.querySelectorAll(".icon-selected");
+            let names = [];
+            selected.forEach((element)=>{
+                names.push(element.querySelector("div").innerHTML);
+            });
+            this.intelligentOpen(names);
+        });
+        
+        RightClickMenu.addToMenu("Open in New Window", this.generatedWindow+"-folder", ()=>{
+            var selected = document.querySelector(".icon-selected");
+            let n = new FileViewer;
+            n.openFolderWindow(selected.querySelector("div").innerHTML);
+        });
+
+        RightClickMenu.addLineToMenu(this.generatedWindow+"-folder"); // breaking line
+
+        RightClickMenu.addToMenu("Move To Trash", this.generatedWindow+"-folder", ()=>{
+            console.log("Trash unavailable. 😬");
+        });
+
+        RightClickMenu.addLineToMenu(this.generatedWindow+"-folder"); // breaking line
+
+        RightClickMenu.addToMenu("Copy", this.generatedWindow+"-folder", ()=>{
+            console.log("Copying not done yet. 🎬");
+        });
+
+        RightClickMenu.addToMenu("Paste", this.generatedWindow+"-folder", ()=>{
+            console.log("Pasting not done yet. 🎬");
+        });
+
+        RightClickMenu.addLineToMenu(this.generatedWindow+"-folder"); // breaking line
+
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
+
+
+        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder"], ()=>{ this.makeNewFolder() });
+        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder"], ()=>{ this.uploadNewFile() });
+        RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow);
     }
     openFolder(open, previous=undefined) {
         this.folderReferenceList = [];
@@ -61,8 +104,13 @@ class FileViewer {
         } else {
             this.win.setTitle(open);
         }
-        
+
         this.displayFolders(open);
+
+        // update right click menu
+        // ! I have no idea why this works or how this works. However, only this works. Not commented out bit below, only this.
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
+        //RightClickMenu.addRightClickForClass(".icon-container", this.generatedWindow+"-icon", this.window);
     }
     realignFolders() {
         var list = this.folderReferenceList;
@@ -80,6 +128,16 @@ class FileViewer {
         });
     }
     displayFolders(open) {
+        // background (for right click menu)
+        this.window.appendChild(this.background);
+        // Deselection
+        this.background.onclick = ()=>{
+            if(event.target == this.background) {
+                clearSelected();
+            }
+        }
+
+
         this.folderReferenceList = [];
         var windowWidth = this.win.getWidthInEm();
         var positions = [1,2];
@@ -107,7 +165,7 @@ class FileViewer {
     }
     createFolder(x, y, name, appendee=document.body, color="white", newWindow=true) {
         let newFolderContainer = document.createElement("div");
-        newFolderContainer.classList.add("absolute", "clickable", "icon-container"); // ? class desktop-folder
+        newFolderContainer.classList.add("absolute", "clickable", "icon-container", "folder"); // ? class desktop-folder
         newFolderContainer.style.top = y+"em";
         newFolderContainer.style.left = x+"em";
         newFolderContainer.id = name;
@@ -120,7 +178,7 @@ class FileViewer {
         newFolderContainer.appendChild(newFolder);
     
         // text
-        let text = document.createElement("a");
+        let text = document.createElement("div");
         text.classList.add(color, "sans-serif");
         text.innerText = name;
         newFolderContainer.appendChild(text);
@@ -132,8 +190,16 @@ class FileViewer {
             } else {
                 this.openFolder(newFolderContainer.id);
             }
-        };
+        }
 
+        // select
+        newFolderContainer.onclick = function(event) {
+            selectElement(event, newFolderContainer);
+        }
+
+        newFolderContainer.oncontextmenu = (event)=>{
+            selectElement(event, newFolderContainer);
+        }
         return newFolderContainer; // allows for adding to this.folderReferenceList
     }
     createFile(x, y, name, appendee=document.body, color="white", newWindow=true, filetype="image") {
@@ -161,7 +227,7 @@ class FileViewer {
         newFileContainer.appendChild(newFile);
     
         // text
-        let text = document.createElement("a");
+        let text = document.createElement("div");
         text.classList.add(color, "sans-serif");
         text.innerText = name;
         newFileContainer.appendChild(text);
@@ -180,10 +246,63 @@ class FileViewer {
                 alert("Opened File "+newFileContainer.id+"!");
             }
             
-        };
+        }
+
+        newFileContainer.onclick = function(event) {
+            selectElement(event, newFileContainer);
+        }
+        newFileContainer.oncontextmenu = (event)=>{
+            selectElement(event, newFileContainer);
+        }
 
         return newFileContainer; // allows for adding to this.folderReferenceList
     }
+
+    /**
+     * Open the file wih specified name
+     * @param {string, array} name 
+     */
+    intelligentOpen(name) {
+        if(typeof name == "object") { // array
+            let oldFolder = this.currentFolder;
+            name.forEach((n)=>{
+                if(oldFolder != this.currentFolder) {
+                    this._intelligentOpenOnce(n, true);
+                } else {
+                    this._intelligentOpenOnce(n);
+                }
+            });
+        } else { // string
+            this._intelligentOpenOnce(name);
+        }
+    }
+
+    // Private
+    _intelligentOpenOnce(name, newFolderWindow=false) {
+        if(/\.[^.]+$/.test(name)) { // app
+            if(name.endsWith(".app")) {
+                try {
+                    makeFunctions[name]();
+                } catch(e) {
+                    console.error("No function was provided for making the app named "+name+".");
+                }
+                
+            } else if(name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".gif")) {
+                new ImageViewer(name);
+            } else {
+                alert("Opened File "+newFileContainer.id+"!");
+            }
+        } else { // folder
+            if(newFolderWindow) {
+                let n = new FileViewer;
+                n.openFolderWindow(name);
+            } else {
+                this.openFolder(name);
+            }
+            
+        }
+    }
+
     getWindow() {
         return this.window;
     }
@@ -197,23 +316,64 @@ class FileViewer {
     // FOLDER/FILE CREATION
     makeNewFolder() {
         try { // safety
-            let name = prompt("Please enter a name for the folder.").toString(); // ! SHOW FAKE FOLDER, ADD NAME WITH INPUT ELEMENT
-            while((name.includes(",")||name.startsWith("file::")||!name||Object.keys(folders).includes(name))) { // illegal names
-                name = prompt("Error: Folder name cannot:\n1. Be the name of an existing folder\n2. Contain a comma\n3. Start with file::\n\nPlease enter a name for the folder.").toString();
+            let blankFolder = this.createFolder(10,10,"untitled folder",this.window, "black", "false");
+            this.folderReferenceList.unshift(blankFolder);
+            blankFolder.classList.add("icon-selected", "icon-rename");
+
+            let invisibleInput = document.createElement("input");
+            invisibleInput.style.opacity = "0";
+            invisibleInput.style.width = "0";
+            invisibleInput.style.height = "0";
+            document.body.appendChild(invisibleInput);
+            
+            let blankFolderText = blankFolder.querySelector("div");
+            setTimeout(()=>{
+                invisibleInput.focus(); // wait for object to be made
+            }, 50);
+            
+            invisibleInput.onkeyup = ()=>{
+                blankFolderText.innerText = invisibleInput.value;
             }
-            // First, add a new empty folder to the end.
-            let currentFolders = localStorage.getItem('folders');
-            localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
-            // Next, add a new subfolder of the current directory.
-            currentFolders = localStorage.getItem('folders');
-            localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
-            // Finally, add the properties to folders{} so they will display
-            folders[name] = [];
-            folders["parent-"+name] = this.currentFolder;
-            folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
-            // And update the screen.
-            this.previous.pop();
-            this.openFolder(this.currentFolder);
+
+            invisibleInput.onkeydown = (event)=>{
+                if(event.key == "Enter") {
+                    invisibleInput.blur();
+                }
+            }
+
+            invisibleInput.onblur = ()=>{
+                let text = blankFolderText.innerText;
+                if(text.includes(",")||text.startsWith("file::")||Object.keys(folders).includes(text)) {
+                    if(Object.keys(folders).includes(text)) {
+                        let i = 2;
+                        while(Object.keys(folders).includes(blankFolderText.innerText)) {
+                            blankFolderText.innerText = text+" "+i;
+                            i++;
+                        }
+                    } else {
+                        blankFolderText.innerText = text.replace(/(?:,|file::)/g, "");
+                    }
+                }
+                invisibleInput.remove();
+                blankFolder.classList.remove("icon-rename");
+                
+
+                let name = blankFolderText.innerText;
+                // First, add a new empty folder to the end.
+                let currentFolders = localStorage.getItem('folders');
+                localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
+                // Next, add a new subfolder of the current directory.
+                currentFolders = localStorage.getItem('folders');
+                localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
+                // Finally, add the properties to folders{} so they will display
+                folders[name] = [];
+                folders["parent-"+name] = this.currentFolder;
+                folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
+                // And update the screen.
+                this.previous.pop();
+                this.openFolder(this.currentFolder);
+            }
+        this.realignFolders();
         } catch(e) {
             console.error("There was an issue in processing the folder creation. Error:");
             throw e;
@@ -257,7 +417,7 @@ class FileViewer {
 
 function createDesktopFolder(x, y, name, appendee=document.body, color="white") {
     let newFolderContainer = document.createElement("div");
-    newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder");
+    newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
     newFolderContainer.style.top = y+"em";
     newFolderContainer.style.left = x+"em";
     newFolderContainer.id = name;
@@ -270,7 +430,7 @@ function createDesktopFolder(x, y, name, appendee=document.body, color="white") 
     newFolderContainer.appendChild(newFolder);
 
     // text
-    let text = document.createElement("a");
+    let text = document.createElement("div");
     text.classList.add(color, "sans-serif");
     text.innerText = name;
     newFolderContainer.appendChild(text);
@@ -279,20 +439,23 @@ function createDesktopFolder(x, y, name, appendee=document.body, color="white") 
         var n = new FileViewer;
         n.openFolderWindow(newFolderContainer.id, ["usr"]);
         // n.addFolder();
-    };
+    }
     newFolderContainer.onclick = (event)=>{
-        if(document.querySelectorAll(".icon-selected").length > 0) {
-            // shift must be down
-            if(event.shiftKey) {
-                newFolderContainer.classList.add("icon-selected");
-            } else {
-                clearSelected();
-                newFolderContainer.classList.add("icon-selected");
-            }
+        selectElement(event, newFolderContainer);
+    }
+}
+
+function selectElement(event, element) {
+    if(document.querySelectorAll(".icon-selected").length > 0) {
+        // shift must be down
+        if(event.shiftKey) {
+            element.classList.add("icon-selected");
         } else {
-            // first to be selected
-            newFolderContainer.classList.add("icon-selected");
+            clearSelected();
+            element.classList.add("icon-selected");
         }
-        
+    } else {
+        // first to be selected
+        element.classList.add("icon-selected");
     }
 }

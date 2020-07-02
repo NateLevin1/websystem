@@ -3,6 +3,50 @@
 // * More functions will be added here as needed.
 
 /**
+ * The global clipboard object.
+ * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.
+ * This is used internally for copying and pasting of files. Everything else that can be represented as text should
+ * go to the actual user's clipboard so WebSystem plays nice with other sites.
+ */
+class Clipboard {
+    /**
+     * Get the contents of the clipboard.
+     * Alternative: Clipboard.contents
+     * @returns {any} - Returns whatever is in the clipboard.
+     */
+    static get() {
+        return Clipboard.contents;
+    }
+    /**
+     * Sets the contents of the clipboard and adds to the clipboard history.
+     * Alternative: Clipboard.contents = item
+     * @param {any} item - An item to be set as the clipboard's value
+     */
+    static set(item) {
+        Clipboard.contents = item;
+        Clipboard.history.push(item);
+    }
+
+    /**
+     * Returns the history of the clipboard, from when it was last updated.
+     */
+    static getHistory() {
+        return Clipboard.history;
+    }
+
+    /**
+     * Set the history. Should really only be used internally.
+     * @param {array} arr - An array to be set to the history.
+     */
+    static setHistory(arr) {
+        Clipboard.history = arr;
+    }
+}
+
+Clipboard.prototype.contents = "";
+Clipboard.prototype.history = [];
+
+/**
  * Returns true if the string is a number. Otherwise it returns false.
  * Example usage:
  * "5".isNumber() - true

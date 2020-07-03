@@ -1,3 +1,34 @@
+function getChildren(name) {
+    let children = folders[name];
+    let finishedObject = { top: name };
+    finishedObject["subs"] = children;
+    let obj = recursiveGetChildren(children, finishedObject);
+    for(const key in obj) {
+        if(typeof obj[key] == "object") {
+            obj[key].forEach((element, index)=>{
+                obj[key][index] = "Copy of "+obj[key][index];
+            });
+        } else {
+            obj[key] = "Copy of "+obj[key];
+        }
+    }
+    return obj;
+}
+// ["file-list", "Top level file name", [["child1", [children of child 1]], ["child2"]]]
+// makeFolder(topLevel)
+// makeSubFolders(topLevel, [sub1, sub2])
+// makeSubFolders(sub1, [sub1Sub]);
+
+// * This function is my annual use of recursion.
+function recursiveGetChildren(children, finishedObject) {
+    children.forEach((child)=>{
+        if(folders[child]) {
+            finishedObject[child] = folders[child];
+            recursiveGetChildren(folders[child], finishedObject);
+        }
+    });
+    return finishedObject;
+}
 class FileViewer {
     openFolderWindow(open, previous=undefined) {
         let win = new Window(100, 100, open);
@@ -77,11 +108,53 @@ class FileViewer {
         RightClickMenu.addLineToMenu(this.generatedWindow+"-folder"); // breaking line
 
         RightClickMenu.addToMenu("Copy", this.generatedWindow+"-folder", ()=>{
-            console.log("Copying not done yet. 🎬");
+            let selected = document.querySelectorAll(".icon-selected");
+            let copy = [];
+            selected.forEach((element)=>{
+                // let selectArr = [];
+                let filename = element.querySelector("div").innerHTML;//+" copy";
+                if(element.querySelector("img").src.includes("folder")) {
+                    // file is a folder
+                    // selectArr = [filename];
+                    copy.push(getChildren(filename));
+                } else {
+                    // file is a file
+                    // selectArr = filename, files[filename]; // files[filename] is the data
+                }
+                // copy.push(selectArr);
+            });
+            // console.log(["file-list", copy]);
+            Clipboard.contents = ["file-list", copy];
         });
-
+        
         RightClickMenu.addToMenu("Paste", this.generatedWindow+"-folder", ()=>{
-            console.log("Pasting not done yet. 🎬");
+            let contents = Clipboard.contents;
+            
+            if(contents[0] == "file-list") {
+                contents.shift();
+                contents = contents[0];
+                console.log(contents);
+                contents.forEach((element)=>{
+                    // "element" is an object in the form:
+                    //  { top: "topmost", subs:["sub1"], sub1: "sub2"}
+
+                    this._addFolderToStorage(element["top"]);
+                    let subs = element["subs"];
+                    this.recursiveAddFromObject(subs, element["top"], element);
+                    // subs.forEach((sub)=>{
+                    //     this._addFolderToDifferentLocation(sub, element["top"]);
+                    // });
+                    
+                //     if(element.length == 1) { // folder, [filename]
+                //         this._addFolderToStorage(element[0]);
+                //     } else if(element.length == 2) { // file, [filename, data]
+                //         this._addFileToStorage(element[0], element[1]);
+                //     }
+                });
+            }
+
+            // this._addFolderToStorage(name);
+            // this._addFileToStorage(filename, filedata);
         });
 
         RightClickMenu.addLineToMenu(this.generatedWindow+"-folder"); // breaking line
@@ -92,6 +165,17 @@ class FileViewer {
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder"], ()=>{ this.makeNewFolder() });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder"], ()=>{ this.uploadNewFile() });
         RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow);
+    }
+    recursiveAddFromObject(children, parent, object) {
+        children.forEach((child)=>{
+            let searcher = child.substring(8, child.length);
+            if(object[searcher]) { // if sub folders exist
+                this._addFolderToDifferentLocation(child, parent);
+                // console.log("Adding folder to different location. New name is "+child+". Parent of it is "+parent+".");
+                this.recursiveAddFromObject(object[searcher], child, object);
+            }
+        });
+        //return object;
     }
     openFolder(open, previous=undefined) {
         this.folderReferenceList = [];
@@ -357,27 +441,75 @@ class FileViewer {
                 invisibleInput.remove();
                 blankFolder.classList.remove("icon-rename");
                 
-
-                let name = blankFolderText.innerText;
-                // First, add a new empty folder to the end.
-                let currentFolders = localStorage.getItem('folders');
-                localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
-                // Next, add a new subfolder of the current directory.
-                currentFolders = localStorage.getItem('folders');
-                localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
-                // Finally, add the properties to folders{} so they will display
-                folders[name] = [];
-                folders["parent-"+name] = this.currentFolder;
-                folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
-                // And update the screen.
-                this.previous.pop();
-                this.openFolder(this.currentFolder);
+                this._addFolderToStorage(blankFolderText.innerText);
+                
             }
         this.realignFolders();
         } catch(e) {
             console.error("There was an issue in processing the folder creation. Error:");
             throw e;
         }
+    }
+
+    _addFolderToStorage(name) {
+        let num = 2;
+        while(folders[name]) { // already exists
+            console.warn("There is already a folder with the name "+name+". Setting to "+name+" 2.");
+            name += " "+num;
+            num++;
+        }
+        // First, add a new empty folder to the end.
+        let currentFolders = localStorage.getItem('folders');
+        localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
+        // Next, add a new subfolder of the current directory.
+        currentFolders = localStorage.getItem('folders');
+        localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
+        // Finally, add the properties to folders{} so they will display
+        folders[name] = [];
+        folders["parent-"+name] = this.currentFolder;
+        folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
+        // And update the screen.
+        this.previous.pop();
+        this.openFolder(this.currentFolder);
+    }
+
+    _addFolderToDifferentLocation(name, newFolderName) {
+        let num = 2;
+        while(folders[name]) { // already exists
+            console.warn("There is already a folder with the name "+name+". Setting to "+name+" 2.");
+            name += " "+num;
+            num++;
+        }
+        // First, add a new empty folder to the end.
+        let currentFolders = localStorage.getItem('folders');
+        localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
+        // Next, add a new subfolder of the current directory.
+        currentFolders = localStorage.getItem('folders');
+        localStorage.setItem('folders', currentFolders.replace(newFolderName+"]{", newFolderName+"]{"+name+","));
+        // Finally, add the properties to folders{} so they will display
+        folders[name] = [];
+        folders["parent-"+name] = newFolderName;
+        folders[newFolderName].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
+    }
+
+    _addFileToStorage(filename, filedata) {
+        // First, add the file as a sub file of the parent.
+        let currentFolders = localStorage.getItem('folders');
+        localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+filename+","));
+        // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
+        var currentFiles = localStorage.getItem('files');
+        var extension = filename.substring(filename.lastIndexOf("."), filename.length);
+        if(extension == ".png") {
+            localStorage.setItem('files', currentFiles+"["+filename+"]{"+filedata+"}");
+            // add data to file
+            files[filename] = filedata;
+        }
+        
+        // Finally, add the file to folders{} so it will display
+        folders[this.currentFolder].unshift("file::"+filename); // ? push? It looks different after the page has been reloaded if push is used
+        // And update the screen.
+        this.previous.pop();
+        this.openFolder(this.currentFolder);
     }
 
     uploadNewFile() {
@@ -394,7 +526,7 @@ class FileViewer {
             var currentFiles = localStorage.getItem('files');
             var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
             if(extension == ".png") {
-                var data = Base64Image.fileToBase64(fileUpload, (filedata)=>{
+                Base64Image.fileToBase64(fileUpload, (filedata)=>{
                     localStorage.setItem('files', currentFiles+"["+file.name+"]{"+filedata+"}");
                     // add data to file
                     files[file.name] = filedata;

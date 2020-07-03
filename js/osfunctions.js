@@ -24,27 +24,10 @@ class Clipboard {
      */
     static set(item) {
         Clipboard.contents = item;
-        Clipboard.history.push(item);
-    }
-
-    /**
-     * Returns the history of the clipboard, from when it was last updated.
-     */
-    static getHistory() {
-        return Clipboard.history;
-    }
-
-    /**
-     * Set the history. Should really only be used internally.
-     * @param {array} arr - An array to be set to the history.
-     */
-    static setHistory(arr) {
-        Clipboard.history = arr;
     }
 }
 
-Clipboard.prototype.contents = "";
-Clipboard.prototype.history = [];
+Clipboard.contents = "";
 
 /**
  * Returns true if the string is a number. Otherwise it returns false.

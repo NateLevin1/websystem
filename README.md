@@ -3,7 +3,7 @@ Websystem is a web-based operating system taking advantage of WebAssembly, WebWo
 
   - Fully Customizable File System
   - Rapid and Easy App Development
-  - Integrated IDE and Shell
+  - Integrated IDE and Terminal Shell
   - Files are Saved Locally Through IndexedDB/WebSQL (localForage)
 
 ### Tech

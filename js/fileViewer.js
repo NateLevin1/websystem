@@ -1,7 +1,3 @@
-window.addEventListener('beforeunload', function (e) {
-    localStorage.clear();
-});
-
 function getChildren(name) {
     let pointerFolder = folders[name];
     let children = [...pointerFolder];
@@ -79,20 +75,11 @@ class FileViewer {
         this.background = document.createElement("div");
         this.background.style.width = "100%";
         this.background.style.height = "calc(100% - 1em)";
+        this.background.style.overflow = "auto"; // scrolling
 
         // Folder Display
-        // ! Add custom scrollbar
         this.displayFolders(open);
-        var oldWindowWidth = this.win.getWidthInEm();
-        this.window.addEventListener('window-resize', ()=>{
-            if(this.win.getWidthInEm() > oldWindowWidth+7||this.win.getWidthInEm() < oldWindowWidth-7) {
-                this.realignFolders(); // update folder display. Could be faster by just updating positions
-                oldWindowWidth = this.win.getWidthInEm();
-            }
-        });
 
-        
-        
         this.generatedWindow = this.win.makeString();
 
         // right click menu
@@ -176,7 +163,7 @@ class FileViewer {
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder() });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile() });
-        RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow);
+        RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
     }
     recursiveAddFromObject(children, parent, object) {
         children.forEach((child)=>{
@@ -203,7 +190,6 @@ class FileViewer {
         });
     }
     openFolder(open, previous=undefined) {
-        this.folderReferenceList = [];
         this.currentFolder = open;
         this.win.clear();
         if(previous || this.previous) {
@@ -221,62 +207,35 @@ class FileViewer {
         RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
         //RightClickMenu.addRightClickForClass(".icon-container", this.generatedWindow+"-icon", this.window);
     }
-    realignFolders() {
-        var list = this.folderReferenceList;
-        var windowWidth = this.win.getWidthInEm();
-        var positions = [1,2];
-        list.forEach((element)=>{
-            element.style.left = positions[0]+"em";
-            element.style.top = positions[1]+"em";
-
-            positions[0] += 8;
-            if(positions[0] > windowWidth-7) {
-                positions[1] += 8;
-                positions[0] = 1;
-            }
-        });
-    }
     displayFolders(open) {
         // background (for right click menu)
         this.window.appendChild(this.background);
         // Deselection
-        this.background.onclick = ()=>{
+        this.background.onclick = ()=>{ // not window to save on events
             if(event.target == this.background) {
                 clearSelected();
             }
         }
-
-
-        this.folderReferenceList = [];
-        var windowWidth = this.win.getWidthInEm();
-        var positions = [1,2];
         if(folders[open]) { // has something
             folders[open].forEach(element =>{
                 if(element.startsWith("file::")) { // is file
                     if(element.endsWith(".png")||element.endsWith(".jpg")||element.endsWith(".jpeg")) {
-                        this.folderReferenceList.push(this.createFile(...positions,element.substring(6, element.length),this.window, "black", false, "image"));
+                        this.createFile(element.substring(6, element.length),this.background, "black", false, "image");
                     } else if(element.endsWith("app")) {
-                        this.folderReferenceList.push(this.createFile(...positions,element.substring(6, element.length-4),this.window, "black", false, "app"));
+                        this.createFile(element.substring(6, element.length-4),this.background, "black", false, "app");
                     } else {
                         console.error("Error: Could not find file extension of file:");
                         console.log(element);
                     }
                 } else { // is folder
-                    this.folderReferenceList.push(this.createFolder(...positions,element,this.window, "black", false));
-                }
-                positions[0] += 8;
-                if(positions[0] > windowWidth-7) {
-                    positions[1] += 8;
-                    positions[0] = 1;
+                    this.createFolder(element,this.background, "black", false);
                 }
             });
         }
     }
-    createFolder(x, y, name, appendee=document.body, color="white", newWindow=true) {
+    createFolder(name, appendee=document.body, color="white", newWindow=true) {
         let newFolderContainer = document.createElement("div");
-        newFolderContainer.classList.add("absolute", "clickable", "icon-container", "folder"); // ? class desktop-folder
-        newFolderContainer.style.top = y+"em";
-        newFolderContainer.style.left = x+"em";
+        newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
         newFolderContainer.id = name;
         appendee.appendChild(newFolderContainer);
     
@@ -309,13 +268,11 @@ class FileViewer {
         newFolderContainer.oncontextmenu = (event)=>{
             selectElement(event, newFolderContainer);
         }
-        return newFolderContainer; // allows for adding to this.folderReferenceList
+        return newFolderContainer; // allows for adding to lists
     }
-    createFile(x, y, name, appendee=document.body, color="white", newWindow=true, filetype="image") {
+    createFile(name, appendee=document.body, color="white", newWindow=true, filetype="image") {
         let newFileContainer = document.createElement("div");
-        newFileContainer.classList.add("absolute", "clickable", "icon-container", "file");
-        newFileContainer.style.top = y+"em";
-        newFileContainer.style.left = x+"em";
+        newFileContainer.classList.add("clickable", "icon-container", "file");
         newFileContainer.id = name;
         appendee.appendChild(newFileContainer);
     
@@ -364,7 +321,7 @@ class FileViewer {
             selectElement(event, newFileContainer);
         }
 
-        return newFileContainer; // allows for adding to this.folderReferenceList
+        return newFileContainer; // allows for adding to lists
     }
 
     /**
@@ -426,7 +383,6 @@ class FileViewer {
     makeNewFolder() {
         try { // safety
             let blankFolder = this.createFolder(10,10,"untitled folder",this.window, "black", "false");
-            this.folderReferenceList.unshift(blankFolder);
             blankFolder.classList.add("icon-selected", "icon-rename");
 
             let invisibleInput = document.createElement("input");
@@ -469,7 +425,6 @@ class FileViewer {
                 this._addFolderToStorage(blankFolderText.innerText);
                 
             }
-        this.realignFolders();
         } catch(e) {
             console.error("There was an issue in processing the folder creation. Error:");
             throw e;

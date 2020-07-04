@@ -179,6 +179,10 @@ body {
 .icon-container {
     max-width:7em;
     text-align:center;
+    display: inline-block;
+    margin:0.5em 0.5em;
+    min-height:8em;
+    vertical-align: middle;
 }
 .icon-container img {
     border: 2px solid rgba(0, 0, 0, 0);

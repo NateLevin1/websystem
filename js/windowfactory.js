@@ -370,17 +370,23 @@ class RightClickMenu {
     });
   }
 
-  static addRightClickForWindow(clickWindow, generatedWindow) {
+  static addRightClickForWindow(clickWindow, generatedWindow, toplevel=false) {
     if(!this.rightClickMenu) {
       this.rightClickMenu = rightClickMenu;
     }
-    RightClickMenu.addContextMenuListener(clickWindow, generatedWindow);
+    RightClickMenu.addContextMenuListener(clickWindow, generatedWindow, toplevel);
   }
-  
-  static addContextMenuListener(clickWindow, generatedWindow) {
+  /**
+   * Add the listeners for right clicking
+   * @param {Element} clickWindow - The element to attach the listener to.
+   * @param {string} generatedWindow - A string representing which things to append
+   * @param {Boolean} toplevel - A boolean representing whether or not the event target must match clickWindow.
+   */
+  static addContextMenuListener(clickWindow, generatedWindow, toplevel=false) {
     clickWindow.addEventListener('contextmenu', (event)=>{
       event.preventDefault();
       if(!this.rightClickMenu.className.includes("right-click-invisible")) {
+        if((toplevel)&&event.target == clickWindow||!toplevel) {
           this.rightClickTimer = 0;
           this.rightClickInterval = setInterval(()=>{
               this.rightClickTimer += 50;
@@ -448,6 +454,7 @@ class RightClickMenu {
           }.bind(this);
 
           document.body.addEventListener('pointerup', pointerHandle, false);
+        }
       }
     });
   }

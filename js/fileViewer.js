@@ -489,14 +489,21 @@ class FileViewer {
         try { // safety
             let blankFolder = this.createFolder("untitled folder", this.background, "black", false, true);
             blankFolder.classList.add("icon-selected", "icon-rename");
+            let blankFolderText = blankFolder.querySelector("div");
 
             let invisibleInput = document.createElement("input");
             invisibleInput.style.opacity = "0";
-            invisibleInput.style.width = "0";
-            invisibleInput.style.height = "0";
+            invisibleInput.style.width = "8.5em";
+            invisibleInput.style.height = "1.5em";
+            let pos = blankFolderText.getBoundingClientRect();
+            invisibleInput.style.position = "absolute";
+            invisibleInput.style.zIndex = blankFolder.parentNode.parentNode.parentNode.style.zIndex + 1;
+            invisibleInput.style.left = pos.left+"px";
+            invisibleInput.style.top = pos.top+"px";
+            invisibleInput.style.transform = "translate(5%, 0%)";
             document.body.appendChild(invisibleInput);
             
-            let blankFolderText = blankFolder.querySelector("div");
+            
             setTimeout(()=>{
                 invisibleInput.focus(); // wait for object to be made
             }, 50);

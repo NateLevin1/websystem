@@ -42,12 +42,13 @@ function recursiveGetChildren(children, finishedObject) {
 }
 class FileViewer {
     openFolderWindow(open, previous=undefined) {
-        let win = new Window(100, 100, open);
+        let win = new Window(100, 200, open, 40, 35);
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
         this.folderList = [open];
         this.currentFolder = open;
+        this.win.setBackgroundColor("rgba(0,0,0,0)");
 
         // Back Button
         let back = document.createElement("div");
@@ -71,14 +72,33 @@ class FileViewer {
             this.previous = [...previous,open];
         }
 
-        // background (for right click menu) cannot be inside display folders function or will be needlessly created and overwritten
+        this.contentContainer = document.createElement("div");
+        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.display = "flex";
+        this.window.appendChild(this.contentContainer);
+
+        // background (for right click menu/scrolling) cannot be inside display folders function or will be needlessly created and overwritten
         this.background = document.createElement("div");
-        this.background.style.width = "100%";
-        this.background.style.height = "calc(100% - 1em)";
+        this.background.style.backgroundColor = "#fff";
+        this.background.style.flexGrow = "1";
         this.background.style.overflow = "auto"; // scrolling
 
         // Folder Display
         this.displayFolders(open);
+        
+        // Sidebar
+        this.createSidebar();
+        this.window.addEventListener('window-resize', event=>{
+            if(this.window.clientWidth/em < 26) {
+                if(this.sidebar) {
+                    this.destroySidebar();
+                }
+            } else {
+                if(!this.sidebar) {
+                    this.createSidebar();
+                }
+            }
+        });
 
         this.generatedWindow = this.win.makeString();
 
@@ -165,6 +185,77 @@ class FileViewer {
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile() });
         RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
     }
+    createSidebar() {
+        this.sidebar = document.createElement("div");
+        this.sidebar.classList.add("heavy-blurred", "file-sidebar", "unselectable");
+        
+        // Design stuff
+        new CSSClass("file-folder::before", "content:'📁';"); // TODO Replace with nice graphics
+
+        // heading 1
+        let favorites = document.createElement("file-heading");
+        favorites.classList.add("ellipsis-overflow", "unselectable");
+        favorites.innerHTML = "Favorites";
+        this.sidebar.appendChild(favorites);
+
+        let favoritesDiv = document.createElement("div");
+        this.sidebar.appendChild(favoritesDiv);
+
+        // heading 1 content
+        let documents = document.createElement("file-member");
+        new CSSClass("file-documents::before", "content:'📝 ';"); // TODO Replace with nice graphics
+        documents.classList.add("ellipsis-overflow", "file-documents", "clickable", "unselectable");
+        documents.innerHTML = "Documents";
+        favoritesDiv.appendChild(documents);
+        
+        let applications = document.createElement("file-member");
+        new CSSClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
+        applications.classList.add("ellipsis-overflow", "file-applications", "clickable", "unselectable");
+        applications.innerHTML = "Applications";
+        favoritesDiv.appendChild(applications);
+
+        let downloads = document.createElement("file-member");
+        new CSSClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
+        downloads.classList.add("ellipsis-overflow", "file-downloads", "clickable", "unselectable");
+        downloads.innerHTML = "Downloads";
+        favoritesDiv.appendChild(downloads);
+
+        let folder1 = document.createElement("file-member");
+        folder1.classList.add("ellipsis-overflow", "file-folder", "clickable", "unselectable");
+        folder1.innerHTML = "WebSystem";
+        favoritesDiv.appendChild(folder1);
+
+        let favoritedElements = favoritesDiv.querySelectorAll("file-member");
+        if(favoritedElements) {
+            favoritedElements.forEach((element)=>{
+                // selection
+                if(element.innerHTML == this.currentFolder) {
+                    element.classList.add("file-member-selected");
+                }
+
+                // Click handling
+                element.onclick = (event)=>{
+                    let content = element.innerHTML;
+                    let parents = [];
+                    let currentParent = content;
+
+                    // TODO - Update this when changing to actual back button
+                    while(currentParent != "usr") {
+                        currentParent = folders["parent-"+currentParent];
+                        parents.unshift(currentParent);
+                    }
+                    this.openFolder(content, parents);
+                }
+
+            });
+        }
+
+        this.contentContainer.insertBefore(this.sidebar, this.background);
+    }
+    destroySidebar() {
+        this.sidebar.remove();
+        this.sidebar = undefined; // unbind
+    }
     recursiveAddFromObject(children, parent, object) {
         children.forEach((child)=>{
             let searcher = child.substring(8, child.length);
@@ -199,8 +290,17 @@ class FileViewer {
         } else {
             this.win.setTitle(open);
         }
+        // clear past screen
+        this.contentContainer.innerHTML = "";
+        this.background.innerHTML = "";
+
+        this.contentContainer = document.createElement("div");
+        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.display = "flex";
+        this.window.appendChild(this.contentContainer);
 
         this.displayFolders(open);
+        this.createSidebar();
 
         // update right click menu
         // ! I have no idea why this works or how this works. However, only this works. Not commented out bit below, only this.
@@ -209,7 +309,7 @@ class FileViewer {
     }
     displayFolders(open) {
         // background (for right click menu)
-        this.window.appendChild(this.background);
+        this.contentContainer.appendChild(this.background);
         // Deselection
         this.background.onclick = ()=>{ // not window to save on events
             if(event.target == this.background) {

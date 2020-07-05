@@ -20,25 +20,12 @@ class Window {
 
         let titleText = document.createElement("a");
         titleText.innerText = title;
-
-        // let back = document.createElement("div");
-        // back.classList.add("file-back-container", "unselectable", "no-move");
-
-        // let backImg = document.createElement("img");
-        // backImg.classList.add("file-back");
-        // backImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTMuMDI1IDFsLTIuODQ3IDIuODI4IDYuMTc2IDYuMTc2aC0xNi4zNTR2My45OTJoMTYuMzU0bC02LjE3NiA2LjE3NiAyLjg0NyAyLjgyOCAxMC45NzUtMTF6Ii8+PC9zdmc+";
         
-
-
         let close = document.createElement("div");
         close.classList.add("close", "unselectable", "no-move");
         
         let resize = document.createElement("div");
         resize.classList.add("resize");
-
-        // put it all together
-        // back.appendChild(backImg);
-        // header.appendChild(back);
 
         header.appendChild(titleText);
         header.appendChild(close);
@@ -109,7 +96,11 @@ class Window {
     setTitle(newTitle) {
       this.window.titleText.innerText = newTitle;
     }
-
+    
+    /**
+     * Set the background color of the window.
+     * @param {CSS Color} color - the color to be used
+     */
     setBackgroundColor(color) {
       this.window.style.backgroundColor = color;
     }

@@ -89,7 +89,7 @@ class FileViewer {
         // Sidebar
         this.createSidebar();
         this.window.addEventListener('window-resize', event=>{
-            if(this.window.clientWidth/em < 26) {
+            if(this.window.clientWidth/em < 27) {
                 if(this.sidebar) {
                     this.destroySidebar();
                 }
@@ -333,11 +333,16 @@ class FileViewer {
             });
         }
     }
-    createFolder(name, appendee=document.body, color="white", newWindow=true) {
+    createFolder(name, appendee=document.body, color="white", newWindow=true, before=false) {
         let newFolderContainer = document.createElement("div");
         newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
         newFolderContainer.id = name;
-        appendee.appendChild(newFolderContainer);
+        if(before == true) {
+            appendee.insertBefore(newFolderContainer, appendee.firstChild);
+        } else {
+            appendee.appendChild(newFolderContainer);
+        }
+        
     
         // img
         let newFolder = document.createElement("img");
@@ -482,7 +487,7 @@ class FileViewer {
     // FOLDER/FILE CREATION
     makeNewFolder() {
         try { // safety
-            let blankFolder = this.createFolder(10,10,"untitled folder",this.window, "black", "false");
+            let blankFolder = this.createFolder("untitled folder", this.background, "black", false, true);
             blankFolder.classList.add("icon-selected", "icon-rename");
 
             let invisibleInput = document.createElement("input");

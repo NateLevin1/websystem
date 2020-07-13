@@ -1,3 +1,15 @@
+// CSS Definitions
+GlobalStyle.newClass("calc-screen-container", "background-color: #8c8c8c;", "width:100%;", "height: 30%;");
+GlobalStyle.newClass("calc-screen", "position: absolute;", "top: 10%;", "width: 99%;", "font-size: 4em;", "text-align: right;");
+GlobalStyle.newClass("calc-button", /*"padding-top:5%;", "padding-bottom:5%;",*/ "display: table-cell;", "background-color: rgba(180,180,180,0.3);", "border: 0.2em solid black;", "text-align: center;", "vertical-align: middle;", "transition: background-color 0.03s;", "font-size: 1.3em;");
+GlobalStyle.newClass("calc-button:active", "background-color: rgba(255, 255, 255, 0.4);"); // on click
+GlobalStyle.newClass("calc-button-container", "display:table;", "width:100%;","height:63%;");
+GlobalStyle.newClass("calc-button-row", "display: table-row;", "height:20%;");
+GlobalStyle.newClass("calc-modifier", "background-color: rgba(255, 159, 12, 0.8);");
+GlobalStyle.newClass("calc-modifier:active", "background-color: rgba(255, 159, 12, 1);");
+GlobalStyle.newClass("calc-0", "border-right:none;");
+GlobalStyle.newClass("calc-0-2", "border-left:none;", "color: rgba(0,0,0,0);");
+
 class Calculator {
     constructor() {
         this.operation = "";
@@ -10,18 +22,6 @@ class Calculator {
         this.header = win.getHeader();
         this.win = win;
         this.win.setBackgroundColor("rgb(40,40,40)");
-        
-        // CSS Definitions
-        new CSSClass("calc-screen-container", "background-color: #8c8c8c;", "width:100%;", "height: 30%;");
-        new CSSClass("calc-screen", "position: absolute;", "top: 10%;", "width: 99%;", "font-size: 4em;", "text-align: right;");
-        new CSSClass("calc-button", /*"padding-top:5%;", "padding-bottom:5%;",*/ "display: table-cell;", "background-color: rgba(180,180,180,0.3);", "border: 0.2em solid black;", "text-align: center;", "vertical-align: middle;", "transition: background-color 0.03s;", "font-size: 1.3em;");
-        new CSSClass("calc-button:active", "background-color: rgba(255, 255, 255, 0.4);"); // on click
-        new CSSClass("calc-button-container", "display:table;", "width:100%;","height:63%;");
-        new CSSClass("calc-button-row", "display: table-row;", "height:20%;");
-        new CSSClass("calc-modifier", "background-color: rgba(255, 159, 12, 0.8);");
-        new CSSClass("calc-modifier:active", "background-color: rgba(255, 159, 12, 1);");
-        new CSSClass("calc-0", "border-right:none;");
-        new CSSClass("calc-0-2", "border-left:none;", "color: rgba(0,0,0,0);");
 
         let screenContainer = document.createElement("div");
         screenContainer.classList.add("calc-screen-container");

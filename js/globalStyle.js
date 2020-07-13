@@ -1,5 +1,5 @@
-class CSSClass {
-    constructor(className, ...args) {
+class GlobalStyle {
+    static newClass(className, ...args) {
         let styles = document.getElementById("global-style");
         styles.innerHTML += "\n."+className+" {\n";
         args.forEach((arg)=>{

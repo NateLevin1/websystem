@@ -1,3 +1,23 @@
+// CSS
+GlobalStyle.newClass("appstore-sidebar", "height:calc(100% - 1em); width:30%; border-right:5px solid black; box-sizing: border-box; display:inline-block; background-color: darkgray; overflow:auto; vertical-align:top;");
+GlobalStyle.newClass("appstore-main", "height:calc(100% - 1.1em); width:70%; box-sizing: border-box; overflow: auto; display:inline-block; border-bottom:2px solid white;");
+GlobalStyle.newClass("appstore-search", "border: 2px solid black; border-radius:20px; outline: none; -webkit-appearance: none; width:90%; height:10%; font-size:1em; margin-top: 5%; margin-left: 5%; margin-right: 5%; text-align: center; transition: text-align 1s;");
+GlobalStyle.newClass("appstore-search:focus", "text-align: left;");
+GlobalStyle.newClass("appstore-menuitem", "background-color:white; border:2px solid black; color:black; height:20%; font-size: 1.5em; width:80%; margin-top:10%; margin-left:auto; margin-right:auto; display: flex; justify-content: center; align-content: center; flex-direction: column; text-align: center; transition: background-color 0.1s, color 0.1s, border-color 0.1s;");
+GlobalStyle.newClass("appstore-menuitem-selected", "background-color:black; color:white; border:2px solid white;")
+GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;")
+GlobalStyle.newClass("appstore-thumbnail", "width:4em; height:4em;");
+GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%; vertical-align:top; margin-top:0.8em;");
+GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
+GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
+GlobalStyle.newClass("appstore-install", "padding:0.3em; background-color: rgb(3, 161, 252); border: 2px solid black; border-radius: 0.3em;color: white; display: inline-block; vertical-align: top; margin-top:1.6em; transition: background-color 0.3s; min-width:4em; text-align: center;");
+GlobalStyle.newClass("appstore-install:hover", "background-color: rgb(11, 145, 222);");
+GlobalStyle.newClass("appstore-install:active", "background-color: rgb(20, 103, 150);");
+GlobalStyle.newClass("appstore-installed", "background-color: rgb(18, 181, 18);");
+GlobalStyle.newClass("appstore-installed:hover", "background-color: rgb(20, 196, 20);");
+GlobalStyle.newClass("appstore-installed:active", "background-color: rgb(13, 120, 13);");
+
+
 class Appstore {
     constructor() {
         let win = new Window(400, 300, "App Store",25,25, 5,2.2);
@@ -5,24 +25,6 @@ class Appstore {
         this.header = win.getHeader();
         this.win = win;
 
-        // CSS
-        new CSSClass("appstore-sidebar", "height:calc(100% - 1em); width:30%; border-right:5px solid black; box-sizing: border-box; display:inline-block; background-color: darkgray; overflow:auto; vertical-align:top;");
-        new CSSClass("appstore-main", "height:calc(100% - 1.1em); width:70%; box-sizing: border-box; overflow: auto; display:inline-block; border-bottom:2px solid white;");
-        new CSSClass("appstore-search", "border: 2px solid black; border-radius:20px; outline: none; -webkit-appearance: none; width:90%; height:10%; font-size:1em; margin-top: 5%; margin-left: 5%; margin-right: 5%; text-align: center; transition: text-align 1s;");
-        new CSSClass("appstore-search:focus", "text-align: left;");
-        new CSSClass("appstore-menuitem", "background-color:white; border:2px solid black; color:black; height:20%; font-size: 1.5em; width:80%; margin-top:10%; margin-left:auto; margin-right:auto; display: flex; justify-content: center; align-content: center; flex-direction: column; text-align: center; transition: background-color 0.1s, color 0.1s, border-color 0.1s;");
-        new CSSClass("appstore-menuitem-selected", "background-color:black; color:white; border:2px solid white;")
-        new CSSClass("appstore-app-container", "margin-top:7%; margin-left:3%;")
-        new CSSClass("appstore-thumbnail", "width:4em; height:4em;");
-        new CSSClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%; vertical-align:top; margin-top:0.8em;");
-        new CSSClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
-        new CSSClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
-        new CSSClass("appstore-install", "padding:0.3em; background-color: rgb(3, 161, 252); border: 2px solid black; border-radius: 0.3em;color: white; display: inline-block; vertical-align: top; margin-top:1.6em; transition: background-color 0.3s; min-width:4em; text-align: center;");
-        new CSSClass("appstore-install:hover", "background-color: rgb(11, 145, 222);");
-        new CSSClass("appstore-install:active", "background-color: rgb(20, 103, 150);");
-        new CSSClass("appstore-installed", "background-color: rgb(18, 181, 18);");
-        new CSSClass("appstore-installed:hover", "background-color: rgb(20, 196, 20);");
-        new CSSClass("appstore-installed:active", "background-color: rgb(13, 120, 13);");
         // * SIDEBAR
         let sidebar = document.createElement("div");
         sidebar.classList.add("appstore-sidebar", "unselectable");

@@ -1,3 +1,11 @@
+// CSS Classes
+// Design stuff
+GlobalStyle.newClass("file-folder::before", "content:'📁';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
+
+
 function getChildren(name) {
     let pointerFolder = folders[name];
     let children = [...pointerFolder];
@@ -188,9 +196,6 @@ class FileViewer {
     createSidebar() {
         this.sidebar = document.createElement("div");
         this.sidebar.classList.add("heavy-blurred", "file-sidebar", "unselectable");
-        
-        // Design stuff
-        new CSSClass("file-folder::before", "content:'📁';"); // TODO Replace with nice graphics
 
         // heading 1
         let favorites = document.createElement("file-heading");
@@ -203,19 +208,16 @@ class FileViewer {
 
         // heading 1 content
         let documents = document.createElement("file-member");
-        new CSSClass("file-documents::before", "content:'📝 ';"); // TODO Replace with nice graphics
         documents.classList.add("ellipsis-overflow", "file-documents", "clickable", "unselectable");
         documents.innerHTML = "Documents";
         favoritesDiv.appendChild(documents);
         
         let applications = document.createElement("file-member");
-        new CSSClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
         applications.classList.add("ellipsis-overflow", "file-applications", "clickable", "unselectable");
         applications.innerHTML = "Applications";
         favoritesDiv.appendChild(applications);
 
         let downloads = document.createElement("file-member");
-        new CSSClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
         downloads.classList.add("ellipsis-overflow", "file-downloads", "clickable", "unselectable");
         downloads.innerHTML = "Downloads";
         favoritesDiv.appendChild(downloads);

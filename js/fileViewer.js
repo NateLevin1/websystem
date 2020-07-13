@@ -5,49 +5,6 @@ GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Repl
 GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
 
-
-function getChildren(name) {
-    let pointerFolder = folders[name];
-    let children = [...pointerFolder];
-    let finishedObject = { top: name };
-    finishedObject["subs"] = children;
-    let obj = recursiveGetChildren(children, finishedObject);
-    for(const key in obj) {
-        if(typeof obj[key] == "object") {
-            obj[key].forEach((element, index)=>{
-                if(!obj[key][index].startsWith("file::")) { // folder
-                    obj[key][index] = "Copy of "+element;
-                } else { // file
-                    obj["data-file::Copy of "+element.substring(6, element.length)] = files[element.substring(6, element.length)];
-                    obj[key][index] = obj[key][index].replace("file::", "file::Copy of ");
-                }
-            });
-        } else {
-            if(!obj[key].startsWith("file::")) { // folder
-                obj[key] = "Copy of "+obj[key];
-            } else { // file
-                obj["data-file::Copy of "+key.substring(6, key.length)] = files[key.substring(6, key.length)];
-                obj[key] = obj[key].replace("file::", "file::Copy of ");
-            }
-            
-        }
-    }
-    return obj;
-}
-
-// * This function is my annual use of recursion.
-function recursiveGetChildren(children, finishedObject) {
-    children.forEach((child)=>{
-        if(child.startsWith("file::")) { // file
-            finishedObject[child] = child;
-        }
-        else if(folders[child]) { // folder
-            finishedObject[child] = folders[child];
-            recursiveGetChildren(folders[child], finishedObject);
-        }
-    });
-    return finishedObject;
-}
 class FileViewer {
     openFolderWindow(open, previous=undefined) {
         let win = new Window(100, 200, open, 40, 35);
@@ -144,7 +101,7 @@ class FileViewer {
                 let filename = element.querySelector("div").innerHTML;//+" copy";
                 if(element.querySelector("img").src.includes("folder")) {
                     // file is a folder
-                    copy.push(getChildren(filename));
+                    copy.push(this.getChildren(filename));
                 } else {
                     // file is a file
                     
@@ -664,6 +621,49 @@ class FileViewer {
         fileUpload.addEventListener('change', fileUploadEvent, false);
         
     }
+
+
+    getChildren(name) {
+        let pointerFolder = folders[name];
+        let children = [...pointerFolder];
+        let finishedObject = { top: name };
+        finishedObject["subs"] = children;
+        let obj = this.recursiveGetChildren(children, finishedObject);
+        for(const key in obj) {
+            if(typeof obj[key] == "object") {
+                obj[key].forEach((element, index)=>{
+                    if(!obj[key][index].startsWith("file::")) { // folder
+                        obj[key][index] = "Copy of "+element;
+                    } else { // file
+                        obj["data-file::Copy of "+element.substring(6, element.length)] = files[element.substring(6, element.length)];
+                        obj[key][index] = obj[key][index].replace("file::", "file::Copy of ");
+                    }
+                });
+            } else {
+                if(!obj[key].startsWith("file::")) { // folder
+                    obj[key] = "Copy of "+obj[key];
+                } else { // file
+                    obj["data-file::Copy of "+key.substring(6, key.length)] = files[key.substring(6, key.length)];
+                    obj[key] = obj[key].replace("file::", "file::Copy of ");
+                }
+                
+            }
+        }
+        return obj;
+    }
+    
+    recursiveGetChildren(children, finishedObject) {
+        children.forEach((child)=>{
+            if(child.startsWith("file::")) { // file
+                finishedObject[child] = child;
+            }
+            else if(folders[child]) { // folder
+                finishedObject[child] = folders[child];
+                this.recursiveGetChildren(folders[child], finishedObject);
+            }
+        });
+        return finishedObject;
+    }
 }
 
 
@@ -697,6 +697,11 @@ function createDesktopFolder(x, y, name, appendee=document.body, color="white") 
     }
 }
 
+/**
+ * Select an element.
+ * @param {Click Event} event - Allows for shift key
+ * @param {HTMLElement} element 
+ */
 function selectElement(event, element) {
     if(document.querySelectorAll(".icon-selected").length > 0) {
         // shift must be down

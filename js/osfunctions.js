@@ -2,6 +2,9 @@
 // * functions good for general use in websystem.
 // * More functions will be added here as needed.
 
+// The NAME variable is used to get the current user's name. Could have issues if at startup with no re-log.
+const NAME = localStorage.getItem("name");
+
 /**
  * The global clipboard object.
  * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.

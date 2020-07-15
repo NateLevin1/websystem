@@ -1,13 +1,14 @@
 class Window {
     /**
-     * Constructor
-     * @param {Minimum Width (px)} width 
-     * @param {Minimum Height (px)} height 
-     * @param {Title of window} title 
-     * @param {Default Width (em)} defaultWidth 
-     * @param {Default Height (em)} defaultHeight 
-     * @param {Default X Position} x 
-     * @param {Default Y Position} y 
+     * Constructor. Make a new window
+     * @param {Number} width - The minimum width in pixels.
+     * @param {Number} height - The minimum height in pixels.
+     * @param {String} title - The title of the window
+     * @param {Number} defaultWidth - The default width of the window in em.
+     * @param {Number} defaultHeight - The default width of the window in em.
+     * @param {Number} x - The default x position on the screen.
+     * @param {Number} y The default y position on the screen.
+     * @param {Boolean} keepAspectRatio - If true, keeps the aspect ratio when resizing.
      */
     constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3, keepAspectRatio=false) {
       let window = document.createElement("div");
@@ -99,10 +100,25 @@ class Window {
     
     /**
      * Set the background color of the window.
-     * @param {CSS Color} color - the color to be used
+     * @param {CSS Color} color - the color to be used.
      */
     setBackgroundColor(color) {
       this.window.style.backgroundColor = color;
+    }
+
+    /**
+     * Set the background color of the header.
+     * @param {CSS Color} color - the color to be used.
+     */
+    setHeaderColor(color) {
+      this.window.header.style.backgroundColor = color;
+    }
+    /**
+     * Set the text color of the header.
+     * @param {CSS Color} color - the color to be used.
+     */
+    setHeaderTextColor(color) {
+      this.window.header.style.color = color;
     }
 
     // Makes a string for the window. Useful for needing a key for an object which is the window.

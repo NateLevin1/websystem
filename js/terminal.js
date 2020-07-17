@@ -2,7 +2,7 @@
 GlobalStyle.newClass("terminal-commandLineDiv", "display: flex;");
 GlobalStyle.newClass("terminal-commandLine", "color: rgb(0,200,0); font-family: monospace; padding-top:0.1em; font-size:1.2em; margin-left: 0.2em;");
 GlobalStyle.newClass("terminal-commandLineInput", "color: rgb(0,200,0); vertical-align: top; flex-grow: 1; caret-color: rgb(0,200,0); color: rgb(0,200,0); font-family: monospace; font-size:1em; height: calc(1em + 3px); margin-top:2px;");
-GlobalStyle.newClass("terminal-commandLineInput::selection", "background-color:rgb(255,255,255); color:black;");
+GlobalStyle.newClass("terminal-select::selection", "background-color:rgb(255,255,255); color:black;");
 GlobalStyle.newClass("terminal-unstyledTextarea", "border: none; overflow:none; outline: none; -webkit-box-shadow: none; -moz-box-shadow:none; box-shadow:none; resize:none; background-color:transparent;");
 GlobalStyle.newClass("terminal-log", "color: rgb(0,230,0); font-family:monospace; margin:0.2em; font-size:1.1em;");
 GlobalStyle.newClass("terminal-input", "color: rgb(0,200,0); font-family:monospace; margin:0.2em; font-size:1.2em;");
@@ -37,16 +37,16 @@ class Terminal {
 
         // COMMAND LINE
         this.commandLine = document.createElement("div");
-        this.commandLine.classList.add("terminal-commandLineDiv");
+        this.commandLine.classList.add("terminal-commandLineDiv", "terminal-select");
 
 
         this.pathText = document.createElement("a");
         this.updatePathText();
-        this.pathText.classList.add("terminal-commandLine");
+        this.pathText.classList.add("terminal-commandLine", "terminal-select");
         this.commandLine.appendChild(this.pathText);
 
         this.commandLineInput = document.createElement("textarea");
-        this.commandLineInput.classList.add("terminal-commandLineInput", "terminal-unstyledTextarea");
+        this.commandLineInput.classList.add("terminal-commandLineInput", "terminal-unstyledTextarea", "terminal-select");
 
         this.commandLineInput.oninput = (event) => {
             this.commandLineInput.style.height = "";
@@ -76,7 +76,7 @@ class Terminal {
                 if(event.ctrlKey || event.metaKey) {
                     if(event.key == "k") {
                         // clear screen
-                        this.screenContainer.innerHTML = "";
+                        this.screenContainer.innerText = "";
                         this.screenContainer.appendChild(this.commandLine);
                         this.commandLineInput.focus();
                     }
@@ -90,6 +90,10 @@ class Terminal {
 
     runLine() {
         let val = this.commandLineInput.value;
+
+        // ! PREVENT XSS
+        val = val.replace(/(<script(\s|\S)*?<\/script>)|(<style(\s|\S)*?<\/style>)|(<!--(\s|\S)*?-->)|(<\/?(\s|\S)*?>)/gi, "xss-protection");
+
         // validate val
         val = val.replace(/ {2,}/g, " ");
         while(val.startsWith(" ")) {
@@ -98,11 +102,11 @@ class Terminal {
         this.commandLineInput.value = "";
 
         let input = document.createElement("p");
-        input.classList.add("terminal-input");
-        input.innerHTML = this.getPathText();
+        input.classList.add("terminal-input", "terminal-select");
+        input.innerText = this.getPathText();
         let valSpan = document.createElement("span");
-        valSpan.innerHTML = val;
-        valSpan.classList.add("terminal-input-textarea");
+        valSpan.innerText = val;
+        valSpan.classList.add("terminal-input-textarea", "terminal-select");
         input.appendChild(valSpan);
 
         this.screenContainer.insertBefore(input, this.commandLine);
@@ -213,20 +217,22 @@ class Terminal {
         } else if(val.startsWith("cp ")) {
             // TODO Make this work
             this.error("Use the file viewer to copy files.");
+        } else {
+            this.error("Unknown command "+val);
         }
     }
 
     error(message) {
         let errMessage = document.createElement("p");
-        errMessage.classList.add("terminal-error");
-        errMessage.innerHTML = "Error: "+message;
+        errMessage.classList.add("terminal-error", "terminal-select");
+        errMessage.innerText = "Error: "+message;
         this.screenContainer.insertBefore(errMessage, this.commandLine);
         this.scrollView();
     }
     log(message) {
         let logMessage = document.createElement("p");
-        logMessage.classList.add("terminal-log");
-        logMessage.innerHTML = message;
+        logMessage.classList.add("terminal-log", "terminal-select");
+        logMessage.innerText = message;
         this.screenContainer.insertBefore(logMessage, this.commandLine);
         this.scrollView();
     }
@@ -237,7 +243,7 @@ class Terminal {
         this.screenContainer.scrollTop = this.screenContainer.scrollHeight - this.screenContainer.clientHeight;
     }
     updatePathText() {
-        this.pathText.innerHTML = NAME+":"+this.currentFolder+" "+this.access+"$> ";
+        this.pathText.innerText = NAME+":"+this.currentFolder+" "+this.access+"$> ";
     }
     getPathText() { // note that it is not necessarily what is shown to user
         return NAME+":"+this.currentFolder+" "+this.access+"$>";

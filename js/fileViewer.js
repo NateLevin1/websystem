@@ -479,7 +479,7 @@ class FileViewer {
 
             invisibleInput.onblur = ()=>{
                 let text = blankFolderText.innerText;
-                if(element.includes(",")||element.includes("]")||element.includes("[")||element.includes("}")||element.includes("{")||text.startsWith("file::")||Object.keys(folders).includes(text)) {
+                if(text.includes(",")||text.includes("]")||text.includes("[")||text.includes("}")||text.includes("{")||text.startsWith("file::")||Object.keys(folders).includes(text)) {
                     if(Object.keys(folders).includes(text)) {
                         let i = 2;
                         while(Object.keys(folders).includes(blankFolderText.innerText)) {

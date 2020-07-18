@@ -45,7 +45,15 @@ class FileSystem {
         // update system
         filesystem.setItem("folders", folders);
     }
-    static addFileAtLocation(name, data, kind, parentPath) {
+    /**
+     * 
+     * @param {String} name - The name of the new folder.
+     * @param {Blob} data - The data of the new file.
+     * @param {String} kind - The kind of the data. E.g. "Image" or "App"
+     * @param {String} parentPath - The path to the parent of the new file.
+     * @param {JSON} options - The options to pass in. Currently unused.
+     */
+    static addFileAtLocation(name, data, kind, parentPath, options={}) {
         let path = parentPath+name+"/";
         let extension = name.match(/\.[^.]+$/)[0];
         let binary = true;

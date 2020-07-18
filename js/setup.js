@@ -97,7 +97,7 @@ onmessage = function (event) {
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/file::Calculator.app", "/Users/"+NAME+"/Applications/file::App Store.app", "/Users/"+NAME+"/Applications/file::Terminal.app"],
+                subfolders: ["/Users/"+NAME+"/Applications/file::Calculator.app", "/Users/"+NAME+"/Applications/file::App Store.app"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: folderMeta
@@ -119,19 +119,6 @@ onmessage = function (event) {
             ["/Users/"+NAME+"/Applications/file::App Store.app"]: {
                 isFile: true,
                 name:"App Store",
-                kind:"App",
-                extension:"app",
-
-                parent: "/Users/"+NAME+"/Applications/",
-                isBinary: false,
-                content: "",
-
-                meta: folderMeta
-            },
-
-            ["/Users/"+NAME+"/Applications/file::Terminal.app"]: {
-                isFile: true,
-                name:"Terminal",
                 kind:"App",
                 extension:"app",
 

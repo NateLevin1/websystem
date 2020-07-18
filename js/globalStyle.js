@@ -1,4 +1,9 @@
 class GlobalStyle {
+    /**
+     * Create a new css class.
+     * @param {String} className - The name of the new css class
+     * @param  {...String} args - The css rule to be put in the class
+     */
     static newClass(className, ...args) {
         let styles = document.getElementById("global-style");
         styles.innerHTML += "\n."+className+" {\n";

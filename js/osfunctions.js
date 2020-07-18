@@ -2,8 +2,8 @@
 // * functions good for general use in websystem.
 // * More functions will be added here as needed.
 
-// The NAME variable is used to get the current user's name. Could have issues if at startup with no re-log.
-const NAME = localStorage.getItem("name");
+// The NAME variable is used to get the current user's name.
+var NAME = localStorage.getItem("name");
 
 /**
  * The global clipboard object.
@@ -98,3 +98,7 @@ function outerWidth(element) {
         .map(side => parseInt(style[`margin-${side}`]))
         .reduce((total, side) => total + side, width)
 }
+
+// Initialized in boot.
+var folders = {};
+var files = {};

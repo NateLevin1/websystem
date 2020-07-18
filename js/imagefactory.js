@@ -1,3 +1,4 @@
+// ! TODO: Remove
 class Base64Image {
     // Base64 -> Image Tag
     /**

@@ -6,13 +6,12 @@ GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO R
 GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
 
 class FileViewer {
-    openFolderWindow(open, previous=undefined) {
-        let win = new Window(100, 200, open, 40, 35);
+    openFolderWindow(path) {
+        let win = new Window(100, 200, path, 40, 35);
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
-        this.folderList = [open];
-        this.currentFolder = open;
+        this.currentFolder = path;
         this.win.setBackgroundColor("rgba(0,0,0,0)");
 
         // Back Button
@@ -29,13 +28,7 @@ class FileViewer {
         this.back = back;
         this.back.onclick = ()=>{this.goBackParent();};
 
-        // Previous list
-        if(!previous) {
-            this.win.setTitle(open);
-        } else {
-            this.win.setTitle(previous.join(" -> ")+" -> "+open);
-            this.previous = [...previous,open];
-        }
+        this.win.setTitle(path);
 
         this.contentContainer = document.createElement("div");
         this.contentContainer.style.height = "calc(100% - 1em)";
@@ -49,7 +42,7 @@ class FileViewer {
         this.background.style.overflow = "auto"; // scrolling
 
         // Folder Display
-        this.displayFolders(open);
+        this.displayFolders(path);
         
         // Sidebar
         this.createSidebar();
@@ -167,43 +160,38 @@ class FileViewer {
         let documents = document.createElement("file-member");
         documents.classList.add("ellipsis-overflow", "file-documents", "clickable", "unselectable");
         documents.innerHTML = "Documents";
+        documents.setAttribute("path", "/Users/"+NAME+"/Documents/");
         favoritesDiv.appendChild(documents);
         
         let applications = document.createElement("file-member");
         applications.classList.add("ellipsis-overflow", "file-applications", "clickable", "unselectable");
         applications.innerHTML = "Applications";
+        applications.setAttribute("path", "/Users/"+NAME+"/Applications/");
         favoritesDiv.appendChild(applications);
 
         let downloads = document.createElement("file-member");
         downloads.classList.add("ellipsis-overflow", "file-downloads", "clickable", "unselectable");
         downloads.innerHTML = "Downloads";
+        downloads.setAttribute("path", "/Users/"+NAME+"/Downloads/");
         favoritesDiv.appendChild(downloads);
 
         let folder1 = document.createElement("file-member");
         folder1.classList.add("ellipsis-overflow", "file-folder", "clickable", "unselectable");
         folder1.innerHTML = "WebSystem";
+        folder1.setAttribute("path", "/Users/"+NAME+"/Desktop/WebSystem/");
         favoritesDiv.appendChild(folder1);
 
         let favoritedElements = favoritesDiv.querySelectorAll("file-member");
         if(favoritedElements) {
             favoritedElements.forEach((element)=>{
                 // selection
-                if(element.innerHTML == this.currentFolder) {
+                if(element.innerHTML == folders[this.currentFolder].name) {
                     element.classList.add("file-member-selected");
                 }
 
                 // Click handling
                 element.onclick = (event)=>{
-                    let content = element.innerHTML;
-                    let parents = [];
-                    let currentParent = content;
-
-                    // TODO - Update this when changing to actual back button
-                    while(currentParent != "usr") {
-                        currentParent = folders["parent-"+currentParent];
-                        parents.unshift(currentParent);
-                    }
-                    this.openFolder(content, parents);
+                    this.openFolder(element.getAttribute("path"));
                 }
 
             });
@@ -239,16 +227,10 @@ class FileViewer {
             }
         });
     }
-    openFolder(open, previous=undefined) {
-        this.currentFolder = open;
+    openFolder(path) {
+        this.currentFolder = path;
         this.win.clear();
-        if(previous || this.previous) {
-            let old = previous ? previous : this.previous;
-            this.win.setTitle(old.join(" -> ")+" -> "+open);
-            this.previous = [...old, open];
-        } else {
-            this.win.setTitle(open);
-        }
+        this.win.setTitle(path);
         // clear past screen
         this.contentContainer.innerHTML = "";
         this.background.innerHTML = "";
@@ -258,15 +240,15 @@ class FileViewer {
         this.contentContainer.style.display = "flex";
         this.window.appendChild(this.contentContainer);
 
-        this.displayFolders(open);
+        this.displayFolders(path);
         this.createSidebar();
 
         // update right click menu
-        // ! I have no idea why this works or how this works. However, only this works. Not commented out bit below, only this.
+        // ! I have no idea why this works or how this works. However, only this works. Not the commented out bit below, only this.
         RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
         //RightClickMenu.addRightClickForClass(".icon-container", this.generatedWindow+"-icon", this.window);
     }
-    displayFolders(open) {
+    displayFolders(path) {
         // background (for right click menu)
         this.contentContainer.appendChild(this.background);
         // Deselection
@@ -275,27 +257,43 @@ class FileViewer {
                 clearSelected();
             }
         }
-        if(folders[open]) { // has something
-            folders[open].forEach(element =>{
-                if(element.startsWith("file::")) { // is file
-                    if(element.endsWith(".png")||element.endsWith(".jpg")||element.endsWith(".jpeg")) {
-                        this.createFile(element.substring(6, element.length),this.background, "black", false, "image");
-                    } else if(element.endsWith("app")) {
-                        this.createFile(element.substring(6, element.length-4),this.background, "black", false, "app");
-                    } else {
-                        console.error("Error: Could not find file extension of file:");
-                        console.log(element);
+        if(folders[path]) { // has something
+            folders[path].subfolders.forEach(element =>{
+                let name = folders[element].name;
+                if(folders[element].isFile) { // is file
+                    switch(folders[element].kind) {
+                        case "Image":
+                            this.createFile(name, element, "image");
+                            break;
+                        case "App":
+                            this.createFile(name, element, "app");
+                            break;
+                        default:
+                            console.error("Error: Could not find file extension of file:");
+                            console.log(name);
+                            break;
                     }
                 } else { // is folder
-                    this.createFolder(element,this.background, "black", false);
+                    this.createFolder(name, element, this.background, "black", false);
                 }
             });
         }
     }
-    createFolder(name, appendee=document.body, color="white", newWindow=true, before=false) {
+    /**
+     * Create a folder in the current window
+     * @param {String} name - The name of the folder to be made.
+     * @param {String} path - The path to the parent of the folder to be created at.
+     * @param {HTMLElement} appendee - The element to append the folder to.
+     * @param {String} color - A CSS Color for the text.
+     * @param {Boolean} newWindow - If true, creates a new window on open.
+     * @param {Boolean} before 
+     */
+    createFolder(name, path=this.currentFolder, appendee=this.background, color="black", newWindow=true, before=false) {
         let newFolderContainer = document.createElement("div");
         newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
-        newFolderContainer.id = name;
+        newFolderContainer.setAttribute("path", path);
+        newFolderContainer.setAttribute("name", name);
+        // newFolderContainer.id = name;
         if(before == true) {
             appendee.insertBefore(newFolderContainer, appendee.firstChild);
         } else {
@@ -318,9 +316,9 @@ class FileViewer {
         newFolderContainer.ondblclick = (event)=>{
             if(newWindow == true) {
                 var n = new FileViewer;
-                n.openFolderWindow(newFolderContainer.id);
+                n.openFolderWindow(newFolderContainer.getAttribute("path"));
             } else {
-                this.openFolder(newFolderContainer.id);
+                this.openFolder(newFolderContainer.getAttribute("path"));
             }
         }
 
@@ -334,10 +332,11 @@ class FileViewer {
         }
         return newFolderContainer; // allows for adding to lists
     }
-    createFile(name, appendee=document.body, color="white", newWindow=true, filetype="image") {
+    createFile(name, path, filetype="image", appendee=this.background, color="black") {
         let newFileContainer = document.createElement("div");
         newFileContainer.classList.add("clickable", "icon-container", "file");
-        newFileContainer.id = name;
+        newFileContainer.setAttribute("path", path);
+        newFileContainer.setAttribute("name", name);
         appendee.appendChild(newFileContainer);
     
         // img
@@ -371,9 +370,9 @@ class FileViewer {
                 }
                 
             } else if(filetype == "image") {
-                new ImageViewer(name);
-            } else {
-                alert("Opened File "+newFileContainer.id+"!");
+                new ImageViewer(name, path);
+            } else { // unknown filetype
+                alert("Opened File "+newFileContainer.getAttribute("name")+"!");
             }
             
         }
@@ -390,7 +389,7 @@ class FileViewer {
 
     /**
      * Open the file wih specified name
-     * @param {string, array} name 
+     * @param {(string|string[])} name 
      */
     intelligentOpen(name) {
         if(typeof name == "object") { // array
@@ -420,7 +419,7 @@ class FileViewer {
             } else if(name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".gif")) {
                 new ImageViewer(name);
             } else {
-                alert("Opened File "+newFileContainer.id+"!");
+                alert("Opened File "+newFileContainer.getAttribute("name")+"!");
             }
         } else { // folder
             if(newFolderWindow) {
@@ -438,15 +437,13 @@ class FileViewer {
     }
 
     goBackParent() {
-        this.previous.pop();
-        this.previous.pop();
-        this.openFolder(folders["parent-"+this.currentFolder]);
+        this.openFolder(folders[this.currentFolder].parent);
     }
 
     // FOLDER/FILE CREATION
     makeNewFolder() {
         try { // safety
-            let blankFolder = this.createFolder("untitled folder", this.background, "black", false, true);
+            let blankFolder = this.createFolder("untitled folder", "", this.background, "black", false, true);
             blankFolder.classList.add("icon-selected", "icon-rename");
             let blankFolderText = blankFolder.querySelector("div");
 
@@ -479,15 +476,20 @@ class FileViewer {
 
             invisibleInput.onblur = ()=>{
                 let text = blankFolderText.innerText;
-                if(text.includes(",")||text.includes("]")||text.includes("[")||text.includes("}")||text.includes("{")||text.startsWith("file::")||Object.keys(folders).includes(text)) {
-                    if(Object.keys(folders).includes(text)) {
+                if(text === "") {
+                    text = "untitled folder";
+                }
+                let path = this.currentFolder+text+"/";
+                if(text.startsWith("file::")||Object.keys(folders).includes(path)) {
+                    if(Object.keys(folders).includes(path)) {
                         let i = 2;
-                        while(Object.keys(folders).includes(blankFolderText.innerText)) {
+                        while(Object.keys(folders).includes(path)) {
                             blankFolderText.innerText = text+" "+i;
                             i++;
+                            path = this.currentFolder+blankFolderText.innerText+"/";
                         }
                     } else {
-                        blankFolderText.innerText = text.replace(/(?:,|file::)/g, "");
+                        blankFolderText.innerText = text.replace(/file::/g, "");
                     }
                 }
                 invisibleInput.remove();
@@ -503,89 +505,23 @@ class FileViewer {
     }
 
     _addFolderToStorage(name) {
-        let num = 2;
-        while(folders[name]) { // already exists
-            console.warn("There is already a folder with the name "+name+". Setting to "+name+" "+num+".");
-            name += " "+num;
-            num++;
-        }
-        // First, add a new empty folder to the end.
-        let currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
-        // Next, add a new subfolder of the current directory.
-        currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{"+name+","));
-        // Finally, add the properties to folders{} so they will display
-        folders[name] = [];
-        folders["parent-"+name] = this.currentFolder;
-        folders[this.currentFolder].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
-        // And update the screen.
-        this.previous.pop();
+        FileSystem.addFolderAtLocation(name, this.currentFolder);
         this.openFolder(this.currentFolder);
     }
 
-    _addFolderToDifferentLocation(name, newFolderName) {
-        let num = 2;
-        while(folders[name]) { // already exists
-            console.warn("There is already a folder with the name "+name+". Setting to "+name+" 2.");
-            name += " "+num;
-            num++;
-        }
-        // First, add a new empty folder to the end.
-        let currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders+" ["+name+"]{}");
-        // Next, add a new subfolder of the current directory.
-        currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders.replace(newFolderName+"]{", newFolderName+"]{"+name+","));
-        // Finally, add the properties to folders{} so they will display
-        folders[name] = [];
-        folders["parent-"+name] = newFolderName;
-        folders[newFolderName].unshift(name); // ? push? It looks different after the page has been reloaded if push is used
+    _addFolderToDifferentLocation(name, parentPath) {
+        FileSystem.addFolderAtLocation(name, parentPath);
     }
 
-    _addFileToDifferentLocation(filename, filedata, newFolderName) {
-        let num = 2;
+    _addFileToDifferentLocation(filename, filedata, filekind, filepath) {
         if(filename.startsWith("file::")) {
             filename = filename.substring(6, filename.length);
         }
-        while(files[filename]) { // already exists
-            console.warn("There is already a file with the filename "+filename+". Setting to "+num+" "+filename+".");
-            filename = num + " "+filename;
-            num++;
-        }
-        // First, add the file as a sub file of the parent.
-        let currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders.replace(newFolderName+"]{", newFolderName+"]{file::"+filename+","));
-        // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
-        var currentFiles = localStorage.getItem('files');
-        var extension = filename.substring(filename.lastIndexOf("."), filename.length);
-        if(extension == ".png") {
-            localStorage.setItem('files', currentFiles+"["+filename+"]{"+filedata+"}");
-            // add data to file
-            files[filename] = filedata;
-        }
-        
-        // Finally, add the file to folders{} so it will display
-        folders[newFolderName].unshift("file::"+filename); // ? push? It looks different after the page has been reloaded if push is used
+        FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
     }
 
-    _addFileToStorage(filename, filedata) {
-        // First, add the file as a sub file of the parent.
-        let currentFolders = localStorage.getItem('folders');
-        localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+filename+","));
-        // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
-        var currentFiles = localStorage.getItem('files');
-        var extension = filename.substring(filename.lastIndexOf("."), filename.length);
-        if(extension == ".png") {
-            localStorage.setItem('files', currentFiles+"["+filename+"]{"+filedata+"}");
-            // add data to file
-            files[filename] = filedata;
-        }
-        
-        // Finally, add the file to folders{} so it will display
-        folders[this.currentFolder].unshift("file::"+filename); // ? push? It looks different after the page has been reloaded if push is used
-        // And update the screen.
-        this.previous.pop();
+    _addFileToStorage(filename, filedata, filekind) {
+        FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
         this.openFolder(this.currentFolder);
     }
 
@@ -594,28 +530,47 @@ class FileViewer {
         fileUpload.type = "file";
         fileUpload.click();
         var fileUploadEvent = function namelessName() {
-            var file = fileUpload.files[0];
-
-            // First, add the file as a sub file of the parent.
-            let currentFolders = localStorage.getItem('folders');
-            localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+file.name+","));
-            // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
-            var currentFiles = localStorage.getItem('files');
-            var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
-            if(extension == ".png") {
-                Base64Image.fileToBase64(fileUpload, (filedata)=>{
-                    localStorage.setItem('files', currentFiles+"["+file.name+"]{"+filedata+"}");
-                    // add data to file
-                    files[file.name] = filedata;
-                });
-            }
-            
-            // Finally, add the file to folders{} so it will display
-            folders[this.currentFolder].unshift("file::"+file.name); // ? push? It looks different after the page has been reloaded if push is used
-            // And update the screen.
-            this.previous.pop();
+            let files = fileUpload.files;
+            files = [...files];
+            files.forEach((file)=>{
+                console.log(file);
+                let extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+                switch(extension) {
+                    case ".png":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".gif":
+                    // Add more as image viewer can handle them
+                        this._addFileToStorage(file.name, file, "Image");
+                        break;
+                    default:
+                        this._addFileToStorage(file.name, file, "Unknown");
+                        break;
+                }
+               
+            });
             this.openFolder(this.currentFolder);
             fileUpload.removeEventListener('change', fileUploadEvent, false);
+            // var file = fileUpload.files[0];
+
+            // // First, add the file as a sub file of the parent.
+            // let currentFolders = localStorage.getItem('folders');
+            // localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+file.name+","));
+            // // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
+            // var currentFiles = localStorage.getItem('files');
+            // var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+            // if(extension == ".png") {
+            //     Base64Image.fileToBase64(fileUpload, (filedata)=>{
+            //         localStorage.setItem('files', currentFiles+"["+file.name+"]{"+filedata+"}");
+            //         // add data to file
+            //         files[file.name] = filedata;
+            //     });
+            // }
+            
+            // // Finally, add the file to folders{} so it will display
+            // folders[this.currentFolder].unshift("file::"+file.name); // ? push? It looks different after the page has been reloaded if push is used
+            // // And update the screen.
+            // this.previous.pop();
         }.bind(this);
 
         fileUpload.addEventListener('change', fileUploadEvent, false);
@@ -667,12 +622,13 @@ class FileViewer {
 }
 
 
-function createDesktopFolder(x, y, name, appendee=document.body, color="white") {
+function createDesktopFolder(x, y, name, path, appendee=document.body, color="white") {
     let newFolderContainer = document.createElement("div");
     newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
     newFolderContainer.style.top = y+"em";
     newFolderContainer.style.left = x+"em";
-    newFolderContainer.id = name;
+    newFolderContainer.setAttribute("path", path);
+    // newFolderContainer.id = name;
     appendee.appendChild(newFolderContainer);
 
     // img
@@ -689,7 +645,7 @@ function createDesktopFolder(x, y, name, appendee=document.body, color="white") 
 
     newFolderContainer.ondblclick = (event)=>{
         var n = new FileViewer;
-        n.openFolderWindow(newFolderContainer.id, ["usr"]);
+        n.openFolderWindow(newFolderContainer.getAttribute("path"));
         // n.addFolder();
     }
     newFolderContainer.onclick = (event)=>{

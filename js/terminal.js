@@ -11,13 +11,9 @@ GlobalStyle.newClass("terminal-error", "color: rgb(250,0,0); font-family:monospa
 
 
 class Terminal {
-    constructor(path="/usr", access="root") {
+    constructor(path="/", access="root") {
         this.path = path;
-        if(path == "/usr") {
-            this.currentFolder = "usr";
-        } else {
-            this.currentFolder = "TODO"; // TODO
-        }
+        this.currentFolder = folders[path].name;
         this.access = access;
         
 
@@ -173,9 +169,7 @@ class Terminal {
             // make folder with name
             let name = val.substring(6);
             name = name.split(" ");
-            if(!typeof name == "object") { // if not an array, make it one
-                name = [name]; // slow but works
-            }
+            name = [...name];
             name.forEach((element)=>{
                 if(element.includes(",")||element.includes("]")||element.includes("[")||element.includes("}")||element.includes("{")||element.startsWith("file::")||Object.keys(folders).includes(element)) { // TODO Update for localForage
                     // illegal name
@@ -278,9 +272,7 @@ class Terminal {
 
         newPath = newPath.split("/"); // split at slash
         // TODO Update for backslashes ^^
-        if(!typeof newPath == "object") { // if not an array (no slashes), make it one
-            newPath = [newPath]; // slow but works
-        }
+        name = [...name];
         
 
         newPath.forEach((element)=>{ // TODO update to include parent when localForage

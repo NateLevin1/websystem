@@ -319,7 +319,6 @@ class Calculator {
         if(this.operation != "") {
             this.getAnswer();
             var old = this.currentNumber;
-            console.log("Got answer because operation is set. lastPressed = "+this.lastPressed);
         }
         
         

@@ -50,7 +50,7 @@ class FileSystem {
      * @param {Blob} data - The data of the new file.
      * @param {String} kind - The kind of the data. E.g. "Image" or "App"
      * @param {String} parentPath - The path to the parent of the new file.
-     * @param {JSON} options - The options to pass in. Currently unused.
+     * @param {JSON} options - The options to pass in.
      */
     static addFileAtLocation(name, data, kind, parentPath, options={}) {
         let path = parentPath+name+"/";
@@ -76,6 +76,7 @@ class FileSystem {
             files[path] = data;
             // update storage
             filesystem.setItem(path, data);
+            content = options;
         }
 
         // Set new folder as subfolder of parent
@@ -103,7 +104,7 @@ class FileSystem {
                 "last-opened-date": "Never",
 
                 locked: false,
-
+                
                 "system-comments": [],
                 "user-comments": [],
 

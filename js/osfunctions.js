@@ -102,3 +102,6 @@ function outerWidth(element) {
 // Initialized in boot.
 var folders = {};
 var files = {};
+
+// Third party media tag getter
+var jsmediatags = window.jsmediatags;

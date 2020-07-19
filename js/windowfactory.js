@@ -185,6 +185,7 @@ class Window {
         } else {
           if(e.target == close) {
             // close window
+            elmnt.dispatchEvent(destroyEvent);
             elmnt.classList.remove("window-slow");
             elmnt.classList.add("window-fast");
             elmnt.style.opacity = "0";
@@ -287,6 +288,8 @@ class Window {
 var focusEvent = new Event('window-focus');
 // Called on the window when it gets resized
 var resizeEvent = new Event('window-resize');
+// Called on the window when it is closed
+var destroyEvent = new Event('window-destroy');
 
 
 // * /* GLOBAL WINDOW THINGS */

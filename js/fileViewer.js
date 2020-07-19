@@ -269,9 +269,13 @@ class FileViewer {
                         case "App":
                             this.createFile(name, element, "app");
                             break;
+                        case "Music":
+                            this.createFile(name, element, "music");
+                            break;
                         default:
                             console.error("Error: Could not find file extension of file:");
                             console.log(name);
+                            this.createFile(name, element, "unknown");
                             break;
                     }
                 } else { // is folder
@@ -350,6 +354,8 @@ class FileViewer {
             } else {
                 newFile.src = "assets/unknown.png";
             }
+        } else if(filetype == "music") {
+            newFile.src = "assets/music.png";
         } else {
             newFile.src = "assets/unknown.png";
         }
@@ -372,6 +378,8 @@ class FileViewer {
                 
             } else if(filetype == "image") {
                 new ImageViewer(name, path);
+            } else if(filetype == "music") {
+                new Music(name, path);
             } else { // unknown filetype
                 alert("Opened File "+newFileContainer.getAttribute("name")+"!");
             }
@@ -390,12 +398,12 @@ class FileViewer {
 
     /**
      * Open the file wih specified name
-     * @param {(string|string[])} name 
+     * @param {(string|string[])} path 
      */
-    intelligentOpen(name) {
-        if(typeof name == "object") { // array
+    intelligentOpen(path) {
+        if(typeof path == "object") { // array
             let oldFolder = this.currentFolder;
-            name.forEach((n)=>{
+            path.forEach((n)=>{
                 if(oldFolder != this.currentFolder) {
                     this._intelligentOpenOnce(n, true);
                 } else {
@@ -403,31 +411,32 @@ class FileViewer {
                 }
             });
         } else { // string
-            this._intelligentOpenOnce(name);
+            this._intelligentOpenOnce(path);
         }
     }
 
     // Private
-    _intelligentOpenOnce(name, newFolderWindow=false) {
-        if(/\.[^.]+$/.test(name)) { // app
-            if(name.endsWith(".app")) {
+    _intelligentOpenOnce(path, newFolderWindow=false) {
+        if(folders[path].kind != "Folder") {
+            if(folders[path].kind == "App") {
                 try {
-                    makeFunctions[name]();
+                    makeFunctions[path]();
                 } catch(e) {
-                    console.error("No function was provided for making the app named "+name+".");
+                    console.error("No function was provided for making the app named "+path+".");
                 }
-                
-            } else if(name.endsWith(".png")||name.endsWith(".jpg")||name.endsWith(".jpeg")||name.endsWith(".gif")) {
-                new ImageViewer(name);
+            } else if(folders[path].kind == "Image") {
+                new ImageViewer(folders[path].name, path);
+            } else if(folders[path].kind == "Music") {
+                new Music(folders[path].name, path);
             } else {
-                alert("Opened File "+newFileContainer.getAttribute("name")+"!");
+                alert("Opened File '"+folders[path].name+"'!");
             }
         } else { // folder
             if(newFolderWindow) {
                 let n = new FileViewer;
-                n.openFolderWindow(name);
+                n.openFolderWindow(path);
             } else {
-                this.openFolder(name);
+                this.openFolder(path);
             }
             
         }
@@ -524,8 +533,25 @@ class FileViewer {
     }
 
     _addFileToStorage(filename, filedata, filekind) {
-        FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
-        this.openFolder(this.currentFolder);
+        if(filekind == "Music") {
+            jsmediatags.read(filedata, {
+                onSuccess: (tag)=>{
+                    let options = {};
+                    options.mediaTags = tag;
+                    FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
+                    this.openFolder(this.currentFolder);
+                },
+                onError: (e) =>{
+                    console.error("There was an error trying to find the tags.");
+                    throw e;
+                }
+            });
+        } else {
+            FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
+            this.openFolder(this.currentFolder);
+        }
+        
+        
     }
 
     uploadNewFile() {
@@ -536,7 +562,7 @@ class FileViewer {
             let files = fileUpload.files;
             files = [...files];
             files.forEach((file)=>{
-                let extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+                let extension = file.name.substring(file.name.lastIndexOf("."), file.name.length).toLowerCase();
                 switch(extension) {
                     case ".png":
                     case ".jpg":
@@ -544,6 +570,12 @@ class FileViewer {
                     case ".gif":
                     // Add more as image viewer can handle them
                         this._addFileToStorage(file.name, file, "Image");
+                        break;
+                    case ".mp3":
+                    case ".wav":
+                    case ".aiff":
+                    case ".flac":
+                        this._addFileToStorage(file.name, file, "Music");
                         break;
                     default:
                         this._addFileToStorage(file.name, file, "Unknown");

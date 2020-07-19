@@ -15,4 +15,12 @@ class GlobalStyle {
         });
         styles.innerHTML += "}";
     }
+    /**
+     * Add raw css to the global style.
+     * @param {String} css - The css to be added.
+     */
+    static addRaw(css) {
+        let styles = document.getElementById("global-style");
+        styles.innerHTML += "\n"+css;
+    }
 }

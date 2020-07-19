@@ -348,6 +348,15 @@ class FileViewer {
         let newFile = document.createElement("img");
         if(filetype=="image") {
             newFile.src = "assets/image.png";
+            // Poor man's lazy loading
+            let thumbed = newFile.cloneNode();
+            thumbed.style.maxWidth = "7em";
+            thumbed.style.maxHeight = "5em";
+            thumbed.style.height = "5em";
+            thumbed.onload = ()=>{
+                newFileContainer.replaceChild(thumbed, newFile);
+            };
+            thumbed.src = URL.createObjectURL(files[path]);
         } else if(filetype=="app"){
             if(appImagePaths[name]) {
                 newFile.src = appImagePaths[name];
@@ -355,7 +364,11 @@ class FileViewer {
                 newFile.src = "assets/unknown.png";
             }
         } else if(filetype == "music") {
-            newFile.src = "assets/music.png";
+            if(folders[path].content.mediaTags) { // use thumbnail
+                newFile.src = Music.getThumbnail(folders[path].content.mediaTags);
+            } else {
+                newFile.src = "assets/music.png";
+            }
         } else {
             newFile.src = "assets/unknown.png";
         }

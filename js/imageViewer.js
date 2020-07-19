@@ -20,7 +20,7 @@ class ImageViewer {
                 if(sizeGetter.naturalWidth > 30*em) {
                     size[0] = 15*em;
                     size[2] = 30;
-                    img.style.maxWidth = "80%";
+                    img.style.maxWidth = "90%";
                 }
                 if(sizeGetter.naturalHeight > 30*em) {
                     size[1] = 15*em;

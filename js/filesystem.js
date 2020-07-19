@@ -11,7 +11,6 @@ class FileSystem {
             name = oldName+" "+num;
             num++;
         }
-
         // Set new folder as subfolder of parent
         folders[parentPath].subfolders.unshift(path);
 

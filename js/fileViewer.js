@@ -68,7 +68,7 @@ class FileViewer {
             var selected = document.querySelectorAll(".icon-selected");
             let names = [];
             selected.forEach((element)=>{
-                names.push(element.querySelector("div").innerHTML);
+                names.push(element.getAttribute("path"));
             });
             this.intelligentOpen(names);
         });
@@ -76,7 +76,7 @@ class FileViewer {
         RightClickMenu.addToMenu("Open in New Window", this.generatedWindow+"-folder", ()=>{
             var selected = document.querySelector(".icon-selected");
             let n = new FileViewer;
-            n.openFolderWindow(selected.querySelector("div").innerHTML);
+            n.openFolderWindow(selected.getAttribute("path"));
         });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
@@ -91,19 +91,18 @@ class FileViewer {
             let selected = document.querySelectorAll(".icon-selected");
             let copy = [];
             selected.forEach((element)=>{
-                let filename = element.querySelector("div").innerHTML;//+" copy";
+                let filename = element.getAttribute("name");
+                let filepath = element.getAttribute("path");
                 if(element.querySelector("img").src.includes("folder")) {
                     // file is a folder
-                    copy.push(this.getChildren(filename));
+                    copy.push(this.getChildren(filepath, filename));
                 } else {
                     // file is a file
-                    
-                    copy.push({"file": true, "filename": "Copy of "+filename, "data":files[filename]});
+                    copy.push({"file": true, "filename": "Copy of "+filename, "dataPath":filepath});
                 }
                 
             });
             Clipboard.contents = ["file-list", copy];
-            
         });
         
         RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], ()=>{
@@ -113,18 +112,27 @@ class FileViewer {
                 contents = contents[0];
                 contents.forEach((element)=>{
                     // "element" is an object in the form:
-                    //  { top: "topmost", subs:["sub1"], sub1: "sub2"}
+                    //  { top: "topmost", subs:[{sub object 1}, {sub object 2}], sub1: ["sub2"]}
                     if(element["file"]) { // is file
-                        this._addFileToStorage(element["filename"], element["data"]);
+                        this._addFileToStorage(element.filename, files[element.dataPath], folders[element.dataPath].kind); // TODO add file kind so it is known
                     } else { // is folder (note that folders can contain files)
                         let num = 2;
-                        while(folders[element["top"]]) { // already exists
-                            element["top"] += " "+num;
+                        let path = this.currentFolder+element["top"];
+                        let oldPath = path;
+                        let oldName = element["top"];
+                        if(!folders[path]) {
+                            path += "/";
+                        }
+                        while(folders[path]) { // already exists
+                            console.warn("There is already a folder with path "+path);
+                            path = oldPath+" "+num+"/";
+                            element["top"] = oldName+" "+num;
                             num++;
                         }
+
                         this._addFolderToStorage(element["top"]);
                         let subs = element["subs"];
-                        this.recursiveAddFromObject(subs, element["top"], element);
+                        this.recursiveAddFromObject(subs, path, element);
                     }
                 });
                 contents = [contents];
@@ -136,8 +144,8 @@ class FileViewer {
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
 
-        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
-        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.window);
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
+        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder() });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile() });
@@ -204,27 +212,20 @@ class FileViewer {
         this.sidebar = undefined; // unbind
     }
     recursiveAddFromObject(children, parent, object) {
+        console.log(object);
         children.forEach((child)=>{
-            let searcher = child.substring(8, child.length);
-            if(object[searcher] || child.startsWith("file::")) { // if sub folders exist
-                if(!child.startsWith("file::")) { // folder
-                    let num = 2;
-                    while(folders[child]) { // already exists
-                        child += " "+num;
-                        num++;
-                    }
-                    this._addFolderToDifferentLocation(child, parent);
-                    this.recursiveAddFromObject(object[searcher], child, object);
-                } else { // file
-                    let data = object["data-"+child];
-                    let num = 2;
-                    while(files[child.substring(6)]) { // already exists
-                        child = "file::"+num + " " + child.substring(6);
-                        num++;
-                    }
-                    this._addFileToDifferentLocation(child, data, parent);
+            if(!child.reference.isFile) { // folder
+                this._addFolderToDifferentLocation(child.name, parent);
+                console.log("Added folder "+child.name+" as subfolder of "+parent+".");
+                if(object[child.name]) {
+                    this.recursiveAddFromObject(object[child.name], parent+child.name+"/", object);
                 }
+            } else { // file
+                // get value at child.path and set data to it.
+                let data = files[child.path];
+                this._addFileToDifferentLocation(child.name, data, child.reference.kind, parent);
             }
+            // }
         });
     }
     openFolder(path) {
@@ -245,8 +246,8 @@ class FileViewer {
 
         // update right click menu
         // ! I have no idea why this works or how this works. However, only this works. Not the commented out bit below, only this.
-        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.window);
-        //RightClickMenu.addRightClickForClass(".icon-container", this.generatedWindow+"-icon", this.window);
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
+        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
     }
     displayFolders(path) {
         // background (for right click menu)
@@ -437,7 +438,9 @@ class FileViewer {
     }
 
     goBackParent() {
-        this.openFolder(folders[this.currentFolder].parent);
+        if(folders[this.currentFolder].parent) { // returns false in root directory
+            this.openFolder(folders[this.currentFolder].parent);
+        }
     }
 
     // FOLDER/FILE CREATION
@@ -533,7 +536,6 @@ class FileViewer {
             let files = fileUpload.files;
             files = [...files];
             files.forEach((file)=>{
-                console.log(file);
                 let extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
                 switch(extension) {
                     case ".png":
@@ -578,43 +580,53 @@ class FileViewer {
     }
 
 
-    getChildren(name) {
-        let pointerFolder = folders[name];
-        let children = [...pointerFolder];
+    getChildren(path, name) {
+        let pointerFolder = folders[path];
+        let children = [];
+        pointerFolder.subfolders.forEach((child)=>{
+            children.push({"name": folders[child]["name"], "path": child, reference: folders[child]});
+        });
         let finishedObject = { top: name };
         finishedObject["subs"] = children;
         let obj = this.recursiveGetChildren(children, finishedObject);
-        for(const key in obj) {
-            if(typeof obj[key] == "object") {
-                obj[key].forEach((element, index)=>{
-                    if(!obj[key][index].startsWith("file::")) { // folder
-                        obj[key][index] = "Copy of "+element;
-                    } else { // file
-                        obj["data-file::Copy of "+element.substring(6, element.length)] = files[element.substring(6, element.length)];
-                        obj[key][index] = obj[key][index].replace("file::", "file::Copy of ");
-                    }
-                });
-            } else {
-                if(!obj[key].startsWith("file::")) { // folder
-                    obj[key] = "Copy of "+obj[key];
-                } else { // file
-                    obj["data-file::Copy of "+key.substring(6, key.length)] = files[key.substring(6, key.length)];
-                    obj[key] = obj[key].replace("file::", "file::Copy of ");
-                }
+        console.log(obj);
+        obj.top = "Copy of "+obj.top;
+        // for(const key in obj) {
+        //     if(typeof obj[key] == "object") {
+        //         obj[key].forEach((element, index)=>{
+        //             if(!obj[key][index].startsWith("file::")) { // folder
+        //                 obj[key][index] = "Copy of "+element;
+        //             } else { // file
+        //                 obj["data-file::Copy of "+element.substring(6, element.length)] = files[element.substring(6, element.length)];
+        //                 obj[key][index] = obj[key][index].replace("file::", "file::Copy of ");
+        //             }
+        //         });
+        //     } else {
+        //         if(!obj[key].startsWith("file::")) { // folder
+        //             obj[key] = "Copy of "+obj[key];
+        //         } else { // file
+        //             obj["data-file::Copy of "+key.substring(6, key.length)] = files[key.substring(6, key.length)];
+        //             obj[key] = obj[key].replace("file::", "file::Copy of ");
+        //         }
                 
-            }
-        }
+        //     }
+        // }
         return obj;
     }
     
     recursiveGetChildren(children, finishedObject) {
         children.forEach((child)=>{
-            if(child.startsWith("file::")) { // file
-                finishedObject[child] = child;
+            // console.log(child);
+            if(child.reference.isFile) { // file
+                finishedObject[child.name] = {name: child.name, dataPath: child.path};
             }
-            else if(folders[child]) { // folder
-                finishedObject[child] = folders[child];
-                this.recursiveGetChildren(folders[child], finishedObject);
+            else if(folders[child.path].subfolders) { // folder
+                let subfolders = folders[child.path].subfolders.map((val)=>{
+                    return {"name": folders[val].name, "path": val, reference: folders[val]}
+                });
+                finishedObject[child.name] = subfolders;
+                
+                this.recursiveGetChildren(subfolders, finishedObject);
             }
         });
         return finishedObject;

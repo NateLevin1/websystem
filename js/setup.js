@@ -2,8 +2,7 @@
 importScripts("thirdparty/localForage/localforage.min.js");
 importScripts("instances.js");
 
-// ! Debug below
-// localforage.clear();
+localforage.clear();
 
 onmessage = function (event) {
     const NAME = event.data;

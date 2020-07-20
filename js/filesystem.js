@@ -120,6 +120,6 @@ class FileSystem {
     // ! DEBUG DO NOT INCLUDE BELOW IN PRODUCTION
     static clearAll() {
         localStorage.clear();
-        localforage.clear();
+        filesystem.clear();
     }
 }

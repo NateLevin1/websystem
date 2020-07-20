@@ -337,7 +337,7 @@ class FileViewer {
         }
         return newFolderContainer; // allows for adding to lists
     }
-    createFile(name, path, filetype="image", appendee=this.background, color="black") {
+    createFile(name, path, filetype, appendee=this.background, color="black") {
         let newFileContainer = document.createElement("div");
         newFileContainer.classList.add("clickable", "icon-container", "file");
         newFileContainer.setAttribute("path", path);
@@ -350,9 +350,7 @@ class FileViewer {
             newFile.src = "assets/image.png";
             // Poor man's lazy loading
             let thumbed = newFile.cloneNode();
-            thumbed.style.maxWidth = "7em";
-            thumbed.style.maxHeight = "5em";
-            thumbed.style.height = "5em";
+            thumbed.classList.add("icon");
             thumbed.onload = ()=>{
                 newFileContainer.replaceChild(thumbed, newFile);
             };
@@ -544,7 +542,12 @@ class FileViewer {
         }
         FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
     }
-
+    /**
+     * 
+     * @param {String} filename - The name of the file to be added
+     * @param {(Blob|File)} filedata - The data to be added
+     * @param {String} filekind - The kind of the file to be added.
+     */
     _addFileToStorage(filename, filedata, filekind) {
         if(filekind == "Music") {
             jsmediatags.read(filedata, {
@@ -570,6 +573,7 @@ class FileViewer {
     uploadNewFile() {
         let fileUpload = document.createElement("input");
         fileUpload.type = "file";
+        fileUpload.multiple = true;
         fileUpload.click();
         var fileUploadEvent = function namelessName() {
             let files = fileUpload.files;
@@ -598,26 +602,6 @@ class FileViewer {
             });
             this.openFolder(this.currentFolder);
             fileUpload.removeEventListener('change', fileUploadEvent, false);
-            // var file = fileUpload.files[0];
-
-            // // First, add the file as a sub file of the parent.
-            // let currentFolders = localStorage.getItem('folders');
-            // localStorage.setItem('folders', currentFolders.replace(this.currentFolder+"]{", this.currentFolder+"]{file::"+file.name+","));
-            // // Next, add the data  of the file (not just the name as in previous step to localStorage (key 'files').
-            // var currentFiles = localStorage.getItem('files');
-            // var extension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
-            // if(extension == ".png") {
-            //     Base64Image.fileToBase64(fileUpload, (filedata)=>{
-            //         localStorage.setItem('files', currentFiles+"["+file.name+"]{"+filedata+"}");
-            //         // add data to file
-            //         files[file.name] = filedata;
-            //     });
-            // }
-            
-            // // Finally, add the file to folders{} so it will display
-            // folders[this.currentFolder].unshift("file::"+file.name); // ? push? It looks different after the page has been reloaded if push is used
-            // // And update the screen.
-            // this.previous.pop();
         }.bind(this);
 
         fileUpload.addEventListener('change', fileUploadEvent, false);
@@ -636,26 +620,6 @@ class FileViewer {
         let obj = this.recursiveGetChildren(children, finishedObject);
         console.log(obj);
         obj.top = "Copy of "+obj.top;
-        // for(const key in obj) {
-        //     if(typeof obj[key] == "object") {
-        //         obj[key].forEach((element, index)=>{
-        //             if(!obj[key][index].startsWith("file::")) { // folder
-        //                 obj[key][index] = "Copy of "+element;
-        //             } else { // file
-        //                 obj["data-file::Copy of "+element.substring(6, element.length)] = files[element.substring(6, element.length)];
-        //                 obj[key][index] = obj[key][index].replace("file::", "file::Copy of ");
-        //             }
-        //         });
-        //     } else {
-        //         if(!obj[key].startsWith("file::")) { // folder
-        //             obj[key] = "Copy of "+obj[key];
-        //         } else { // file
-        //             obj["data-file::Copy of "+key.substring(6, key.length)] = files[key.substring(6, key.length)];
-        //             obj[key] = obj[key].replace("file::", "file::Copy of ");
-        //         }
-                
-        //     }
-        // }
         return obj;
     }
     

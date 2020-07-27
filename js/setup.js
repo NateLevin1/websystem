@@ -85,7 +85,7 @@ onmessage = function (event) {
                 name: NAME,
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/", "/Users/"+NAME+"/Desktop/", "/Users/"+NAME+"/Documents/"],
+                subfolders: ["/Users/"+NAME+"/Applications/", "/Users/"+NAME+"/Desktop/", "/Users/"+NAME+"/Documents/", "/Users/"+NAME+"/Downloads/"],
                 parent: "/Users/",
     
                 meta: folderMeta
@@ -95,7 +95,7 @@ onmessage = function (event) {
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/file::Calculator.app", "/Users/"+NAME+"/Applications/file::App Store.app", "/Users/"+NAME+"/Applications/file::Music.app"],
+                subfolders: ["/Users/"+NAME+"/Applications/file::Calculator.app", "/Users/"+NAME+"/Applications/file::App Store.app", "/Users/"+NAME+"/Applications/file::Music.app", "/Users/"+NAME+"/Applications/file::Image Viewer.app"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: folderMeta
@@ -130,6 +130,19 @@ onmessage = function (event) {
             ["/Users/"+NAME+"/Applications/file::App Store.app"]: {
                 isFile: true,
                 name:"App Store",
+                kind:"App",
+                extension:"app",
+
+                parent: "/Users/"+NAME+"/Applications/",
+                isBinary: false,
+                content: "",
+
+                meta: folderMeta
+            },
+
+            ["/Users/"+NAME+"/Applications/file::Image Viewer.app"]: {
+                isFile: true,
+                name:"Image Viewer",
                 kind:"App",
                 extension:"app",
 

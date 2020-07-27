@@ -1,6 +1,10 @@
 GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1em);", "width: 100%;");
 class ImageViewer {
     constructor(name, path) {
+        if(!name && !path) { // open in standalone mode
+            this.openInStandalone();
+            return undefined; // prevent running of rest of code
+        }
         var img = document.createElement("img");
         if(files[path]) {
             img.src = URL.createObjectURL(files[path]);
@@ -56,4 +60,38 @@ class ImageViewer {
             }
         });
     }
+
+    openInStandalone() {
+        this.win = new Window(280, 280, "Image Viewer", 25,25, 10, 5);
+        this.win.setBackgroundColor("rgb(230, 230, 230)");
+        this.window = this.win.getWindow();
+        this.header = this.win.getHeader();
+
+        this.window.classList.add("unselectable");
+
+        let contentContainer = document.createElement("div");
+        contentContainer.classList.add("image-viewer-standalone-container");
+
+        let fileOpen = document.createElement("button");
+        fileOpen.innerText = "Choose a File";
+        fileOpen.classList.add("unselectable");
+        fileOpen.style.fontSize = "1em";
+        fileOpen.style.cursor = "pointer";
+        fileOpen.onclick = ()=>{
+            FileSystem.requestFileByGUI("Image").then((selection)=>{
+                new ImageViewer(folders[selection].name, selection);
+                this.win.forceClose();
+            }).catch((reason)=>{
+                console.log(reason);
+            });
+        }
+        contentContainer.appendChild(fileOpen);
+
+        this.window.appendChild(contentContainer);
+    }
 }
+
+GlobalStyle.newClass("image-viewer-standalone-container", "height: calc(100% - 1em);", "display: flex;", "justify-content:center;", "align-items:center;");
+
+appImagePaths["Image Viewer"] = "assets/image.png";
+makeFunctions["Image Viewer"] = ()=>{ new ImageViewer };

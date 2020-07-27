@@ -149,6 +149,13 @@ class FileViewer {
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder() });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile() });
+        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
+            alert("Note: Apps cannot be added via this.")
+            let filename = prompt("Filename (with extension):");
+            let filedata = prompt("Filedata (if any):");
+            let filekind = prompt("Filekind:");
+            this._addFileToStorage(filename, filedata, filekind);
+        });
         RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
     }
     createSidebar() {

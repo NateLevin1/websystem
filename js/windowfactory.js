@@ -293,6 +293,26 @@ class Window {
     getHeightInEm() {
       return this.window.clientHeight/em;
     }
+    /**
+     * Forces the window to close.
+     * @param {Boolean} fade - Default true. Whether or not to fade out when closing.
+     */
+    forceClose(fade=true) {
+      this.window.dispatchEvent(destroyEvent);
+      if(fade) {
+        this.window.classList.remove("window-slow");
+        this.window.classList.add("window-fast");
+        this.window.style.opacity = "0";
+        setTimeout(()=>{
+          this.window.remove();
+        }, 150);
+      } else {
+        setTimeout(()=>{ // allow for handling of event
+          this.window.remove();
+        }, 50);
+      }
+      
+    }
 }
 
 

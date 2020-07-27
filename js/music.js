@@ -338,10 +338,6 @@ class Music {
 appImagePaths["Music"] = "assets/musicPlayer.png";
 makeFunctions["Music"] = ()=>{ new Music };
 
-setTimeout(()=>{
-  makeFunctions["Music"]();
-}, 800);
-
 
 
 // STYLES

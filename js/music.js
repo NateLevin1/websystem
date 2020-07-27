@@ -4,7 +4,7 @@ class Music {
         if(name && path) { // open player
             win = new Window(390, 142, "Music", 24.375, 8.875, 20, 2.2, false);
         } else { // open standalone
-            win = new Window(350, 140, "Music", 25,25, 20, 2.2);
+            win = new Window(280, 380, "Music", 25,25, 10, 2.2);
         }
         
         this.window = win.getWindow();
@@ -254,16 +254,17 @@ class Music {
       this.win.setBackgroundColor("rgba(250, 250, 250, 0.9)");
       // search for all music
       let songPaths = [];
+      let sorted = [];
       for(const path in files) {
         try {
           if(files[path].type.startsWith("audio")) { // is music
             songPaths.push(path);
+            sorted.push({title: folders[path].content.mediaTags.tags.title, path:path});
           }
         } catch(e) {
           // Optional chaining doesn't have widespread browser support yet so this is the only way to stop the error. As an error can be expected, this does nothing.
         }
       }
-      console.log(songPaths);
 
       let top = document.createElement("div");
       top.classList.add("music-standalone-top");
@@ -271,20 +272,49 @@ class Music {
       this.contentContainer.appendChild(top);
 
       let scroll = document.createElement("div");
+      scroll.classList.add("music-standalone-scroll");
       this.contentContainer.appendChild(scroll);
 
       songPaths.forEach((path, index)=>{
+        let mediaTags = folders[path].content.mediaTags;
+
         let container = document.createElement("div");
-        if(index % 2 == 1) {
+        container.classList.add("music-standalone-song");
+        if(index % 2 == 0) {
           container.classList.add("music-standalone-a");
         } else {
           container.classList.add("music-standalone-b");
         }
+
         let thumbnail = document.createElement("img");
-        thumbnail.src = Music.getThumbnail(folders[path].content.mediaTags);
+        thumbnail.src = Music.getThumbnail(mediaTags);
         thumbnail.classList.add("music-standalone-thumbnail");
-        
         container.appendChild(thumbnail);
+
+        let info = document.createElement("div");
+        info.classList.add("music-standalone-song-info");
+        container.appendChild(info);
+
+        let title = document.createElement("div");
+        title.classList.add("music-standalone-song-title");
+        title.innerText = mediaTags.tags.title;
+        info.appendChild(title);
+
+        let artist = document.createElement("div");
+        artist.classList.add("music-standalone-song-artist");
+        artist.innerText = mediaTags.tags.artist;
+        info.appendChild(artist);
+
+        let play = document.createElement("div");
+        play.classList.add("music-standalone-song-play");
+        play.innerText = "Play";
+        play.onclick = ()=>{
+          // create new player
+          new Music(mediaTags.tags.title, path);
+        }
+        container.appendChild(play);
+
+
         scroll.appendChild(container);
       });
     }
@@ -308,6 +338,11 @@ class Music {
 appImagePaths["Music"] = "assets/musicPlayer.png";
 makeFunctions["Music"] = ()=>{ new Music };
 
+setTimeout(()=>{
+  makeFunctions["Music"]();
+}, 800);
+
+
 
 // STYLES
 GlobalStyle.newClass("music-song-title", "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;", "text-align: center;", "margin-top:5px;");
@@ -322,8 +357,15 @@ GlobalStyle.newClass("music-searching-text", "position: absolute;", "top: 50%;",
 GlobalStyle.newClass("music-song-lyrics-button", "position: absolute;", "bottom:2%;", "right:2%;", "background-color:rgb(54, 207, 227);", "padding: 0.2em;", "border:2px solid black;", "cursor: pointer;", "font-size:0.7em;")
 GlobalStyle.newClass("music-song-lyrics-text", "width: 100%;", "padding-top: 2%;", "height: 50%;", "overflow: auto;", "color:black;", "margin-left:0.2em;");
 GlobalStyle.newClass("music-standalone-top", "border-bottom: 2px solid black;", "font-size:2em;", "text-align:center;");
-GlobalStyle.newClass("music-standalone-a", "background-color: rgb(250,250,250);", "width:100%;");
-GlobalStyle.newClass("music-standalone-b", "background-color: rgb(230,230,230);", "width:100%;");
+GlobalStyle.newClass("music-standalone-scroll", "overflow-y:auto;", "overflow-x: hidden;", "height:calc(100% - 2.9em);");
+GlobalStyle.newClass("music-standalone-a", "background-color: rgb(250,250,250);");
+GlobalStyle.newClass("music-standalone-b", "background-color: rgb(230,230,230);");
+GlobalStyle.newClass("music-standalone-song", "width:100%;");
+GlobalStyle.newClass("music-standalone-song-info", "max-width: 45%;", "display: inline-block;", "vertical-align: top;", "margin-top:0.5em;");
+GlobalStyle.newClass("music-standalone-song-title", "display:inline-block;", "padding-left:4px;", "padding-top:4px;", "max-width: 100%;", /** Ellipsis ahead */ "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;");
+GlobalStyle.newClass("music-standalone-song-play", "padding:0.5em 1em;", "font-size:1em;", "background-color: rgb(0,250,40);", "border:2px solid black;", "float: right;", "margin:0.5em 0.5em;", "transition: background-color 0.1s;", "cursor: pointer;");
+GlobalStyle.newClass("music-standalone-song-play:active", "background-color:white;");
+GlobalStyle.newClass("music-standalone-song-artist", "font-size:0.7em;", "display:block;", "padding-left:4px;", "max-width: 100%;", /** Ellipsis ahead */ "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;");
 GlobalStyle.newClass("music-standalone-thumbnail", "max-height:4em;");
 // Below generated using this awesome website: http://danielstern.ca/range.css/?ref=css-tricks#/
 GlobalStyle.addRaw(`input[type=range].music-song-range {

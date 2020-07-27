@@ -2,7 +2,7 @@ class GlobalStyle {
     /**
      * Create a new css class.
      * @param {String} className - The name of the new css class
-     * @param  {...String} args - The css rule to be put in the class
+     * @param  {...String} args - The css rules to be put in the class
      */
     static newClass(className, ...args) {
         let styles = document.getElementById("global-style");
@@ -16,25 +16,27 @@ class GlobalStyle {
         styles.innerHTML += "}";
     }
     /**
-     * Add a new css rule by an identifier.
+     * Add new css rules by an identifier.
      * The difference between this and newClass 
      * is that newClass must be class.
      * This method allows for things based on element type
      * and id (although id should not be used as multiple instances of a window may cause issues)
-     * @param {String} identifierName - The name of the identifier. e.g. 'div' or #abc
-     * @param  {...String} args 
+     * @param {String} identifierName - The name of the identifier. e.g. 'div' or '#abc'
+     * @param  {...String} args - The css rules to be added
      */
-    static newRuleByIdentifier(identifierName, ...args) {
+    static newRulesByIdentifier(identifierName, ...args) {
         let styles = document.getElementById("global-style");
         styles.innerHTML += "\n"+identifierName+" {\n";
-        this.addArgumentsAsRules(args);
+        GlobalStyle._addArgumentsAsRules(args, styles);
         styles.innerHTML += "}";
     }
     /**
-     * Add arguments as rules
+     * Add arguments as rules. Only used internally, will cause issues if used outside of this class.
+     * It has to be static so other static functions can access it.
      * @param {Array} args - The arguments from the ...args parameter
+     * @param {HTMLElement} styles - The global-style element
      */
-    addArgumentsAsRules(args) {
+    static _addArgumentsAsRules(args, styles) {
         args.forEach((arg)=>{
             styles.innerHTML += "\t"+arg+"\n";
             if(arg.indexOf(";") == -1) {

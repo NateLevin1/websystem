@@ -171,7 +171,7 @@ body {
 /* DESKTOP */
 .icon {
     cursor: pointer;
-    width:7em;
+    max-width:7em;
     height:5em;
     display:block;
     margin:auto;

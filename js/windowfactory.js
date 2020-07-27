@@ -41,8 +41,9 @@ class Window {
           window.style.opacity = "1";
         }, 10);
         
-
-        this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, width, height, keepAspectRatio);
+        this.minWidth = width;
+        this.minHeight = height;
+        this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
 
         this.window = window;
         this.window.header = header;
@@ -150,17 +151,32 @@ class Window {
     }
 
     /**
-     * Make window able to be dragged and resized.
-     * @param {Window} elmnt 
-     * @param {Header} header 
-     * @param {Resizer} resizeElement 
-     * @param {Close button} close
-     * @param {Default width of window} defaultHeight 
-     * @param {Default height of window} defaultWidth 
-     * @param {Minimum width of window} minWidth 
-     * @param {Minimum Height of window} minHeight 
+     * Set min width
+     * @param {String} width - A string representing the width. E.g. 25px or 0.5em.
      */
-    configureElement(elmnt, header, resizeElement, close, defaultWidth, defaultHeight, minWidth=200, minHeight=200, keepAspectRatio=false) {
+    setMinWidth(width) {
+      this.minWidth = width;
+    }
+
+    /**
+     * Set min height
+     * @param {String} height - A string representing the height. E.g. 25px or 0.5em.
+     */
+    setMinHeight(height) {
+      this.minHeight = height;
+    }
+
+    /**
+     * Make window able to be dragged and resized.
+     * @param {HTMLElement} elmnt - The window
+     * @param {HTMLElement} header - The header
+     * @param {HTMLElement} resizeElement - The element for resizing
+     * @param {HTMLElement} close- The close button
+     * @param {String} defaultHeight - The default height of the window
+     * @param {String} defaultWidth - The default width of the window
+     * @param {Boolean} keepAspectRatio - Whether or not to keep the original aspect ratio of the window when resizing 
+     */
+    configureElement(elmnt, header, resizeElement, close, defaultWidth, defaultHeight, keepAspectRatio=false) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.style.width = defaultWidth+"em";
       elmnt.style.height = defaultHeight+"em";
@@ -221,16 +237,16 @@ class Window {
           e = e || window.event;
           e.preventDefault();
           document.onmouseup = closeDragElement
-          document.onmousemove = resizeMove;
+          document.onmousemove = resizeFunction;
       }
       var oldWidth = defaultWidth * em;
       var currentWidth = defaultWidth * em;
       var currentHeight = defaultHeight * em;
-      function resizeMove(e) {
+      var resizeFunction = function (e) {
           e = e || window.event;
           e.preventDefault();
           let msOffset = 8; // mouse offset so it is centered
-          if((e.clientX - elmnt.offsetLeft)+msOffset > minWidth) {
+          if((e.clientX - elmnt.offsetLeft)+msOffset > this.minWidth) {
             if(keepAspectRatio) {
               currentWidth = (e.clientX - elmnt.offsetLeft)+msOffset;
               elmnt.style.width = currentWidth + "px";
@@ -241,17 +257,17 @@ class Window {
               elmnt.style.width = (e.clientX - elmnt.offsetLeft)+msOffset + "px";
             }
           } else {
-            elmnt.style.width = minWidth;
+            elmnt.style.width = this.minWidth;
           }
-          if((e.clientY - elmnt.offsetTop)+msOffset > minHeight) {
+          if((e.clientY - elmnt.offsetTop)+msOffset > this.minHeight) {
             if(!keepAspectRatio) {
               elmnt.style.height = (e.clientY - elmnt.offsetTop)+msOffset + "px";
             }
           } else {
-            elmnt.style.height = minHeight;
+            elmnt.style.height = this.minHeight;
           }
           elmnt.dispatchEvent(resizeEvent);
-      }
+      }.bind(this);
     }
     /**
      * Returns the width of the window in pixels.

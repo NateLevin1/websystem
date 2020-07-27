@@ -1,10 +1,9 @@
 // Should be run in worker
-importScripts("thirdparty/localForage/localforage.min.js");
+importScripts("thirdparty/localForage/localforage.js");
 importScripts("instances.js");
 
-localforage.clear();
-
 onmessage = function (event) {
+    localforage.clear().then(()=>{ // wait until cleared
     const NAME = event.data;
     filesystem.setItem("account", {accounts:[NAME], admin:NAME}).then(()=>{
         filesystem.getItem("account").then((result)=>{
@@ -208,4 +207,5 @@ onmessage = function (event) {
                 });
               });
         });
+    });
 }

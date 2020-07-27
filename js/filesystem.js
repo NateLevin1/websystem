@@ -117,9 +117,161 @@ class FileSystem {
         filesystem.setItem("folders", folders);
     }
 
+    static requestFileByGUI(kind) {
+        return new Promise((resolve, reject)=>{
+            let win = new Window(300, 300, "File Selection", 25,20, 5, 5);
+            let window = win.getWindow();
+            window.classList.add("unselectable");
+
+            let container = document.createElement("div");
+            container.style.height = "calc(100% - 1em)";
+            container.style.display = "flex";
+            container.style.flexDirection = "column";
+
+            let filesContainer = document.createElement("div");
+            filesContainer.style.overflowY = "auto";
+            filesContainer.style.overflowX = "hidden";
+            filesContainer.style.flex = "3";
+            filesContainer.style.border = "2px solid black";
+            filesContainer.style.minHeight = "calc(100% - 2.2em)";
+            filesContainer.style.color = "black";
+            container.appendChild(filesContainer);
+
+            let footer = document.createElement("div");
+            footer.style.flex = "1";
+
+            // "Open"
+            let opener = document.createElement("button");
+            opener.classList.add("default-button");
+            opener.innerText = "Open";
+            opener.style.display = "inline-block";
+            opener.style.float = "right";
+            opener.style.minWidth = "20%";
+            opener.onclick = ()=>{
+                let selected = filesContainer.querySelector(".select-gui-selected");
+                if(selected) {
+                    let foldersRef = folders[selected.getAttribute("path")];
+                    if(foldersRef.kind != "Folder") {
+                        resolve(selected.getAttribute("path"));
+                        win.forceClose(false);
+                    } else {
+                        // open the folder
+                        openFolder(selected.getAttribute("path"));
+                    }
+                }
+            }
+            footer.appendChild(opener);
+
+            // "Cancel"
+            let canceler = document.createElement("button");
+            canceler.innerText = "Cancel";
+            canceler.style.display = "inline-block";
+            canceler.style.float = "right";
+            canceler.style.minWidth = "20%";
+            canceler.onclick = ()=>{
+                reject("No file selected.");
+                win.forceClose(false);
+            }
+            footer.appendChild(canceler);
+
+            // Path
+            let pathText = document.createElement("div");
+            pathText.style.display = "inline-block";
+            pathText.style.maxWidth = "50%";
+            pathText.style.overflow = "hidden";
+            pathText.style.whiteSpace = "no-wrap";
+            pathText.style.textOverflow = "ellipsis";
+            pathText.style.float = "left";
+            pathText.style.color = "black";
+            pathText.style.padding = "0.2em 0.2em";
+            footer.appendChild(pathText);
+
+            container.appendChild(footer);
+
+            window.appendChild(container);
+
+
+            // LOCATION
+            let location = "/Users/"+NAME+"/";
+            let currentFolder = NAME+"/";
+            openFolder(location);
+
+            // FUNCTIONS ? Do not include here?
+            function openFolder(path) {
+                // set the current folder and path
+                currentFolder = folders[path].name;
+                location = path;
+
+                // set path text
+                // pathText.innerHTML = "";
+                let locationText = document.createElement("span");
+                locationText.style.cursor = "pointer";
+                locationText.innerText = currentFolder+"/";
+                locationText.setAttribute("path", location);
+                locationText.onclick = ()=>{
+                    while(pathText.lastChild != locationText) {
+                        pathText.removeChild(pathText.lastChild);
+                    }
+                    pathText.removeChild(pathText.lastChild); // remove the current one so the new one looks right
+                    openFolder(locationText.getAttribute("path"));
+                }
+                pathText.appendChild(locationText);
+
+                // update file container to show files
+                filesContainer.innerHTML = "";
+                let subs = folders[path].subfolders;
+                subs.forEach((folder, index)=>{
+                    if(!kind || folders[folder].kind == "Folder" || folders[folder].kind == kind) {
+                        let container = document.createElement("div");
+                        container.setAttribute("path", folder);
+                        container.classList.add("select-gui-subfolder-container");
+                        if(index % 2 == 0) {
+                            container.classList.add("select-gui-a");
+                        } else {
+                            container.classList.add("select-gui-b");
+                        }
+                        container.innerText = folders[folder].name;
+                        container.innerHTML += "<div style='float: right'>"+folders[folder].kind+"</div>";
+
+                        container.onclick = ()=>{
+                            // Remove old selection
+                            filesContainer.querySelector(".select-gui-selected").classList.remove("select-gui-selected");
+                            // Select this element
+                            container.classList.add("select-gui-selected");
+                        
+                        }
+                        container.ondblclick = ()=>{
+                            let path = container.getAttribute("path");
+                            if(folders[path].kind == "Folder") { // cannot open a non-folder file
+                                // open folder
+                                openFolder(container.getAttribute("path"));
+                            }
+                        }
+
+                        filesContainer.appendChild(container);
+                    }
+                });
+                if(filesContainer.firstChild) {
+                    // select the first folder
+                    filesContainer.firstChild.classList.add("select-gui-selected");
+                } else {
+                    filesContainer.innerText = "No items in folder";
+                }
+                
+            }
+        });
+    }
+
     // ! DEBUG DO NOT INCLUDE BELOW IN PRODUCTION
     static clearAll() {
         localStorage.clear();
         filesystem.clear();
     }
 }
+setTimeout(()=>{ // allows browser to fully run the globalStyle.js script. Without this very strange bugs occur
+    GlobalStyle.newClass("select-gui-a", "background-color: rgb(230,230,230);");
+    GlobalStyle.newClass("select-gui-b", "background-color: rgb(250,250,250);");
+
+    GlobalStyle.newClass("select-gui-subfolder-container", "max-height: 1.3em;", "height: 1.3em;", "font-size: 0.9em;", "color: black;", "cursor: pointer;", "padding: 0.2em 0.1em;", "margin: 0.2em 0;");
+    GlobalStyle.newClass("select-gui-selected", "background-color: rgba(0, 89, 221, 1);", "color: white;");
+}, 10);

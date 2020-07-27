@@ -130,11 +130,15 @@ button {
     display:block;
     font-size:0.7em;
     cursor: pointer;
-    color: unset;
+    color: black;
     padding: 0.4em 1em;
     outline: none;
 }
-  
+button.default-button {
+    color: white;
+    background-image: linear-gradient(0, rgb(81, 143, 241), rgb(120, 172, 255));
+    border-color: rgb(7,84,207);
+}
 button:active {
     color: white;
     background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254));

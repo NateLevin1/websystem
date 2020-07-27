@@ -120,6 +120,26 @@ body {
     background-color:rgb(43, 255, 166);
     
 }
+
+/* GENERIC WEBSYSTEM BUTTON BELOW */
+button {
+    border: 1px solid rgb(180,180,180);
+    border-radius:4px;
+    background-color: unset;
+    background-image: linear-gradient(0, rgb(253,253,253), rgb(255,255,255));
+    display:block;
+    font-size:0.7em;
+    cursor: pointer;
+    color: unset;
+    padding: 0.4em 1em;
+    outline: none;
+}
+  
+button:active {
+    color: white;
+    background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254));
+    border-color: rgb(7,84,207);
+}
 /* END BUTTONS */
 
 
@@ -180,6 +200,7 @@ body {
     cursor: pointer;
 }
 .icon-container {
+    min-width:7em;
     max-width:7em;
     text-align:center;
     display: inline-block;

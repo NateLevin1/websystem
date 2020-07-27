@@ -2,7 +2,7 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 390/em,142/em, 20, 2.2, false);
+            win = new Window(390, 142, "Music", 24.375, 8.875, 20, 2.2, false);
         } else { // open standalone
             win = new Window(350, 140, "Music", 25,25, 20, 2.2);
         }
@@ -30,6 +30,8 @@ class Music {
             this.window.appendChild(noResize);
 
             this.openSong(name, path);
+        } else {
+            this.openStandalone();
         }
     }
     openSong(name, path) {
@@ -44,7 +46,7 @@ class Music {
         }
 
         let thumb = document.createElement("img");
-        thumb.src = this.getThumbnail(tags);
+        thumb.src = Music.getThumbnail(tags);
         thumb.classList.add("music-song-thumbnail");
         this.contentContainer.appendChild(thumb);
 
@@ -63,7 +65,6 @@ class Music {
         info.appendChild(artistText);
 
         let audio = document.createElement("audio");
-        // audio.controls = true;
         audio.src = URL.createObjectURL(files[path]);
         info.appendChild(audio);
         audio.play();
@@ -84,11 +85,15 @@ class Music {
                 playPause.src = "assets/licensed/pause.png";
             }
         }
+        this.playPause = playPause;
         info.appendChild(playPause);
+
+
 
         audio.addEventListener('ended', ()=>{
             this.playing = false;
-        })
+        });
+
         
         audio.onloadedmetadata = ()=>{
             let duration = audio.duration;
@@ -116,7 +121,9 @@ class Music {
             seeker.onmouseup = ()=>{
                 audio.currentTime = seeker.value;
                 if(!this.playing) {
+                    this.playing = true;
                     audio.play();
+                    this.playPause.src = "assets/licensed/pause.png";
                 }
                 this.songAnimation = setInterval(()=>{
                     let c = audio.currentTime;
@@ -131,8 +138,6 @@ class Music {
 
             info.appendChild(seeker);
 
-            // this.seeker = seeker;
-            // this.audio = audio;
             // Animation
 
             this.songAnimation = setInterval(()=>{
@@ -150,11 +155,142 @@ class Music {
             this.window.addEventListener("window-destroy", ()=>{
                 clearInterval(this.songAnimation);
             });
+
+
+            // LYRICS
+            if(tags.tags.title) { // needed for lyrics
+              let lyricsButton = document.createElement("div");
+              this.contentContainer.style.maxHeight = "8em";
+              lyricsButton.innerText = "Get Lyrics";
+              lyricsButton.classList.add("music-song-lyrics-button");
+  
+              let lyricsShown = false;
+              let lyrics = "";
+  
+              let lyricsText = document.createElement("div");
+              lyricsText.innerText = lyrics;
+              lyricsText.classList.add("music-song-lyrics-text");
+              lyricsText.style.display = "none";
+              this.window.appendChild(lyricsText);
+  
+              lyricsButton.onclick = ()=>{
+                lyricsShown = !lyricsShown;
+                if(!lyricsShown) {
+                  lyricsText.style.display = "none";
+                  lyricsButton.innerText = "Show Lyrics"; // lyrics are hidden
+                  this.window.style.height = "8.875em";
+                  seeker.style.top = "53%";
+                  playPause.style.top = "50%";
+                }
+                if(lyricsShown) {
+                  lyricsText.style.display = "block";
+                  if(!lyrics) {
+                    lyrics = "";
+                    lyricsText.innerText = "Fetching lyrics... (This may take a few seconds)";
+                    let control = new AbortController();
+                    let signal = control.signal;
+                    let requestTimeout = setTimeout(()=>{
+                      control.abort();
+                      lyrics = "Could not find any lyrics for this song.";
+                      lyricsText.innerText = lyrics;
+                    }, 7000); // abort after seven seconds. Safety.
+                    // This is the Canarado api.
+                    fetch(`https://canarado-lyrics.p.rapidapi.com/lyrics/${encodeURIComponent(name.toLowerCase().substring(0,name.indexOf("("))+" "+artist.toLowerCase())}`, {
+                      signal,
+                      "method": "GET",
+                      "headers": {
+                        "x-rapidapi-host": "canarado-lyrics.p.rapidapi.com",
+                        "x-rapidapi-key": keys.lyrics
+                      }
+                    })
+                    .then(response => {
+                      return response.json();
+                    })
+                    .then((data)=>{
+                      clearTimeout(requestTimeout);
+                      if(data.status.code == "200") {
+                        data.content.forEach((obj)=>{
+                          if(!lyrics) {
+                            if(artist.toLowerCase().includes(obj.artist.toLowerCase())||name.toLowerCase().includes(obj.title.toLowerCase())) {
+                              if(obj.lyrics == "[Instrumental]") {
+                                obj.lyrics = "This song is instrumental.";
+                              }
+                              lyrics = obj.lyrics;
+                              lyricsText.innerText = lyrics;
+                            }
+                          }
+                        });
+                        if(!lyrics) {
+                          lyrics = "Could not find any matching lyrics for this song.";
+                          lyricsText.innerText = lyrics;
+                        }
+                      } else {
+                        lyrics = "There was an error fetching the lyrics.";
+                        lyricsText.innerText = lyrics;
+                      }
+                    })
+                    .catch(err => {
+                      lyrics = "There was an error fetching the lyrics.";
+                      lyricsText.innerText = lyrics;
+                      console.log(err);
+                    });
+
+
+                  }
+                  lyricsButton.innerText = "Hide Lyrics"; // lyrics are shown
+                  this.window.style.height = "25em";
+                  seeker.style.top = "19%";
+                  playPause.style.top = "17.8%";
+                }
+                // make window bigger
+                // this.window.style.height = "25em";
+              }
+              this.window.appendChild(lyricsButton);
+            }
         }
     }
 
-    getThumbnail(tags) {
-        if(tags) {
+    openStandalone() {
+      this.win.setBackgroundColor("rgba(250, 250, 250, 0.9)");
+      // search for all music
+      let songPaths = [];
+      for(const path in files) {
+        try {
+          if(files[path].type.startsWith("audio")) { // is music
+            songPaths.push(path);
+          }
+        } catch(e) {
+          // Optional chaining doesn't have widespread browser support yet so this is the only way to stop the error. As an error can be expected, this does nothing.
+        }
+      }
+      console.log(songPaths);
+
+      let top = document.createElement("div");
+      top.classList.add("music-standalone-top");
+      top.innerHTML = "All Music";
+      this.contentContainer.appendChild(top);
+
+      let scroll = document.createElement("div");
+      this.contentContainer.appendChild(scroll);
+
+      songPaths.forEach((path, index)=>{
+        let container = document.createElement("div");
+        if(index % 2 == 1) {
+          container.classList.add("music-standalone-a");
+        } else {
+          container.classList.add("music-standalone-b");
+        }
+        let thumbnail = document.createElement("img");
+        thumbnail.src = Music.getThumbnail(folders[path].content.mediaTags);
+        thumbnail.classList.add("music-standalone-thumbnail");
+        
+        container.appendChild(thumbnail);
+        scroll.appendChild(container);
+      });
+    }
+
+    static getThumbnail(tags) {
+        if(tags.tags.picture) {
             // jsmediatags thumbnail array to src: https://stackoverflow.com/a/45859810/
             let picture = tags.tags.picture; // create reference to track art
             let base64String = "";
@@ -164,9 +300,8 @@ class Music {
             return "data:" + picture.format + ";base64," + window.btoa(base64String);
         } else {
             // unknown, replace with "no track art" later
-            return "assets/unknown.png";
+            return "assets/music.png";
         }
-        
     }
 }
 
@@ -183,6 +318,13 @@ GlobalStyle.newClass("music-play-pause", "margin-left:0.5em;", "width: 1.7em;", 
 GlobalStyle.newClass("music-play-pause:hover", "width: 1.8em;");
 GlobalStyle.newClass("music-song-range", "position: absolute;", "top: 53%;", "right:3%;", "max-width:53%;");
 GlobalStyle.newClass("music-song-timestamp", "position: relative;", "top: 38%;", "left:2%;", "max-width:0%;"/* Max width zero makes it so that it doesn't cover up other stuff*/);
+GlobalStyle.newClass("music-searching-text", "position: absolute;", "top: 50%;", "left: 50%;", "transform: translate(-50%,-50%);", "font-size: 2em;", "text-align: center;");
+GlobalStyle.newClass("music-song-lyrics-button", "position: absolute;", "bottom:2%;", "right:2%;", "background-color:rgb(54, 207, 227);", "padding: 0.2em;", "border:2px solid black;", "cursor: pointer;", "font-size:0.7em;")
+GlobalStyle.newClass("music-song-lyrics-text", "width: 100%;", "padding-top: 2%;", "height: 50%;", "overflow: auto;", "color:black;", "margin-left:0.2em;");
+GlobalStyle.newClass("music-standalone-top", "border-bottom: 2px solid black;", "font-size:2em;", "text-align:center;");
+GlobalStyle.newClass("music-standalone-a", "background-color: rgb(250,250,250);", "width:100%;");
+GlobalStyle.newClass("music-standalone-b", "background-color: rgb(230,230,230);", "width:100%;");
+GlobalStyle.newClass("music-standalone-thumbnail", "max-height:4em;");
 // Below generated using this awesome website: http://danielstern.ca/range.css/?ref=css-tricks#/
 GlobalStyle.addRaw(`input[type=range].music-song-range {
     width: 100%;

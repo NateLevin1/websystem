@@ -557,18 +557,29 @@ class FileViewer {
      */
     _addFileToStorage(filename, filedata, filekind) {
         if(filekind == "Music") {
-            jsmediatags.read(filedata, {
-                onSuccess: (tag)=>{
-                    let options = {};
-                    options.mediaTags = tag;
+            // read tags in worker
+            if(window.Worker) {
+                let reader = new Worker("js/getMusicTagsWorker.js");
+                reader.postMessage(filedata);
+                reader.onmessage = (message)=>{
+                    let options = message.data;
                     FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
                     this.openFolder(this.currentFolder);
-                },
-                onError: (e) =>{
-                    console.error("There was an error trying to find the tags.");
-                    throw e;
                 }
-            });
+            } else {
+                jsmediatags.read(filedata, {
+                    onSuccess: (tag)=>{
+                        let options = {};
+                        options.mediaTags = tag;
+                        FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
+                        this.openFolder(this.currentFolder);
+                    },
+                    onError: (e) =>{
+                        console.error("There was an error trying to find the tags.");
+                        throw e;
+                    }
+                });
+            }
         } else {
             FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
             this.openFolder(this.currentFolder);

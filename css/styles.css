@@ -369,8 +369,8 @@ button:active {
 }
 .file-sidebar {
     flex-grow: 1;
-    width: 100%;
     max-width: 10.8em;
+    min-width: 8em;
     background-color: rgba(206, 206, 206, 0.98);
     color: rgb(2, 6, 14);
     overflow:auto;

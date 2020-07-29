@@ -17,7 +17,9 @@ GlobalStyle.newClass("appstore-installed", "background-color: rgb(18, 181, 18);"
 GlobalStyle.newClass("appstore-installed:hover", "background-color: rgb(20, 196, 20);");
 GlobalStyle.newClass("appstore-installed:active", "background-color: rgb(13, 120, 13);");
 
-
+/**
+ * WebSystem's App store. Includes the interface and installApp method, which is used internally to save space.
+ */
 class Appstore {
     constructor() {
         let win = new Window(400, 300, "App Store",25,25, 5,2.2);
@@ -142,11 +144,11 @@ class Appstore {
         
     }
     /**
-     * addApplicationToScreen()
-     * Adds an app to the screen with specified title, description, and thumbnail.
-     * @param {The title of the app} title 
-     * @param {The description of the app} desc 
-     * @param {The src value of the thumbnail of the app} imagesrc 
+     * @private
+     * Adds an app to the app store's screen with specified title, description, and thumbnail.
+     * @param {String} title - The title of the app
+     * @param {String} desc - The description of the app
+     * @param {String} imagesrc - The src value of the thumbnail of the app
      */
     addApplicationToScreen(title, desc="", imagesrc="x", script="") {
         let appContainer = document.createElement("div");
@@ -217,28 +219,25 @@ class Appstore {
         });
     }
 
-    static installApp(title, script, button="") {
+    /**
+     * Install an app with the given script.
+     * @param {String} title - The title of the app to be installed.
+     * @param {String} script - The js script to be added to the document
+     * @param {HTMLElement} [button=undefined] - The button to be changed from 'install' to 'open'.
+     */
+    static installApp(title, script, button=undefined) {
         // first, add script to document
         var scr = document.createElement("script");
         scr.innerHTML = script;
         document.body.appendChild(scr);
-        // next, add to localStorage filesystem
-        let currentFolders = localStorage.getItem('folders');
-        if(!currentFolders.includes("file::"+title+".app")) { // duplication happens without this
-            localStorage.setItem('folders', currentFolders.replace("Applications]{", "Applications]{file::"+title+".app,"));
-        }
-        
-        // next, add to localStorage download apps
+        // next, add to filesystem
+        FileSystem.addFileAtLocation(title+".app", "", "App", "/Users/"+NAME+"/Applications/", { alias: title });
+
+        // next, add to localStorage download apps TODO: Change below to use localForage
         let oldDownloads = localStorage.getItem('downloads');
         if(!oldDownloads.includes("app::"+title)) { // duplication happens without this
             localStorage.setItem('downloads', oldDownloads+",app::"+title);
         }
-        
-        // next, add to current filesystem
-        if(!folders["Applications"].includes("file::"+title+".app")) { // duplication happens without this
-            folders["Applications"].unshift("file::"+title+".app");
-        }
-        
 
         // ? Dispatch event on document to update open fileViewer windows
 

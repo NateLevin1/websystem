@@ -10,7 +10,9 @@ document.onclick = (event)=>{
     //     document.body.removeChild(element);
     // }); // TODO
 }
-
+/**
+ * Remove the 'icon-selected' class from all icons. Note that this will not deselect any icons in a file chooser GUI.
+ */
 function clearSelected() {
     let selected = document.querySelectorAll(".icon-selected");
     selected.forEach((node)=>{

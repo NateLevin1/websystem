@@ -4,7 +4,7 @@
   "description": "An operating system built in javascript.",
   "main": "index.html",
   "scripts": {
-    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose js -r"
+    "generate-docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose js"
   },
   "repository": {
     "type": "git",

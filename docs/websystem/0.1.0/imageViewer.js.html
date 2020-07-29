@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      osfunctions.js - Documentation
+      imageViewer.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -90,7 +90,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        osfunctions.js
+        imageViewer.js
       </h1>
     
 
@@ -99,116 +99,111 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>// * The purpose of this file is to provide useful
-// * functions good for general use in websystem.
-// * More functions will be added here as needed.
-
-// The NAME variable is used to get the current user's name.
-var NAME = localStorage.getItem("name");
-
+    <pre class="prettyprint source linenums"><code>GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1em);", "width: 100%;");
 /**
- * The global clipboard object.
- * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.
- * This is used internally for copying and pasting of files. Everything else that can be represented as text should
- * go to the actual user's clipboard so WebSystem plays nice with other sites.
- * @property {any} contents - The contents of the clipboard. Alternative to using get() and set().
+ * The image viewer interface for websystem. Opens in standalone mode if no name and path is provided, otherwise will open the actual image.
  */
-class Clipboard {
+class ImageViewer {
     /**
-     * Get the contents of the clipboard.
-     * Alternative: Clipboard.contents
-     * @returns {any} - Returns whatever is in the clipboard.
+     * If name and path are not specified, opens a new window in standalone mode. Else, opens the image.
+     * @param {String} name - The name of the image. Displayed as the header, does not necessarily need to be the actual name of the file
+     * @param {String} path - The path of the file. Used to get the data to display.
      */
-    static get() {
-        return Clipboard.contents;
+    constructor(name, path) {
+        if(!name &amp;&amp; !path) { // open in standalone mode
+            this.openInStandalone();
+            return undefined; // prevent running of rest of code
+        }
+        var img = document.createElement("img");
+        if(files[path]) {
+            img.src = URL.createObjectURL(files[path]);
+        } else {
+            throw "No value for files[path]."
+        }
+        
+        this.img = img;
+        img.onload = function() {
+            // only open when img has been loaded
+            let sizeGetter = img.cloneNode();
+            sizeGetter.style.display = "none";
+            document.body.appendChild(sizeGetter);
+            sizeGetter.onload = function () {
+                var win;
+                let size = [sizeGetter.naturalWidth+4, sizeGetter.naturalHeight+em+4, sizeGetter.naturalWidth/em+0.2, (sizeGetter.naturalHeight+em)/em+0.2];
+                if(sizeGetter.naturalWidth > 30*em) {
+                    size[0] = 15*em;
+                    size[2] = 30;
+                    img.style.maxWidth = "90%";
+                }
+                if(sizeGetter.naturalHeight > 30*em) {
+                    size[1] = 15*em;
+                    size[3] = 29;
+                }
+                document.body.removeChild(sizeGetter);
+
+                win = new Window(size[0], size[1], name, size[2], size[3], 3, 3, false);
+                win.setBackgroundColor("rgb(200, 200, 200)");
+
+
+                this.window = win.getWindow();
+                this.header = win.getHeader();
+                this.win = win;
+                let scrollContainer = document.createElement("div");
+                scrollContainer.classList.add("image-view-scroll");
+                scrollContainer.appendChild(img);
+                this.window.appendChild(scrollContainer);
+
+                this.addListeners();
+            }.bind(this);
+        }.bind(this);
     }
-    /**
-     * Sets the contents of the clipboard and adds to the clipboard history.
-     * Alternative: Clipboard.contents = item
-     * @param {any} item - An item to be set as the clipboard's value
-     */
-    static set(item) {
-        Clipboard.contents = item;
+
+    addListeners() {
+        this.window.classList.add("unselectable");
+        this.window.addEventListener('window-resize', (event)=>{
+            let windowWidth = this.win.getWidth();
+            if(windowWidth &lt; 30*em &amp;&amp; this.img.style.maxWidth != "100%") {
+                this.img.style.maxWidth = "100%";
+            } else if(windowWidth > 30*em &amp;&amp; this.img.style.maxWidth != "90%") {
+                this.img.style.maxWidth = "90%";
+            }
+        });
+    }
+
+    openInStandalone() {
+        this.win = new Window(280, 280, "Image Viewer", 25,25, 10, 5);
+        this.win.setBackgroundColor("rgb(230, 230, 230)");
+        this.window = this.win.getWindow();
+        this.header = this.win.getHeader();
+
+        this.window.classList.add("unselectable");
+
+        let contentContainer = document.createElement("div");
+        contentContainer.classList.add("image-viewer-standalone-container");
+
+        let fileOpen = document.createElement("button");
+        fileOpen.innerText = "Choose a File";
+        fileOpen.classList.add("unselectable");
+        fileOpen.style.fontSize = "1em";
+        fileOpen.style.cursor = "pointer";
+        fileOpen.onclick = ()=>{
+            FileSystem.requestFileByGUI("Image").then((selection)=>{
+                new ImageViewer(folders[selection].name, selection);
+                this.win.forceClose();
+            }).catch((reason)=>{
+                console.log(reason);
+            });
+        }
+        contentContainer.appendChild(fileOpen);
+
+        this.window.appendChild(contentContainer);
     }
 }
 
-Clipboard.contents = "";
+GlobalStyle.newClass("image-viewer-standalone-container", "height: calc(100% - 1em);", "display: flex;", "justify-content:center;", "align-items:center;");
 
-/**
- * Returns true if the string is a number. Otherwise it returns false.
- * Example usage:
- * "5".isNumber() - true
- * "abc".isNumber() - false
- */
-String.prototype.isNumber = function () {
-    return !isNaN(parseFloat(this));
-}
-
-// appImagePaths: Add the name of the app to its prototype, equaling the path to the icon
-var appImagePaths = {};
-
-// 1em. Calculates the value in pixels of 1 em. Useful for many things. Notably, offsets where pixels are required but ems are given, and vice versa
-// to convert pixels to em, do: pixels/em
-var emDiv = document.createElement("div");
-emDiv.style.width = "1em";
-document.body.appendChild(emDiv);
-var em = emDiv.clientWidth; // this is the useful property
-document.body.removeChild(emDiv);
-
-/**
- * Check if an element is being hovered. Used internally for right click menu and topbar,
- * though is available for its various uses.
- * From &lt;a href="https://stackoverflow.com/a/14800287/">this&lt;/a> StackOverflow answer.
- * @param {HTMLElement} e - The element to check for being hovered on.
- */
-const isHover = e => e.parentElement.querySelector(':hover') === e;
-
-// makeFunctions
-// The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
-makeFunctions = {};
-
-// ! DEBUG ONLY
-// ! THIS SHOULD BE REMOVED FOR RELEASE
-function jsonEscapeNewlines(source) {
-    source = source.toString();
-    source = source.replace(/(?:\r\n|\r|\n)/g, '\\n');
-    source = source.replace(/"/g, "\\\"");
-    console.log(source);
-}
-
-
-// Via StackOverflow: https://stackoverflow.com/a/54095466/ Fabian von Ellerts
-/**
- * Returns the element height * including margins *
- * If margins aren't required, use &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight">offsetHeight&lt;/a>
- * @param {HTMLElement} element - The element to get the height
- * @returns {number} - in pixels
- */
-function outerHeight(element) {
-    const height = element.offsetHeight,
-        style = window.getComputedStyle(element)
-
-    return ['top', 'bottom']
-        .map(side => parseInt(style[`margin-${side}`]))
-        .reduce((total, side) => total + side, height)
-}
-
-// See Above
-function outerWidth(element) {
-    const width = element.offsetWidth,
-        style = window.getComputedStyle(element)
-
-    return ['left', 'right']
-        .map(side => parseInt(style[`margin-${side}`]))
-        .reduce((total, side) => total + side, width)
-}
-
-// Initialized in boot.
-var folders = {};
-var files = {};
-
-// Third party media tag getter
-var jsmediatags = window.jsmediatags;</code></pre>
+appImagePaths["Image Viewer"] = "assets/image.png";
+makeFunctions["Image Viewer"] = ()=>{ new ImageViewer };</code></pre>
   </article>
 </section>
 

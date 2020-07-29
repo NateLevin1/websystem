@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Global - Documentation
+      FileViewer - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -88,7 +88,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        Global
+        FileViewer
       </h1>
     
 
@@ -99,10 +99,14 @@
     
       <h2>
         
-        
+        FileViewer
         
       </h2>
 
+      
+        <div class="class-description">
+          The class which holds the interface for the file viewer.
+        </div>
       
     
   </header>
@@ -112,7 +116,34 @@
       
         
 
-        
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#FileViewer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="FileViewer">
+      <span class="type-signature"></span>new FileViewer<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+
+
 
 <dl class="details">
 
@@ -141,6 +172,15 @@
   
 
   
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line11">line 11</a>
+        </li>
+      </ul>
+    </dd>
+  
 
   
 
@@ -150,7 +190,18 @@
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
       
     </div>
 
@@ -176,13 +227,13 @@
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#boot">
+    <a class="link-icon" href="#createFile">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="boot">
-      <span class="type-signature"></span>boot<span class="signature">()</span><span class="type-signature"></span>
+    <h4 class="name" id="createFile">
+      <span class="type-signature"></span>createFile<span class="signature">(name, path, filetype, appendee<span class="signature-attributes">opt</span>, color<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -191,190 +242,7 @@
 
 
   <div class="description">
-    Begin boot sequence.
-Runs on page onload.
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="boot.js.html">boot.js</a>, <a href="boot.js.html#line5">line 5</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#clearSelected">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="clearSelected">
-      <span class="type-signature"></span>clearSelected<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    Remove the 'icon-selected' class from all icons. Note that this will not deselect any icons in a file chooser GUI.
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="desktop.js.html">desktop.js</a>, <a href="desktop.js.html#line16">line 16</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#createDesktopFolder">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="createDesktopFolder">
-      <span class="type-signature"></span>createDesktopFolder<span class="signature">(x, y, name, path, appendee<span class="signature-attributes">opt</span>, color<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    Add a folder to the desktop's screen.
+    Add a file to the screen.
   </div>
 
 
@@ -411,88 +279,6 @@ Runs on page onload.
     
       <tr>
         
-          <td class="name"><code>x</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      <a href="String.html">String</a>
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-          <td class="attributes">
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-          </td>
-        
-
-        <td class="description last">
-          The position of the new folders left side in em.
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>y</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      <a href="String.html">String</a>
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-          <td class="attributes">
-            
-
-            
-
-            
-          </td>
-        
-
-        
-          <td class="default">
-            
-          </td>
-        
-
-        <td class="description last">
-          The position of the new folders top side in em.
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
           <td class="name"><code>name</code></td>
         
 
@@ -526,7 +312,7 @@ Runs on page onload.
         
 
         <td class="description last">
-          The name of the new folder
+          The name of the file
           
         </td>
       </tr>
@@ -567,7 +353,48 @@ Runs on page onload.
         
 
         <td class="description last">
-          The path of the new folder
+          The path of the file
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>filetype</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          The filetype of the file. e.g. 'Image' or 'Music'.
           
         </td>
       </tr>
@@ -606,13 +433,13 @@ Runs on page onload.
         
           <td class="default">
             
-              mainContent
+              this.background
             
           </td>
         
 
         <td class="description last">
-          The element to append the new folder to.
+          The element to append the new file to.
           
         </td>
       </tr>
@@ -651,13 +478,13 @@ Runs on page onload.
         
           <td class="default">
             
-              "white"
+              "black"
             
           </td>
         
 
         <td class="description last">
-          The color of the new folder's text. Can be any valid css rule for 'color', e.g. 'red' or 'rgb(10,10,10)'
+          The color of the text for the file. Any valid css color will work. e.g. 'rgb(10,10,10)'
           
         </td>
       </tr>
@@ -701,7 +528,7 @@ Runs on page onload.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line695">line 695</a>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line366">line 366</a>
         </li>
       </ul>
     </dd>
@@ -734,13 +561,13 @@ Runs on page onload.
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#isHover">
+    <a class="link-icon" href="#createFolder">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="isHover">
-      <span class="type-signature"></span>isHover<span class="signature">(e)</span><span class="type-signature"></span>
+    <h4 class="name" id="createFolder">
+      <span class="type-signature"></span>createFolder<span class="signature">(name, path, appendee, color, newWindow, before)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -749,9 +576,7 @@ Runs on page onload.
 
 
   <div class="description">
-    Check if an element is being hovered. Used internally for right click menu and topbar,
-though is available for its various uses.
-From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answer.
+    Add a folder to the screen in the current window
   </div>
 
 
@@ -775,6 +600,8 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
       
 
       
+        <th>Default</th>
+      
 
       <th class="last">Description</th>
     </tr>
@@ -784,7 +611,73 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
     
       <tr>
         
-          <td class="name"><code>e</code></td>
+          <td class="name"><code>name</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          The name of the folder to be made.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          The path to the parent of the folder to be created at.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>appendee</code></td>
         
 
         <td class="type">
@@ -803,9 +696,118 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
         
 
         
+          <td class="default">
+            
+          </td>
+        
 
         <td class="description last">
-          The element to check for being hovered on.
+          The element to append the folder to.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>color</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              black
+            
+          </td>
+        
+
+        <td class="description last">
+          A CSS Color for the text.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>newWindow</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              true
+            
+          </td>
+        
+
+        <td class="description last">
+          If true, creates a new window on open.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>before</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              false
+            
+          </td>
+        
+
+        <td class="description last">
+          
           
         </td>
       </tr>
@@ -849,7 +851,7 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="osfunctions.js.html">osfunctions.js</a>, <a href="osfunctions.js.html#line63">line 63</a>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line314">line 314</a>
         </li>
       </ul>
     </dd>
@@ -882,13 +884,13 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#outerHeight">
+    <a class="link-icon" href="#intelligentOpen">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="outerHeight">
-      <span class="type-signature"></span>outerHeight<span class="signature">(element)</span><span class="type-signature"> &rarr; {number}</span>
+    <h4 class="name" id="intelligentOpen">
+      <span class="type-signature"></span>intelligentOpen<span class="signature">(path)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -897,8 +899,7 @@ From <a href="https://stackoverflow.com/a/14800287/">this</a> StackOverflow answ
 
 
   <div class="description">
-    Returns the element height * including margins *
-If margins aren't required, use <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight">offsetHeight</a>
+    Open the file(s) with the specified path.
   </div>
 
 
@@ -931,14 +932,20 @@ If margins aren't required, use <a href="https://developer.mozilla.org/en-US/doc
     
       <tr>
         
-          <td class="name"><code>element</code></td>
+          <td class="name"><code>path</code></td>
         
 
         <td class="type">
           
             
     <span class="param-type">
-      HTMLElement
+      string
+    </span>
+
+    |
+
+    <span class="param-type">
+      Array.&lt;string>
     </span>
 
     
@@ -952,7 +959,7 @@ If margins aren't required, use <a href="https://developer.mozilla.org/en-US/doc
         
 
         <td class="description last">
-          The element to get the height
+          A string or array of strings representing which paths to open.
           
         </td>
       </tr>
@@ -996,7 +1003,390 @@ If margins aren't required, use <a href="https://developer.mozilla.org/en-US/doc
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="osfunctions.js.html">osfunctions.js</a>, <a href="osfunctions.js.html#line86">line 86</a>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line440">line 440</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#openFolder">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="openFolder">
+      <span class="type-signature"></span>openFolder<span class="signature">(path)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <strong>Change</strong> the current fileViewer's window to be the path provided.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line249">line 249</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#openFolderWindow">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="openFolderWindow">
+      <span class="type-signature"></span>openFolderWindow<span class="signature">(path)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Open a new file viewer <strong>window</strong> at the given path.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>path</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line16">line 16</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#uploadNewFile">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="uploadNewFile">
+      <span class="type-signature"></span>uploadNewFile<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Allows the user to upload one or more files and will add it to the current folder.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="fileViewer.js.html">fileViewer.js</a>, <a href="fileViewer.js.html#line614">line 614</a>
         </li>
       </ul>
     </dd>

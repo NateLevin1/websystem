@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      osfunctions.js - Documentation
+      Appstore - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -90,129 +88,596 @@
   <div id="main">
     
       <h1 class="page-title">
-        osfunctions.js
+        Appstore
       </h1>
     
 
     
-      
 
 <section>
+  <header>
+    
+      <h2>
+        
+        Appstore
+        
+      </h2>
+
+      
+        <div class="class-description">
+          WebSystem's App store. Includes the interface and installApp method, which is used internally to save space.
+        </div>
+      
+    
+  </header>
+
   <article>
-    <pre class="prettyprint source linenums"><code>// * The purpose of this file is to provide useful
-// * functions good for general use in websystem.
-// * More functions will be added here as needed.
-
-// The NAME variable is used to get the current user's name.
-var NAME = localStorage.getItem("name");
-
-/**
- * The global clipboard object.
- * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.
- * This is used internally for copying and pasting of files. Everything else that can be represented as text should
- * go to the actual user's clipboard so WebSystem plays nice with other sites.
- * @property {any} contents - The contents of the clipboard. Alternative to using get() and set().
- */
-class Clipboard {
-    /**
-     * Get the contents of the clipboard.
-     * Alternative: Clipboard.contents
-     * @returns {any} - Returns whatever is in the clipboard.
-     */
-    static get() {
-        return Clipboard.contents;
-    }
-    /**
-     * Sets the contents of the clipboard and adds to the clipboard history.
-     * Alternative: Clipboard.contents = item
-     * @param {any} item - An item to be set as the clipboard's value
-     */
-    static set(item) {
-        Clipboard.contents = item;
-    }
-}
-
-Clipboard.contents = "";
-
-/**
- * Returns true if the string is a number. Otherwise it returns false.
- * Example usage:
- * "5".isNumber() - true
- * "abc".isNumber() - false
- */
-String.prototype.isNumber = function () {
-    return !isNaN(parseFloat(this));
-}
-
-// appImagePaths: Add the name of the app to its prototype, equaling the path to the icon
-var appImagePaths = {};
-
-// 1em. Calculates the value in pixels of 1 em. Useful for many things. Notably, offsets where pixels are required but ems are given, and vice versa
-// to convert pixels to em, do: pixels/em
-var emDiv = document.createElement("div");
-emDiv.style.width = "1em";
-document.body.appendChild(emDiv);
-var em = emDiv.clientWidth; // this is the useful property
-document.body.removeChild(emDiv);
-
-/**
- * Check if an element is being hovered. Used internally for right click menu and topbar,
- * though is available for its various uses.
- * From &lt;a href="https://stackoverflow.com/a/14800287/">this&lt;/a> StackOverflow answer.
- * @param {HTMLElement} e - The element to check for being hovered on.
- */
-const isHover = e => e.parentElement.querySelector(':hover') === e;
-
-// makeFunctions
-// The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
-makeFunctions = {};
-
-// ! DEBUG ONLY
-// ! THIS SHOULD BE REMOVED FOR RELEASE
-function jsonEscapeNewlines(source) {
-    source = source.toString();
-    source = source.replace(/(?:\r\n|\r|\n)/g, '\\n');
-    source = source.replace(/"/g, "\\\"");
-    console.log(source);
-}
+    <div class="container-overview">
+      
+        
 
 
-// Via StackOverflow: https://stackoverflow.com/a/54095466/ Fabian von Ellerts
-/**
- * Returns the element height * including margins *
- * If margins aren't required, use &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight">offsetHeight&lt;/a>
- * @param {HTMLElement} element - The element to get the height
- * @returns {number} - in pixels
- */
-function outerHeight(element) {
-    const height = element.offsetHeight,
-        style = window.getComputedStyle(element)
+  
+    <h2>Constructor</h2>
+  
 
-    return ['top', 'bottom']
-        .map(side => parseInt(style[`margin-${side}`]))
-        .reduce((total, side) => total + side, height)
-}
+  <span class='name-container'>
+    <a class="link-icon" href="#Appstore">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="Appstore">
+      <span class="type-signature"></span>new Appstore<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
 
-// See Above
-function outerWidth(element) {
-    const width = element.offsetWidth,
-        style = window.getComputedStyle(element)
+  
 
-    return ['left', 'right']
-        .map(side => parseInt(style[`margin-${side}`]))
-        .reduce((total, side) => total + side, width)
-}
 
-// Initialized in boot.
-var folders = {};
-var files = {};
 
-// Third party media tag getter
-var jsmediatags = window.jsmediatags;</code></pre>
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="appstore.js.html">appstore.js</a>, <a href="appstore.js.html#line24">line 24</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#.installApp">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id=".installApp">
+      <span class="type-signature">(static) </span>installApp<span class="signature">(title, script, button<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Install an app with the given script.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>title</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          The title of the app to be installed.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>script</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          The js script to be added to the document
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>button</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      HTMLElement
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          The button to be changed from 'install' to 'open'.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="appstore.js.html">appstore.js</a>, <a href="appstore.js.html#line228">line 228</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#addApplicationToScreen">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="addApplicationToScreen">
+      <span class="type-signature">(private) </span>addApplicationToScreen<span class="signature">(title, desc, imagesrc)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>title</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          The title of the app
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>desc</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          The description of the app
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>imagesrc</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="String.html">String</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+          <td class="default">
+            
+              x
+            
+          </td>
+        
+
+        <td class="description last">
+          The src value of the thumbnail of the app
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="appstore.js.html">appstore.js</a>, <a href="appstore.js.html#line153">line 153</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    
+
+    
+
+    
   </article>
 </section>
 
-    
+
 
 
   </div>

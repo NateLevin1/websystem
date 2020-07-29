@@ -1,4 +1,12 @@
+/**
+ * The interface for adding and removing files in WebSystem.
+ */
 class FileSystem {
+    /**
+     * Add a new folder as a subfolder of <code>parentPath</code>
+     * @param {String} name - The name of the folder to be added.
+     * @param {String} parentPath - The path to the parent of the folder to be added. *Must* end in a slash ('/').
+     */
     static addFolderAtLocation(name, parentPath) {
         let path = parentPath+name+"/";
 
@@ -45,9 +53,9 @@ class FileSystem {
         filesystem.setItem("folders", folders);
     }
     /**
-     * 
+     * Add a file with the parent <code>parentPath</code>.
      * @param {String} name - The name of the new folder.
-     * @param {Blob} data - The data of the new file.
+     * @param {(Blob|String)} data - The data of the new file. If string, the file will not be stored as binary.
      * @param {String} kind - The kind of the data. E.g. "Image" or "App"
      * @param {String} parentPath - The path to the parent of the new file.
      * @param {JSON} options - The options to pass in.
@@ -77,6 +85,10 @@ class FileSystem {
             // update storage
             filesystem.setItem(path, data);
             content = options;
+        }
+
+        if(options.alias) {
+            name = alias;
         }
 
         // Set new folder as subfolder of parent
@@ -116,7 +128,19 @@ class FileSystem {
         // update system
         filesystem.setItem("folders", folders);
     }
-
+    /**
+     * Request a file for the user to select. Starts at the user's home directory.
+     * <br> 
+     * @example
+     * FileSystem.requestFileByGUI("Image").then((path)=>{
+     *  console.log("Path to selected file is "+path);
+     * }).catch(()=>{
+     *  console.log("File selection cancelled!");
+     * });
+     * @experimental The current GUI is not final. However, the return values will stay the same. Additionally, this code may be moved to its own class.
+     * @param {String} kind - The kind of file to be requested. e.g. 'Music' or 'Image'
+     * @returns {Promise} The promise returned is resolved when the file is selected, and rejected if the file selection is cancelled.
+     */
     static requestFileByGUI(kind) {
         return new Promise((resolve, reject)=>{
             let win = new Window(300, 300, "File Selection", 25,20, 5, 5);

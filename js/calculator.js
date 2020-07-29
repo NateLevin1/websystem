@@ -344,8 +344,8 @@ class Calculator {
 
 
     /**
-    * Fit text to div (from https://github.com/ricardobrg/fitText/)
-    * @param {Element to select (changed from link above to not be id based)} outputSelector 
+    * Fit text to div (from <a href="https://github.com/ricardobrg/fitText/">fitText</a>)
+    * @param {HTMLElement} outputSelector - Element to select (changed from link above to not be id based)
     */
     fitText(output) {
         // max font size in pixels

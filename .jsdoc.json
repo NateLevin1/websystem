@@ -4,9 +4,9 @@
         "dictionaries": ["jsdoc"]
     },
     "source": {
-        "include": ["lib", "package.json", "README.md"],
+        "include": ["package.json", "README.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs)"
+        "excludePattern": "(node_modules/|docs|thirdparty)"
     },
     "templates": {
         "referenceTitle": "WebSystem",
@@ -22,6 +22,5 @@
         "private": true,
         "recurse": true,
         "template": "./node_modules/jsdoc-template"
-    },
-    "recurseDepth": 1
+    }
 }

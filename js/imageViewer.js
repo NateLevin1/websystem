@@ -1,5 +1,13 @@
 GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1em);", "width: 100%;");
+/**
+ * The image viewer interface for websystem. Opens in standalone mode if no name and path is provided, otherwise will open the actual image.
+ */
 class ImageViewer {
+    /**
+     * If name and path are not specified, opens a new window in standalone mode. Else, opens the image.
+     * @param {String} name - The name of the image. Displayed as the header, does not necessarily need to be the actual name of the file
+     * @param {String} path - The path of the file. Used to get the data to display.
+     */
     constructor(name, path) {
         if(!name && !path) { // open in standalone mode
             this.openInStandalone();

@@ -5,7 +5,14 @@ GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Repl
 GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
 
+/**
+ * The class which holds the interface for the file viewer.
+ */
 class FileViewer {
+    /**
+     * Open a new file viewer <strong>window</strong> at the given path.
+     * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
+     */
     openFolderWindow(path) {
         let win = new Window(100, 200, path, 40, 35);
         this.window = win.getWindow();
@@ -235,6 +242,10 @@ class FileViewer {
             // }
         });
     }
+    /**
+     * <strong>Change</strong> the current fileViewer's window to be the path provided.
+     * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
+     */
     openFolder(path) {
         this.currentFolder = path;
         this.win.clear();
@@ -292,7 +303,7 @@ class FileViewer {
         }
     }
     /**
-     * Create a folder in the current window
+     * Add a folder to the screen in the current window
      * @param {String} name - The name of the folder to be made.
      * @param {String} path - The path to the parent of the folder to be created at.
      * @param {HTMLElement} appendee - The element to append the folder to.
@@ -344,6 +355,14 @@ class FileViewer {
         }
         return newFolderContainer; // allows for adding to lists
     }
+    /**
+     * Add a file to the screen.
+     * @param {String} name - The name of the file
+     * @param {String} path - The path of the file
+     * @param {String} filetype - The filetype of the file. e.g. 'Image' or 'Music'.
+     * @param {HTMLElement} [appendee=this.background] - The element to append the new file to.
+     * @param {String} [color="black"] - The color of the text for the file. Any valid css color will work. e.g. 'rgb(10,10,10)'
+     */
     createFile(name, path, filetype, appendee=this.background, color="black") {
         let newFileContainer = document.createElement("div");
         newFileContainer.classList.add("clickable", "icon-container", "file");
@@ -415,8 +434,8 @@ class FileViewer {
     }
 
     /**
-     * Open the file wih specified name
-     * @param {(string|string[])} path 
+     * Open the file(s) with the specified path.
+     * @param {(string|string[])} path - A string or array of strings representing which paths to open.
      */
     intelligentOpen(path) {
         if(typeof path == "object") { // array
@@ -550,7 +569,9 @@ class FileViewer {
         FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
     }
     /**
-     * 
+     * Add a file to storage. Reads the tags if music.
+     * @ignore
+     * @private
      * @param {String} filename - The name of the file to be added
      * @param {(Blob|File)} filedata - The data to be added
      * @param {String} filekind - The kind of the file to be added.
@@ -587,7 +608,9 @@ class FileViewer {
         
         
     }
-
+    /**
+     * Allows the user to upload one or more files and will add it to the current folder.
+     */
     uploadNewFile() {
         let fileUpload = document.createElement("input");
         fileUpload.type = "file";
@@ -660,7 +683,15 @@ class FileViewer {
     }
 }
 
-
+/**
+ * Add a folder to the desktop's screen.
+ * @param {String} x - The position of the new folders left side in em.
+ * @param {String} y - The position of the new folders top side in em.
+ * @param {String} name - The name of the new folder
+ * @param {String} path - The path of the new folder
+ * @param {HTMLElement} [appendee=mainContent] - The element to append the new folder to.
+ * @param {String} [color="white"] - The color of the new folder's text. Can be any valid css rule for 'color', e.g. 'red' or 'rgb(10,10,10)'
+ */
 function createDesktopFolder(x, y, name, path, appendee=mainContent, color="white") {
     let newFolderContainer = document.createElement("div");
     newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
@@ -694,7 +725,9 @@ function createDesktopFolder(x, y, name, path, appendee=mainContent, color="whit
 
 /**
  * Select an element.
- * @param {Click Event} event - Allows for shift key
+ * @private
+ * @ignore
+ * @param {Event} event - The click event. Allows for shift key
  * @param {HTMLElement} element 
  */
 function selectElement(event, element) {

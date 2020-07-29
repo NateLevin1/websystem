@@ -68,40 +68,63 @@ class Window {
         }
       });
     }
-
+    /**
+     * Get the window. Note that the window includes the header, so setting overflow: auto on this may look wrong.
+     * @returns {HTMLElement} The window element
+     */
     getWindow() {
       return this.window;
     }
-
+    /**
+     * Get the header element.
+     * @returns {HTMLElement} The header element
+     */
     getHeader() {
       return this.window.header;
     }
-    
+    /**
+     * Get the title of the window
+     * @returns {HTMLElement} The header text element
+     */
     getHeaderText() {
       return this.window.titleText;
     }
 
+    /**
+     * Get the window's width. Note that the returned value is a string.
+     * Use <code>getWidth</code> to get it as an integer in px, or <code>getWidthInEm</code> to get it as an integer in em.
+     * @returns {String} A string, ending in px or em.
+     */
     getWindowWidth() {
       return this.window.style.width;
     }
-
+    /**
+     * Get the window's height. Note that the returned value is a string.
+     * Use <code>getHeight</code> to get it as an integer in px, or <code>getHeightInEm</code> to get it as an integer in em.
+     * @returns {String} A string, ending in px or em.
+     */
     getWindowHeight() {
       return this.window.style.height;
     }
-
+    /**
+     * Clear the window. Removes all elements that are children of the window (except the header).
+     */
     clear() {
       while(this.window.lastChild != this.lastChildNoChildren) {
         this.window.removeChild(this.window.lastChild);
       }
     }
-
+    /**
+     * Set the title of the window.
+     * @param {String} newTitle - The title of the window.
+     */
     setTitle(newTitle) {
       this.window.titleText.innerText = newTitle;
     }
     
     /**
      * Set the background color of the window.
-     * @param {CSS Color} color - the color to be used.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
      */
     setBackgroundColor(color) {
       this.window.style.backgroundColor = color;
@@ -109,41 +132,52 @@ class Window {
 
     /**
      * Set the background color of the header.
-     * @param {CSS Color} color - the color to be used.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
      */
     setHeaderColor(color) {
       this.window.header.style.backgroundColor = color;
     }
     /**
      * Set the text color of the header.
-     * @param {CSS Color} color - the color to be used.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
      */
     setHeaderTextColor(color) {
       this.window.header.style.color = color;
     }
 
-    // Makes a string for the window. Useful for needing a key for an object which is the window.
+    /**
+     * Makes a string for the window. Useful for needing a key for an object which is the window, i.e. when creating right click menus.
+     */
     makeString() {
       this.uniqueId = "window-"+Math.random();
       return this.uniqueId;
     }
 
+    /**
+     * @returns {Boolean} Whether or not the window has focus.
+     */
     focused() {
       return this.hasFocus;
     }
-
+    /**
+     * Used internally, should *not* be used to give a window focus. Use dispatchFocus() for that.
+     */
     giveFocus() {
       this.hasFocus = true;
       this.window.style.zIndex = 10;
     }
-
+    /**
+     * Remove the focus from the window. Used internally, may be annoying to user if this is run.
+     */
     removeFocus() {
       this.hasFocus = false;
       if(this.window.style.zIndex > 2) {
         this.window.style.zIndex -= 1;
       }
     }
-
+    /**
+     * Give the current window focus. Used internally, may be annoying to user if this is run.
+     */
     dispatchFocus() {
       this.giveFocus(); // give opened window focus
       focusEvent.window = this.window;
@@ -151,7 +185,7 @@ class Window {
     }
 
     /**
-     * Set min width
+     * Set the minimum width of the element
      * @param {String} width - A string representing the width. E.g. 25px or 0.5em.
      */
     setMinWidth(width) {
@@ -159,7 +193,7 @@ class Window {
     }
 
     /**
-     * Set min height
+     * Set the minimum height of the element
      * @param {String} height - A string representing the height. E.g. 25px or 0.5em.
      */
     setMinHeight(height) {
@@ -278,32 +312,32 @@ class Window {
       }.bind(this);
     }
     /**
-     * Returns the width of the window in pixels.
+     * @returns {Number} The width in pixels.
      */
     getWidth() {
       return this.window.clientWidth;
     }
     /**
-     * Returns the height of the window in pixels.
+     * @returns {Number} The height in pixels.
      */
     getHeight() {
       return this.window.clientHeight;
     }
     /**
-     * Returns the width of the window in em.
+     * @returns {Number} The width of the window in em.
      */
     getWidthInEm() {
       return this.window.clientWidth/em;
     }
     /**
-     * Returns the height of the window in em.
+     * @returns {Number} The height of the window in em.
      */
     getHeightInEm() {
       return this.window.clientHeight/em;
     }
     /**
      * Forces the window to close.
-     * @param {Boolean} fade - Default true. Whether or not to fade out when closing.
+     * @param {Boolean} [fade=true] - Whether or not to fade out when closing.
      */
     forceClose(fade=true) {
       this.window.dispatchEvent(destroyEvent);

@@ -1,0 +1,22 @@
+{
+  "name": "websystem",
+  "version": "0.1.0",
+  "description": "An operating system built in javascript.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UltimatePro-Grammer/websystem.git"
+  },
+  "author": "UltimateProGrammer",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/UltimatePro-Grammer/websystem/issues"
+  },
+  "homepage": "https://github.com/UltimatePro-Grammer/websystem#readme",
+  "dependencies": {
+    "jsdoc": "^3.6.5"
+  }
+}

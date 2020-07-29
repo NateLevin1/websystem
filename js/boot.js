@@ -78,6 +78,8 @@ function boot() {
     
 }
 function showDesktopFolders() {
+    mainContent.classList.add("main-content");
+    document.body.appendChild(mainContent);
     // Set folders{} to correct value
     filesystem.getItem("folders").then((result)=>{
         folders = result;
@@ -87,7 +89,6 @@ function showDesktopFolders() {
             yPos += 8;
         });
         // ! DEBUG
-        // FileSystem.addFolderAtLocation("test", "/Users/"+NAME+"/Desktop/WebSystem/");
         console.log(folders);
         filesystem.iterate((value, key)=>{
             if(key != "folders") {
@@ -134,6 +135,8 @@ function startDesktop() {
     welcomeTextContainer.appendChild(welcomeText);
     document.body.appendChild(welcomeTextContainer);
 
+    // Add top bar
+    new TopBar;
     // Show desktop + set folders to correct value
     showDesktopFolders();
     
@@ -186,6 +189,8 @@ function startDesktop() {
     }, 500)
     
 }
+
+var mainContent = document.createElement("div");
 
 // * Debug
 //localStorage.clear();

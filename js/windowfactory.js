@@ -12,61 +12,61 @@ class Window {
      */
     constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3, keepAspectRatio=false) {
       let window = document.createElement("div");
-        window.classList.add("window", "absolute", "window-slow");
-        window.style.top = y+"em";
-        window.style.left = x+"em";
+      window.classList.add("window", "absolute", "window-slow");
+      window.style.top = y+"em";
+      window.style.left = x+"em";
 
-        let header = document.createElement("div");
-        header.classList.add("window-header", "unselectable");
+      let header = document.createElement("div");
+      header.classList.add("window-header", "unselectable");
 
-        let titleText = document.createElement("a");
-        titleText.innerText = title;
-        
-        let close = document.createElement("div");
-        close.classList.add("close", "unselectable", "no-move");
-        
-        let resize = document.createElement("div");
-        resize.classList.add("resize");
+      let titleText = document.createElement("a");
+      titleText.innerText = title;
+      
+      let close = document.createElement("div");
+      close.classList.add("close", "unselectable", "no-move");
+      
+      let resize = document.createElement("div");
+      resize.classList.add("resize");
 
-        header.appendChild(titleText);
-        header.appendChild(close);
+      header.appendChild(titleText);
+      header.appendChild(close);
 
-        window.appendChild(header);
-        window.appendChild(resize);
-        document.body.appendChild(window);
+      window.appendChild(header);
+      window.appendChild(resize);
+      mainContent.appendChild(window);
 
-        this.lastChildNoChildren = window.lastChild;
+      this.lastChildNoChildren = window.lastChild;
 
-        setTimeout(()=>{
-          window.style.opacity = "1";
-        }, 10);
-        
-        this.minWidth = width;
-        this.minHeight = height;
-        this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
+      setTimeout(()=>{
+        window.style.opacity = "1";
+      }, 10);
+      
+      this.minWidth = width;
+      this.minHeight = height;
+      this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
 
-        this.window = window;
-        this.window.header = header;
-        this.window.titleText = titleText;
+      this.window = window;
+      this.window.header = header;
+      this.window.titleText = titleText;
 
-        // Focus/Unfocus
-        this.dispatchFocus(); // when new window is opened focus by default
+      // Focus/Unfocus
+      this.dispatchFocus(); // when new window is opened focus by default
 
-        this.window.onmousedown = ()=>{
-          this.dispatchFocus();
-        }
+      this.window.onmousedown = ()=>{
+        this.dispatchFocus();
+      }
 
-        document.addEventListener('window-focus', (event)=>{
-          if(this.focused()) {
-            if(event.window == this.window) {
-              this.giveFocus();
-            } else {
-              this.removeFocus();
-            }
+      document.addEventListener('window-focus', (event)=>{
+        if(this.focused()) {
+          if(event.window == this.window) {
+            this.giveFocus();
           } else {
             this.removeFocus();
           }
-        });
+        } else {
+          this.removeFocus();
+        }
+      });
     }
 
     getWindow() {
@@ -212,7 +212,7 @@ class Window {
         }
         
       }
-
+      let fakeOffsetTop = elmnt.offsetTop;
       function elementDrag(e) {
         e = e || window.event;
         e.preventDefault();
@@ -221,12 +221,20 @@ class Window {
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
+        
         // set the element's new position:
-        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.top = (fakeOffsetTop - pos2) + "px";
         elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        if((fakeOffsetTop - pos2) < 0) {
+          elmnt.style.top = "0px";
+          fakeOffsetTop = fakeOffsetTop - pos2;
+        } else {
+          fakeOffsetTop = elmnt.offsetTop;
+        }
       }
 
       function closeDragElement() {
+        fakeOffsetTop = elmnt.offsetTop;
         // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
@@ -337,9 +345,9 @@ class RightClickMenu {
    * RightClickMenu.addToMenu("Menu Item", ".window"); // will only show up when a window has been right clicked
    * 
    * Note that you might need to add a class to your window to be able to reference it.
-   * @param {The element to be appended to the menu. If a string uses default element.} element 
-   * @param {An element instance (or instances with an array) representing where to use the menu item.} usage 
-   * @param {A callback to run when the element is clicked} callback
+   * @param {(HTMLElement|String)} element - The element to be appended to the menu. If a string uses default element.
+   * @param {Array} usage - An element instance (or instances with an array) representing where to use the menu item.
+   * @param {Function} callback - A callback to run when the element is clicked
    */
   static addToMenu(element, usage, callback) {
     if(!this.usages) {
@@ -434,7 +442,7 @@ class RightClickMenu {
       if(!this.rightClickMenu.className.includes("right-click-invisible")) {
         if((toplevel)&&event.target == clickWindow||!toplevel) {
           this.rightClickTimer = 0;
-          this.rightClickInterval = setInterval(()=>{
+          this.rightClickInterval = setInterval(()=>{ // trying to use timeStamp instead of this didn't work for some dumb reason so I have to do this
               this.rightClickTimer += 50;
           }, 50);
           // show menu
@@ -449,7 +457,7 @@ class RightClickMenu {
           this.rightClickMenu.innerHTML = "";
           RightClickMenu.appendAllSelectedChildren(generatedWindow);
           
-          var pointerHandle = function pointerUpEventHandler(event) {
+          var pointerHandle = (event)=>{
               // run callback of clicked
               let children = this.rightClickMenu.children;
               children = Array.from(children);
@@ -472,7 +480,7 @@ class RightClickMenu {
                   }, 400);
               } else {
                   // remove on click
-                  var removeOnClick = function removeOnceClicked() {
+                  var removeOnClick = ()=>{
                       // run callback of clicked
                       let children = this.rightClickMenu.children;
                       children = Array.from(children);
@@ -491,13 +499,13 @@ class RightClickMenu {
                           this.rightClickMenu.innerHTML = "";
                       }, 400);
                       document.body.removeEventListener('pointerdown', removeOnClick, false);
-                  }.bind(this);
+                  }
 
                   document.body.addEventListener('pointerdown', removeOnClick, false);
               }
               // remove listener
               document.body.removeEventListener('pointerup', pointerHandle, false);
-          }.bind(this);
+          }
 
           document.body.addEventListener('pointerup', pointerHandle, false);
         }

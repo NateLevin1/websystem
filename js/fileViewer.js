@@ -661,7 +661,7 @@ class FileViewer {
 }
 
 
-function createDesktopFolder(x, y, name, path, appendee=document.body, color="white") {
+function createDesktopFolder(x, y, name, path, appendee=mainContent, color="white") {
     let newFolderContainer = document.createElement("div");
     newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
     newFolderContainer.style.top = y+"em";

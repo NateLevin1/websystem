@@ -1,6 +1,6 @@
 /**
- * Begin Boot Sequence
- * Runs after page has been loaded.
+ * Begin boot sequence.
+ * Runs on page onload.
  */
 function boot() {
     let name = localStorage.getItem("name");

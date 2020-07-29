@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      topbar.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      WebSystem
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem">repository</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="Clipboard-nav"><a href="Clipboard.html">Clipboard</a><ul class='methods'><li data-type="method" id="Clipboard-get-nav"><a href="Clipboard.html#.get">get</a></li><li data-type="method" id="Clipboard-set-nav"><a href="Clipboard.html#.set">set</a></li></ul></li><li id="Window-nav"><a href="Window.html">Window</a><ul class='methods'><li data-type="method" id="Window-clear-nav"><a href="Window.html#clear">clear</a></li><li data-type="method" id="Window-configureElement-nav"><a href="Window.html#configureElement">configureElement</a></li><li data-type="method" id="Window-dispatchFocus-nav"><a href="Window.html#dispatchFocus">dispatchFocus</a></li><li data-type="method" id="Window-focused-nav"><a href="Window.html#focused">focused</a></li><li data-type="method" id="Window-forceClose-nav"><a href="Window.html#forceClose">forceClose</a></li><li data-type="method" id="Window-getHeader-nav"><a href="Window.html#getHeader">getHeader</a></li><li data-type="method" id="Window-getHeaderText-nav"><a href="Window.html#getHeaderText">getHeaderText</a></li><li data-type="method" id="Window-getHeight-nav"><a href="Window.html#getHeight">getHeight</a></li><li data-type="method" id="Window-getHeightInEm-nav"><a href="Window.html#getHeightInEm">getHeightInEm</a></li><li data-type="method" id="Window-getWidth-nav"><a href="Window.html#getWidth">getWidth</a></li><li data-type="method" id="Window-getWidthInEm-nav"><a href="Window.html#getWidthInEm">getWidthInEm</a></li><li data-type="method" id="Window-getWindow-nav"><a href="Window.html#getWindow">getWindow</a></li><li data-type="method" id="Window-getWindowHeight-nav"><a href="Window.html#getWindowHeight">getWindowHeight</a></li><li data-type="method" id="Window-getWindowWidth-nav"><a href="Window.html#getWindowWidth">getWindowWidth</a></li><li data-type="method" id="Window-giveFocus-nav"><a href="Window.html#giveFocus">giveFocus</a></li><li data-type="method" id="Window-makeString-nav"><a href="Window.html#makeString">makeString</a></li><li data-type="method" id="Window-removeFocus-nav"><a href="Window.html#removeFocus">removeFocus</a></li><li data-type="method" id="Window-setBackgroundColor-nav"><a href="Window.html#setBackgroundColor">setBackgroundColor</a></li><li data-type="method" id="Window-setHeaderColor-nav"><a href="Window.html#setHeaderColor">setHeaderColor</a></li><li data-type="method" id="Window-setHeaderTextColor-nav"><a href="Window.html#setHeaderTextColor">setHeaderTextColor</a></li><li data-type="method" id="Window-setMinHeight-nav"><a href="Window.html#setMinHeight">setMinHeight</a></li><li data-type="method" id="Window-setMinWidth-nav"><a href="Window.html#setMinWidth">setMinWidth</a></li><li data-type="method" id="Window-setTitle-nav"><a href="Window.html#setTitle">setTitle</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#boot">boot</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#selectElement">selectElement</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        topbar.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>class TopBar {
+    constructor() { // ran on boot
+        let bar = document.createElement("div");
+        bar.classList.add("top-bar", "heavy-blurred");
+        document.body.appendChild(bar);
+        this.bar = bar;
+
+        this.menuItems = {};
+        this.unclickables = [];
+        let menu = document.createElement("div");
+        menu.classList.add("top-bar-menu", "unselectable");
+        menu.style.display = "none";
+        document.body.appendChild(menu);
+        this.menu = menu;
+
+
+        let curDate = new Date;
+        let curHours = curDate.getHours();
+        let amOrPm = "AM";
+        if(curHours > 12) {
+            curHours -= 12;
+            amOrPm = "PM"
+        }
+        let dayName = new Intl.DateTimeFormat('en-US', {weekday: "short"}).format(curDate);
+
+        let time = document.createElement("div");
+        time.innerText = dayName+" "+curHours+":"+curDate.getMinutes().toString().padStart(2, "0")+" "+amOrPm;
+        time.classList.add("top-bar-time", "unselectable");
+        bar.appendChild(time);
+
+
+        let info = document.createElement("div");
+        info.innerText = "⚫";
+        info.classList.add("top-bar-top-item", "unselectable");
+        bar.appendChild(info);
+        this.addListenerForItem({el: info, name:"info"});
+
+        this.addToMenu("About WebSystem", "info", ()=>{ console.log("Hello World!"); });
+        this.addLineToMenu("info");
+        this.addToMenu("Go To Github", "info", ()=>{ console.log("Hello World 2!"); });
+        
+        let name = document.createElement("div");
+        name.innerText = "File";
+        name.classList.add("top-bar-top-item", "unselectable");
+        bar.appendChild(name);
+        this.addListenerForItem({el: name, name: "file"});
+
+        let newSelect = this.addToMenu("New  ▶", "file", undefined, {clickable: false});
+        this.addSecondaryListenerForItem({el: newSelect, name:"newSelect"});
+        this.addToMenu("Folder", "newSelect", ()=>{ console.log("New Folder!"); });
+        this.addToMenu("File", "newSelect", ()=>{ console.log("New File!"); });
+
+        let more = this.addToMenu("More Options ▶", "newSelect", undefined, {clickable: false});
+        this.addSecondaryListenerForItem({el: more, name:"more"});
+        this.addToMenu("Option 3", "more", ()=>{ console.log("Option 3!"); });
+    }
+
+    addLineToMenu(from) {
+        let el = document.createElement("hr");
+        el.classList.add("top-bar-menu-line");
+        this.menuItems[from].push(el);
+    }
+
+    addToMenu(element, from, callback, options={clickable: true}) {
+        if(typeof element == "string") {
+            let newEl = document.createElement("div");
+            newEl.innerText = element;
+            newEl.classList.add("top-bar-menu-item");
+            element = newEl;
+        }
+        this.menuItems[from].push(element);
+        if(options.clickable) {
+            element.addEventListener("menu-select", ()=>{
+                callback();
+            });
+        } else {
+            this.unclickables.push(element);
+        }
+        return element; // allows for changing after creation
+    }
+
+    addListenerForItem(obj) {
+        let item = obj.name;
+        this.menuItems[item] = [];
+        obj.el.onmousedown = (event)=>{
+            this.show = true;
+            // Remove anything old
+            this.menu.classList.remove("top-bar-menu-invisible");
+            document.body.removeEventListener("mousedown", runSelected);
+            // make sure no others are selected before selecting
+            this.bar.childNodes.forEach((child)=>{
+                if(child.classList.contains("top-bar-top-item-selected")) {
+                    child.classList.remove("top-bar-top-item-selected");
+                }
+            });
+
+            this.showMenu(item, obj.el);
+            let startTime = event.timeStamp;
+            document.body.addEventListener("mouseup", (event)=>{
+                let pressedTime = event.timeStamp - startTime;
+                if(pressedTime > 200) {
+                    this.show = false;
+                    runSelected();
+                } else { // otherwise keep it there, wait for a mouse down to get info
+                    document.body.addEventListener("mousedown", runSelected, { once: true });
+                    this.show = false;
+                }
+            }, { once: true });
+        }
+
+        const runSelected = (event)=>{
+            if(!this.show &amp;&amp; !(this.unclickables.includes(event.target))) {
+                this.removeMenu(this.menu, obj.el);
+            } else if(this.unclickables.includes(event.target)) {
+                // below is required because it has once: true.
+                document.body.addEventListener("mousedown", runSelected, { once: true });
+            }
+        }
+    }
+
+    addSecondaryListenerForItem(obj) {
+        let {el, name} = obj;
+        let newMenu = document.createElement("div");
+        this.menuItems[name] = [];
+        let allowRemove = false;
+        let menuCreated = false;
+        el.onmouseover = ()=>{
+            if(!menuCreated) {
+                menuCreated = true;
+                // create menu
+                newMenu = document.createElement("div");
+                addListenersToNewMenu(newMenu);
+                allowRemove = false;
+                newMenu.classList.add("top-bar-menu", "unselectable");
+                newMenu.style.left = Math.round(el.getBoundingClientRect().right+0.2*em)+"px";
+                newMenu.style.top = Math.round(el.getBoundingClientRect().top-0.2*em)+"px";
+                document.body.addEventListener("mousedown", removeIfAble, { once: true });
+                // add proper stuff to menu
+                let elementsToAdd = this.menuItems[name];
+                elementsToAdd.forEach((element)=>{
+                    newMenu.appendChild(element);
+                });
+                // display menu
+                document.body.appendChild(newMenu);
+            }
+        }
+        
+        el.onmouseout = ()=>{
+            if(allowRemove) {
+                newMenu.remove();
+                menuCreated = false;
+            }
+        }
+        const addListenersToNewMenu = (element)=>{
+            element.onmouseover = ()=>{
+                allowRemove = false;
+            }
+            element.onmouseout = ()=>{
+                allowRemove = true;
+            }
+        }
+        const removeIfAble = (event)=>{
+            if(!this.unclickables.includes(event.target)) { // don't remove if not clickable
+                this.removeMenu(newMenu);
+                setTimeout(()=>{
+                    newMenu.remove();
+                    menuCreated = false;
+                }, 200);
+            } else {
+                // below is required because it has once: true.
+                document.body.addEventListener("mousedown", removeIfAble, { once: true });
+            }
+        }
+    }
+
+    showMenu(item, element) {
+        this.menu.style.display = "inline-block";
+        this.menu.style.left = Math.round(element.getBoundingClientRect().x-0.2*em)+"px";
+        element.classList.add("top-bar-top-item-selected");
+        let elementsToAdd = this.menuItems[item];
+        this.menu.innerHTML = "";
+        elementsToAdd.forEach((element)=>{
+            this.menu.appendChild(element);
+        });
+    }
+    /**
+     * 
+     * @param {HTMLElement} menu - The menu for removing
+     * @param {HTMLElement} [origin=undefined] - The origin of the removing. Removes 'selected' class from it.
+     */
+    removeMenu(menu, origin=undefined) {
+        // get whatever is hovered
+        // use that info to run callback
+        let children = menu.children;
+        children = Array.from(children);
+        children.forEach((element)=>{
+            if(isHover(element)) {
+                element.dispatchEvent(menuSelect);
+            }
+        });
+        menu.classList.add("top-bar-menu-invisible");
+        if(origin) {
+            origin.classList.remove("top-bar-top-item-selected");
+        }
+        setTimeout(()=>{
+            menu.style.display = "none";
+            menu.classList.remove("top-bar-menu-invisible");
+        }, 200);
+        
+    }
+
+}
+
+// EVENTS
+// Ran whenever a menu item is selected. Used internally to call the callback function.
+var menuSelect = new Event("menu-select");</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>

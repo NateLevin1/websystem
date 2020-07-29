@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      filesystem.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      WebSystem
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem">repository</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="Clipboard-nav"><a href="Clipboard.html">Clipboard</a><ul class='methods'><li data-type="method" id="Clipboard-get-nav"><a href="Clipboard.html#.get">get</a></li><li data-type="method" id="Clipboard-set-nav"><a href="Clipboard.html#.set">set</a></li></ul></li><li id="Window-nav"><a href="Window.html">Window</a><ul class='methods'><li data-type="method" id="Window-clear-nav"><a href="Window.html#clear">clear</a></li><li data-type="method" id="Window-configureElement-nav"><a href="Window.html#configureElement">configureElement</a></li><li data-type="method" id="Window-dispatchFocus-nav"><a href="Window.html#dispatchFocus">dispatchFocus</a></li><li data-type="method" id="Window-focused-nav"><a href="Window.html#focused">focused</a></li><li data-type="method" id="Window-forceClose-nav"><a href="Window.html#forceClose">forceClose</a></li><li data-type="method" id="Window-getHeader-nav"><a href="Window.html#getHeader">getHeader</a></li><li data-type="method" id="Window-getHeaderText-nav"><a href="Window.html#getHeaderText">getHeaderText</a></li><li data-type="method" id="Window-getHeight-nav"><a href="Window.html#getHeight">getHeight</a></li><li data-type="method" id="Window-getHeightInEm-nav"><a href="Window.html#getHeightInEm">getHeightInEm</a></li><li data-type="method" id="Window-getWidth-nav"><a href="Window.html#getWidth">getWidth</a></li><li data-type="method" id="Window-getWidthInEm-nav"><a href="Window.html#getWidthInEm">getWidthInEm</a></li><li data-type="method" id="Window-getWindow-nav"><a href="Window.html#getWindow">getWindow</a></li><li data-type="method" id="Window-getWindowHeight-nav"><a href="Window.html#getWindowHeight">getWindowHeight</a></li><li data-type="method" id="Window-getWindowWidth-nav"><a href="Window.html#getWindowWidth">getWindowWidth</a></li><li data-type="method" id="Window-giveFocus-nav"><a href="Window.html#giveFocus">giveFocus</a></li><li data-type="method" id="Window-makeString-nav"><a href="Window.html#makeString">makeString</a></li><li data-type="method" id="Window-removeFocus-nav"><a href="Window.html#removeFocus">removeFocus</a></li><li data-type="method" id="Window-setBackgroundColor-nav"><a href="Window.html#setBackgroundColor">setBackgroundColor</a></li><li data-type="method" id="Window-setHeaderColor-nav"><a href="Window.html#setHeaderColor">setHeaderColor</a></li><li data-type="method" id="Window-setHeaderTextColor-nav"><a href="Window.html#setHeaderTextColor">setHeaderTextColor</a></li><li data-type="method" id="Window-setMinHeight-nav"><a href="Window.html#setMinHeight">setMinHeight</a></li><li data-type="method" id="Window-setMinWidth-nav"><a href="Window.html#setMinWidth">setMinWidth</a></li><li data-type="method" id="Window-setTitle-nav"><a href="Window.html#setTitle">setTitle</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#boot">boot</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#selectElement">selectElement</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        filesystem.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>class FileSystem {
+    static addFolderAtLocation(name, parentPath) {
+        let path = parentPath+name+"/";
+
+        let num = 2;
+        let oldPath = path;
+        let oldName = name;
+        while(folders[path]) { // already exists
+            console.warn("There is already a folder with path "+path);
+            path = oldPath+" "+num;
+            name = oldName+" "+num;
+            num++;
+        }
+        // Set new folder as subfolder of parent
+        folders[parentPath].subfolders.unshift(path);
+
+        // Set up metadata
+        let currentDate = Date.now();
+
+        // update folders{}
+        folders[path] = {
+            "name": name,
+            kind: "Folder",
+    
+            subfolders: [],
+            parent: parentPath,
+    
+            meta: {
+                size:0,
+
+                "creation-date": currentDate,
+                "modified-date": currentDate,
+                "last-opened-date": "Never",
+
+                locked: false,
+
+                "system-comments": [],
+                "user-comments": [],
+
+                hasTags: false,
+                tags: []
+            }
+        };
+        // update system
+        filesystem.setItem("folders", folders);
+    }
+    /**
+     * 
+     * @param {String} name - The name of the new folder.
+     * @param {Blob} data - The data of the new file.
+     * @param {String} kind - The kind of the data. E.g. "Image" or "App"
+     * @param {String} parentPath - The path to the parent of the new file.
+     * @param {JSON} options - The options to pass in.
+     */
+    static addFileAtLocation(name, data, kind, parentPath, options={}) {
+        let path = parentPath+name+"/";
+        let extension = name.match(/\.[^.]+$/)[0];
+        let binary = true;
+        let content = "";
+        let num = 2;
+        let oldPath = path;
+        let oldName = name;
+        while(folders[path]) { // already exists
+            console.warn("There is already a file with path "+path);
+            path = oldPath+" "+num;
+            name = oldName+" "+num;
+            num++;
+        }
+
+        if(typeof data == "string") { // text encoded file
+            binary = false;
+            content = data;
+            // don't set binaries
+        } else {
+            // update files
+            files[path] = data;
+            // update storage
+            filesystem.setItem(path, data);
+            content = options;
+        }
+
+        // Set new folder as subfolder of parent
+        folders[parentPath].subfolders.unshift(path);
+
+        // Set up metadata
+        let currentDate = Date.now();
+
+        // update folders{}
+        folders[path] = {
+            isFile: true,
+            "name":name,
+            "kind":kind,
+            extension:extension,
+
+            parent: parentPath,
+            isBinary: binary,
+            "content": content,
+
+            meta: {
+                size:0,
+
+                "creation-date": currentDate,
+                "modified-date": currentDate,
+                "last-opened-date": "Never",
+
+                locked: false,
+                
+                "system-comments": [],
+                "user-comments": [],
+
+                hasTags: false,
+                tags: []
+            }
+        };
+        
+        // update system
+        filesystem.setItem("folders", folders);
+    }
+
+    static requestFileByGUI(kind) {
+        return new Promise((resolve, reject)=>{
+            let win = new Window(300, 300, "File Selection", 25,20, 5, 5);
+            let window = win.getWindow();
+            window.classList.add("unselectable");
+
+            let container = document.createElement("div");
+            container.style.height = "calc(100% - 1em)";
+            container.style.display = "flex";
+            container.style.flexDirection = "column";
+
+            let filesContainer = document.createElement("div");
+            filesContainer.style.overflowY = "auto";
+            filesContainer.style.overflowX = "hidden";
+            filesContainer.style.flex = "3";
+            filesContainer.style.border = "2px solid black";
+            filesContainer.style.minHeight = "calc(100% - 2.2em)";
+            filesContainer.style.color = "black";
+            container.appendChild(filesContainer);
+
+            let footer = document.createElement("div");
+            footer.style.flex = "1";
+
+            // "Open"
+            let opener = document.createElement("button");
+            opener.classList.add("default-button");
+            opener.innerText = "Open";
+            opener.style.display = "inline-block";
+            opener.style.float = "right";
+            opener.style.minWidth = "20%";
+            opener.onclick = ()=>{
+                let selected = filesContainer.querySelector(".select-gui-selected");
+                if(selected) {
+                    let foldersRef = folders[selected.getAttribute("path")];
+                    if(foldersRef.kind != "Folder") {
+                        resolve(selected.getAttribute("path"));
+                        win.forceClose(false);
+                    } else {
+                        // open the folder
+                        openFolder(selected.getAttribute("path"));
+                    }
+                }
+            }
+            footer.appendChild(opener);
+
+            // "Cancel"
+            let canceler = document.createElement("button");
+            canceler.innerText = "Cancel";
+            canceler.style.display = "inline-block";
+            canceler.style.float = "right";
+            canceler.style.minWidth = "20%";
+            canceler.onclick = ()=>{
+                reject("No file selected.");
+                win.forceClose(false);
+            }
+            footer.appendChild(canceler);
+
+            // Path
+            let pathText = document.createElement("div");
+            pathText.style.display = "inline-block";
+            pathText.style.maxWidth = "50%";
+            pathText.style.overflow = "hidden";
+            pathText.style.whiteSpace = "no-wrap";
+            pathText.style.textOverflow = "ellipsis";
+            pathText.style.float = "left";
+            pathText.style.color = "black";
+            pathText.style.padding = "0.2em 0.2em";
+            footer.appendChild(pathText);
+
+            container.appendChild(footer);
+
+            window.appendChild(container);
+
+
+            // LOCATION
+            let location = "/Users/"+NAME+"/";
+            let currentFolder = NAME+"/";
+            openFolder(location);
+
+            // FUNCTIONS ? Do not include here?
+            function openFolder(path) {
+                // set the current folder and path
+                currentFolder = folders[path].name;
+                location = path;
+
+                // set path text
+                // pathText.innerHTML = "";
+                let locationText = document.createElement("span");
+                locationText.style.cursor = "pointer";
+                locationText.innerText = currentFolder+"/";
+                locationText.setAttribute("path", location);
+                locationText.onclick = ()=>{
+                    while(pathText.lastChild != locationText) {
+                        pathText.removeChild(pathText.lastChild);
+                    }
+                    pathText.removeChild(pathText.lastChild); // remove the current one so the new one looks right
+                    openFolder(locationText.getAttribute("path"));
+                }
+                pathText.appendChild(locationText);
+
+                // update file container to show files
+                filesContainer.innerHTML = "";
+                let subs = folders[path].subfolders;
+                subs.forEach((folder, index)=>{
+                    if(!kind || folders[folder].kind == "Folder" || folders[folder].kind == kind) {
+                        let container = document.createElement("div");
+                        container.setAttribute("path", folder);
+                        container.classList.add("select-gui-subfolder-container");
+                        if(index % 2 == 0) {
+                            container.classList.add("select-gui-a");
+                        } else {
+                            container.classList.add("select-gui-b");
+                        }
+                        container.innerText = folders[folder].name;
+                        container.innerHTML += "&lt;div style='float: right'>"+folders[folder].kind+"&lt;/div>";
+
+                        container.onclick = ()=>{
+                            // Remove old selection
+                            filesContainer.querySelector(".select-gui-selected").classList.remove("select-gui-selected");
+                            // Select this element
+                            container.classList.add("select-gui-selected");
+                        
+                        }
+                        container.ondblclick = ()=>{
+                            let path = container.getAttribute("path");
+                            if(folders[path].kind == "Folder") { // cannot open a non-folder file
+                                // open folder
+                                openFolder(container.getAttribute("path"));
+                            }
+                        }
+
+                        filesContainer.appendChild(container);
+                    }
+                });
+                if(filesContainer.firstChild) {
+                    // select the first folder
+                    filesContainer.firstChild.classList.add("select-gui-selected");
+                } else {
+                    filesContainer.innerText = "No items in folder";
+                }
+                
+            }
+        });
+    }
+
+    // ! DEBUG DO NOT INCLUDE BELOW IN PRODUCTION
+    static clearAll() {
+        localStorage.clear();
+        filesystem.clear();
+    }
+}
+setTimeout(()=>{ // allows browser to fully run the globalStyle.js script. Without this very strange bugs occur
+    GlobalStyle.newClass("select-gui-a", "background-color: rgb(230,230,230);");
+    GlobalStyle.newClass("select-gui-b", "background-color: rgb(250,250,250);");
+
+    GlobalStyle.newClass("select-gui-subfolder-container", "max-height: 1.3em;", "height: 1.3em;", "font-size: 0.9em;", "color: black;", "cursor: pointer;", "padding: 0.2em 0.1em;", "margin: 0.2em 0;");
+    GlobalStyle.newClass("select-gui-selected", "background-color: rgba(0, 89, 221, 1);", "color: white;");
+}, 10);</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>

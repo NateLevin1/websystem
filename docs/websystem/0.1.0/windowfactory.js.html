@@ -1,0 +1,681 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      windowfactory.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      WebSystem
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem">repository</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="Clipboard-nav"><a href="Clipboard.html">Clipboard</a><ul class='methods'><li data-type="method" id="Clipboard-get-nav"><a href="Clipboard.html#.get">get</a></li><li data-type="method" id="Clipboard-set-nav"><a href="Clipboard.html#.set">set</a></li></ul></li><li id="Window-nav"><a href="Window.html">Window</a><ul class='methods'><li data-type="method" id="Window-clear-nav"><a href="Window.html#clear">clear</a></li><li data-type="method" id="Window-configureElement-nav"><a href="Window.html#configureElement">configureElement</a></li><li data-type="method" id="Window-dispatchFocus-nav"><a href="Window.html#dispatchFocus">dispatchFocus</a></li><li data-type="method" id="Window-focused-nav"><a href="Window.html#focused">focused</a></li><li data-type="method" id="Window-forceClose-nav"><a href="Window.html#forceClose">forceClose</a></li><li data-type="method" id="Window-getHeader-nav"><a href="Window.html#getHeader">getHeader</a></li><li data-type="method" id="Window-getHeaderText-nav"><a href="Window.html#getHeaderText">getHeaderText</a></li><li data-type="method" id="Window-getHeight-nav"><a href="Window.html#getHeight">getHeight</a></li><li data-type="method" id="Window-getHeightInEm-nav"><a href="Window.html#getHeightInEm">getHeightInEm</a></li><li data-type="method" id="Window-getWidth-nav"><a href="Window.html#getWidth">getWidth</a></li><li data-type="method" id="Window-getWidthInEm-nav"><a href="Window.html#getWidthInEm">getWidthInEm</a></li><li data-type="method" id="Window-getWindow-nav"><a href="Window.html#getWindow">getWindow</a></li><li data-type="method" id="Window-getWindowHeight-nav"><a href="Window.html#getWindowHeight">getWindowHeight</a></li><li data-type="method" id="Window-getWindowWidth-nav"><a href="Window.html#getWindowWidth">getWindowWidth</a></li><li data-type="method" id="Window-giveFocus-nav"><a href="Window.html#giveFocus">giveFocus</a></li><li data-type="method" id="Window-makeString-nav"><a href="Window.html#makeString">makeString</a></li><li data-type="method" id="Window-removeFocus-nav"><a href="Window.html#removeFocus">removeFocus</a></li><li data-type="method" id="Window-setBackgroundColor-nav"><a href="Window.html#setBackgroundColor">setBackgroundColor</a></li><li data-type="method" id="Window-setHeaderColor-nav"><a href="Window.html#setHeaderColor">setHeaderColor</a></li><li data-type="method" id="Window-setHeaderTextColor-nav"><a href="Window.html#setHeaderTextColor">setHeaderTextColor</a></li><li data-type="method" id="Window-setMinHeight-nav"><a href="Window.html#setMinHeight">setMinHeight</a></li><li data-type="method" id="Window-setMinWidth-nav"><a href="Window.html#setMinWidth">setMinWidth</a></li><li data-type="method" id="Window-setTitle-nav"><a href="Window.html#setTitle">setTitle</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#boot">boot</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#selectElement">selectElement</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        windowfactory.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>class Window {
+    /**
+     * Constructor. Make a new window
+     * @param {Number} width - The minimum width in pixels.
+     * @param {Number} height - The minimum height in pixels.
+     * @param {String} title - The title of the window
+     * @param {Number} defaultWidth - The default width of the window in em.
+     * @param {Number} defaultHeight - The default width of the window in em.
+     * @param {Number} x - The default x position on the screen.
+     * @param {Number} y The default y position on the screen.
+     * @param {Boolean} keepAspectRatio - If true, keeps the aspect ratio when resizing.
+     */
+    constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3, keepAspectRatio=false) {
+      let window = document.createElement("div");
+      window.classList.add("window", "absolute", "window-slow");
+      window.style.top = y+"em";
+      window.style.left = x+"em";
+
+      let header = document.createElement("div");
+      header.classList.add("window-header", "unselectable");
+
+      let titleText = document.createElement("a");
+      titleText.innerText = title;
+      
+      let close = document.createElement("div");
+      close.classList.add("close", "unselectable", "no-move");
+      
+      let resize = document.createElement("div");
+      resize.classList.add("resize");
+
+      header.appendChild(titleText);
+      header.appendChild(close);
+
+      window.appendChild(header);
+      window.appendChild(resize);
+      mainContent.appendChild(window);
+
+      this.lastChildNoChildren = window.lastChild;
+
+      setTimeout(()=>{
+        window.style.opacity = "1";
+      }, 10);
+      
+      this.minWidth = width;
+      this.minHeight = height;
+      this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
+
+      this.window = window;
+      this.window.header = header;
+      this.window.titleText = titleText;
+
+      // Focus/Unfocus
+      this.dispatchFocus(); // when new window is opened focus by default
+
+      this.window.onmousedown = ()=>{
+        this.dispatchFocus();
+      }
+
+      document.addEventListener('window-focus', (event)=>{
+        if(this.focused()) {
+          if(event.window == this.window) {
+            this.giveFocus();
+          } else {
+            this.removeFocus();
+          }
+        } else {
+          this.removeFocus();
+        }
+      });
+    }
+    /**
+     * Get the window. Note that the window includes the header, so setting overflow: auto on this may look wrong.
+     * @returns {HTMLElement} The window element
+     */
+    getWindow() {
+      return this.window;
+    }
+    /**
+     * Get the header element.
+     * @returns {HTMLElement} The header element
+     */
+    getHeader() {
+      return this.window.header;
+    }
+    /**
+     * Get the title of the window
+     * @returns {HTMLElement} The header text element
+     */
+    getHeaderText() {
+      return this.window.titleText;
+    }
+
+    /**
+     * Get the window's width. Note that the returned value is a string.
+     * Use &lt;code>getWidth&lt;/code> to get it as an integer in px, or &lt;code>getWidthInEm&lt;/code> to get it as an integer in em.
+     * @returns {String} A string, ending in px or em.
+     */
+    getWindowWidth() {
+      return this.window.style.width;
+    }
+    /**
+     * Get the window's height. Note that the returned value is a string.
+     * Use &lt;code>getHeight&lt;/code> to get it as an integer in px, or &lt;code>getHeightInEm&lt;/code> to get it as an integer in em.
+     * @returns {String} A string, ending in px or em.
+     */
+    getWindowHeight() {
+      return this.window.style.height;
+    }
+    /**
+     * Clear the window. Removes all elements that are children of the window (except the header).
+     */
+    clear() {
+      while(this.window.lastChild != this.lastChildNoChildren) {
+        this.window.removeChild(this.window.lastChild);
+      }
+    }
+    /**
+     * Set the title of the window.
+     * @param {String} newTitle - The title of the window.
+     */
+    setTitle(newTitle) {
+      this.window.titleText.innerText = newTitle;
+    }
+    
+    /**
+     * Set the background color of the window.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
+     */
+    setBackgroundColor(color) {
+      this.window.style.backgroundColor = color;
+    }
+
+    /**
+     * Set the background color of the header.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
+     */
+    setHeaderColor(color) {
+      this.window.header.style.backgroundColor = color;
+    }
+    /**
+     * Set the text color of the header.
+     * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
+     */
+    setHeaderTextColor(color) {
+      this.window.header.style.color = color;
+    }
+
+    /**
+     * Makes a string for the window. Useful for needing a key for an object which is the window, i.e. when creating right click menus.
+     */
+    makeString() {
+      this.uniqueId = "window-"+Math.random();
+      return this.uniqueId;
+    }
+
+    /**
+     * @returns {Boolean} Whether or not the window has focus.
+     */
+    focused() {
+      return this.hasFocus;
+    }
+    /**
+     * Used internally, should *not* be used to give a window focus. Use dispatchFocus() for that.
+     */
+    giveFocus() {
+      this.hasFocus = true;
+      this.window.style.zIndex = 10;
+    }
+    /**
+     * Remove the focus from the window. Used internally, may be annoying to user if this is run.
+     */
+    removeFocus() {
+      this.hasFocus = false;
+      if(this.window.style.zIndex > 2) {
+        this.window.style.zIndex -= 1;
+      }
+    }
+    /**
+     * Give the current window focus. Used internally, may be annoying to user if this is run.
+     */
+    dispatchFocus() {
+      this.giveFocus(); // give opened window focus
+      focusEvent.window = this.window;
+      document.dispatchEvent(focusEvent);
+    }
+
+    /**
+     * Set the minimum width of the element
+     * @param {String} width - A string representing the width. E.g. 25px or 0.5em.
+     */
+    setMinWidth(width) {
+      this.minWidth = width;
+    }
+
+    /**
+     * Set the minimum height of the element
+     * @param {String} height - A string representing the height. E.g. 25px or 0.5em.
+     */
+    setMinHeight(height) {
+      this.minHeight = height;
+    }
+
+    /**
+     * Make window able to be dragged and resized.
+     * @param {HTMLElement} elmnt - The window
+     * @param {HTMLElement} header - The header
+     * @param {HTMLElement} resizeElement - The element for resizing
+     * @param {HTMLElement} close- The close button
+     * @param {String} defaultHeight - The default height of the window
+     * @param {String} defaultWidth - The default width of the window
+     * @param {Boolean} keepAspectRatio - Whether or not to keep the original aspect ratio of the window when resizing 
+     */
+    configureElement(elmnt, header, resizeElement, close, defaultWidth, defaultHeight, keepAspectRatio=false) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      elmnt.style.width = defaultWidth+"em";
+      elmnt.style.height = defaultHeight+"em";
+      if (header) {
+        // if present, the header is where you move the DIV from:
+        header.onmousedown = dragMouseDown;
+      } else {
+        // otherwise, move the DIV from anywhere inside the DIV: 
+        elmnt.onmousedown = dragMouseDown;
+      }
+      resizeElement.onmousedown = resize;
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        if(!e.target.classList.contains("no-move")) {
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        } else {
+          if(e.target == close) {
+            // close window
+            elmnt.dispatchEvent(destroyEvent);
+            elmnt.classList.remove("window-slow");
+            elmnt.classList.add("window-fast");
+            elmnt.style.opacity = "0";
+            setTimeout(()=>{
+              elmnt.remove();
+            }, 150);
+          }
+        }
+        
+      }
+      let fakeOffsetTop = elmnt.offsetTop;
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        
+        // set the element's new position:
+        elmnt.style.top = (fakeOffsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        if((fakeOffsetTop - pos2) &lt; 0) {
+          elmnt.style.top = "0px";
+          fakeOffsetTop = fakeOffsetTop - pos2;
+        } else {
+          fakeOffsetTop = elmnt.offsetTop;
+        }
+      }
+
+      function closeDragElement() {
+        fakeOffsetTop = elmnt.offsetTop;
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+
+      // not w3schools
+      function resize(e) {
+          e = e || window.event;
+          e.preventDefault();
+          document.onmouseup = closeDragElement
+          document.onmousemove = resizeFunction;
+      }
+      var oldWidth = defaultWidth * em;
+      var currentWidth = defaultWidth * em;
+      var currentHeight = defaultHeight * em;
+      var resizeFunction = function (e) {
+          e = e || window.event;
+          e.preventDefault();
+          let msOffset = 8; // mouse offset so it is centered
+          if((e.clientX - elmnt.offsetLeft)+msOffset > this.minWidth) {
+            if(keepAspectRatio) {
+              currentWidth = (e.clientX - elmnt.offsetLeft)+msOffset;
+              elmnt.style.width = currentWidth + "px";
+              currentHeight += currentWidth - oldWidth;
+              elmnt.style.height = currentHeight + "px";
+              oldWidth = currentWidth;
+            } else {
+              elmnt.style.width = (e.clientX - elmnt.offsetLeft)+msOffset + "px";
+            }
+          } else {
+            elmnt.style.width = this.minWidth;
+          }
+          if((e.clientY - elmnt.offsetTop)+msOffset > this.minHeight) {
+            if(!keepAspectRatio) {
+              elmnt.style.height = (e.clientY - elmnt.offsetTop)+msOffset + "px";
+            }
+          } else {
+            elmnt.style.height = this.minHeight;
+          }
+          elmnt.dispatchEvent(resizeEvent);
+      }.bind(this);
+    }
+    /**
+     * @returns {Number} The width in pixels.
+     */
+    getWidth() {
+      return this.window.clientWidth;
+    }
+    /**
+     * @returns {Number} The height in pixels.
+     */
+    getHeight() {
+      return this.window.clientHeight;
+    }
+    /**
+     * @returns {Number} The width of the window in em.
+     */
+    getWidthInEm() {
+      return this.window.clientWidth/em;
+    }
+    /**
+     * @returns {Number} The height of the window in em.
+     */
+    getHeightInEm() {
+      return this.window.clientHeight/em;
+    }
+    /**
+     * Forces the window to close.
+     * @param {Boolean} [fade=true] - Whether or not to fade out when closing.
+     */
+    forceClose(fade=true) {
+      this.window.dispatchEvent(destroyEvent);
+      if(fade) {
+        this.window.classList.remove("window-slow");
+        this.window.classList.add("window-fast");
+        this.window.style.opacity = "0";
+        setTimeout(()=>{
+          this.window.remove();
+        }, 150);
+      } else {
+        setTimeout(()=>{ // allow for handling of event
+          this.window.remove();
+        }, 50);
+      }
+      
+    }
+}
+
+
+
+
+// * /* EVENTS */
+
+// Called on the window when the window gains focus
+var focusEvent = new Event('window-focus');
+// Called on the window when it gets resized
+var resizeEvent = new Event('window-resize');
+// Called on the window when it is closed
+var destroyEvent = new Event('window-destroy');
+
+
+// * /* GLOBAL WINDOW THINGS */
+// Right Click Menu
+class RightClickMenu {
+  /**
+   * Adds an element to the menu. IDs are recommended.
+   * Example usage:
+   * RightClickMenu.addToMenu("Menu Item", ".window"); // will only show up when a window has been right clicked
+   * 
+   * Note that you might need to add a class to your window to be able to reference it.
+   * @param {(HTMLElement|String)} element - The element to be appended to the menu. If a string uses default element.
+   * @param {Array} usage - An element instance (or instances with an array) representing where to use the menu item.
+   * @param {Function} callback - A callback to run when the element is clicked
+   */
+  static addToMenu(element, usage, callback) {
+    if(!this.usages) {
+      this.usages = {};
+    }
+    if(typeof element == "string") {
+      var text = element;
+      element = document.createElement("div");
+      element.innerText = text;
+      element.classList.add("right-click-menu-member");
+    }
+    if(typeof usage == "object") { // multiple usages, use foreach.
+      usage.forEach((use)=>{
+        if (!this.usages[use]) {
+          this.usages[use] = [];
+        }
+        this.usages[use].push(element);
+      });
+    } else {
+      if (!this.usages[usage]) {
+        this.usages[usage] = [];
+      }
+      this.usages[usage].push(element);
+    }
+    
+
+    element.addEventListener("right-click-select", ()=>{
+      callback();
+    });
+  }
+
+  static addLineToMenu(usage) {
+    var element = document.createElement("hr");
+    element.classList.add("right-click-menu-member-no-hover");
+    if(typeof usage == "object") { // multiple usages, use foreach.
+      usage.forEach((use)=>{
+        if (!this.usages[use]) {
+          this.usages[use] = [];
+        }
+        this.usages[use].push(element);
+      });
+    } else {
+      if (!this.usages[usage]) {
+        this.usages[usage] = [];
+      }
+      this.usages[usage].push(element);
+    }
+  }
+
+  // Appends all of the right click menu items by the selector
+  static appendAllSelectedChildren(selector) {
+    let elements = this.usages[selector];
+    elements.forEach((element) => {
+        rightClickMenu.appendChild(element);
+        this.rightClickHeight += outerHeight(element)/em;
+    });
+    this.rightClickMenu.style.height = this.rightClickHeight+"em";
+  }
+
+  static addRightClickForClass(classString, generatedString, parent) {
+    var elements = parent.querySelectorAll(classString);
+    elements.forEach((element)=>{
+      RightClickMenu.addContextMenuListener(element, generatedString);
+      element.classList.add("right-click-added");
+    });
+  }
+
+  static updateRightClickForClass(classString, generatedString, parent) {
+    var elements = parent.querySelectorAll(classString);
+    elements.forEach((element)=>{
+      if(!element.classList.contains("right-click-added")) {
+        RightClickMenu.addContextMenuListener(element, generatedString);
+      }
+    });
+  }
+
+  static addRightClickForWindow(clickWindow, generatedWindow, toplevel=false) {
+    if(!this.rightClickMenu) {
+      this.rightClickMenu = rightClickMenu;
+    }
+    RightClickMenu.addContextMenuListener(clickWindow, generatedWindow, toplevel);
+  }
+  /**
+   * Add the listeners for right clicking
+   * @param {Element} clickWindow - The element to attach the listener to.
+   * @param {string} generatedWindow - A string representing which things to append
+   * @param {Boolean} toplevel - A boolean representing whether or not the event target must match clickWindow.
+   */
+  static addContextMenuListener(clickWindow, generatedWindow, toplevel=false) {
+    clickWindow.addEventListener('contextmenu', (event)=>{
+      event.preventDefault();
+      if(!this.rightClickMenu.className.includes("right-click-invisible")) {
+        if((toplevel)&amp;&amp;event.target == clickWindow||!toplevel) {
+          this.rightClickTimer = 0;
+          this.rightClickInterval = setInterval(()=>{ // trying to use timeStamp instead of this didn't work for some dumb reason so I have to do this
+              this.rightClickTimer += 50;
+          }, 50);
+          // show menu
+          this.rightClickMenu.classList.add("right-click-visible");
+          
+          // set position
+          this.rightClickMenu.style.top = event.clientY+"px";
+          this.rightClickMenu.style.left = event.clientX+"px";
+          this.rightClickHeight = 0;
+          this.rightClickMenu.style.height = "0em";
+
+          this.rightClickMenu.innerHTML = "";
+          RightClickMenu.appendAllSelectedChildren(generatedWindow);
+          
+          var pointerHandle = (event)=>{
+              // run callback of clicked
+              let children = this.rightClickMenu.children;
+              children = Array.from(children);
+              children.forEach((element)=>{
+                if(isHover(element)) {
+                  element.dispatchEvent(rightClickSelect);
+                }
+              });
+              // stop timer
+              clearInterval(this.rightClickInterval);
+              // get timer
+              if(this.rightClickTimer > 200) {
+                  this.rightClickMenu.classList.add("right-click-slow");
+                  this.rightClickMenu.classList.add("right-click-invisible");
+                  this.rightClickMenu.classList.remove("right-click-visible");
+                  setTimeout(()=>{
+                      this.rightClickMenu.classList.remove("right-click-invisible");
+                      this.rightClickMenu.classList.remove("right-click-slow");
+                      this.rightClickMenu.innerHTML = "";
+                  }, 400);
+              } else {
+                  // remove on click
+                  var removeOnClick = ()=>{
+                      // run callback of clicked
+                      let children = this.rightClickMenu.children;
+                      children = Array.from(children);
+                      children.forEach((element)=>{
+                        if(isHover(element)) {
+                          element.dispatchEvent(rightClickSelect)
+                        }
+                      });
+                      // ? Make below a function
+                      this.rightClickMenu.classList.add("right-click-slow");
+                      this.rightClickMenu.classList.add("right-click-invisible");
+                      this.rightClickMenu.classList.remove("right-click-visible");
+                      setTimeout(()=>{
+                          this.rightClickMenu.classList.remove("right-click-invisible");
+                          this.rightClickMenu.classList.remove("right-click-slow");
+                          this.rightClickMenu.innerHTML = "";
+                      }, 400);
+                      document.body.removeEventListener('pointerdown', removeOnClick, false);
+                  }
+
+                  document.body.addEventListener('pointerdown', removeOnClick, false);
+              }
+              // remove listener
+              document.body.removeEventListener('pointerup', pointerHandle, false);
+          }
+
+          document.body.addEventListener('pointerup', pointerHandle, false);
+        }
+      }
+    });
+  }
+  
+}
+var rightClickMenu = document.createElement("div");
+rightClickMenu.classList.add("right-click", "right-click-fast", "unselectable", "absolute");
+document.body.appendChild(rightClickMenu);
+
+// EVENTS
+
+// Called when an element is selected from a right click.
+// Handled internally- runs callback given in addToMenu function.
+var rightClickSelect = new Event("right-click-select");</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>

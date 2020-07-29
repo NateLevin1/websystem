@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      fileViewer.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      WebSystem
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem">repository</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="Clipboard-nav"><a href="Clipboard.html">Clipboard</a><ul class='methods'><li data-type="method" id="Clipboard-get-nav"><a href="Clipboard.html#.get">get</a></li><li data-type="method" id="Clipboard-set-nav"><a href="Clipboard.html#.set">set</a></li></ul></li><li id="Window-nav"><a href="Window.html">Window</a><ul class='methods'><li data-type="method" id="Window-clear-nav"><a href="Window.html#clear">clear</a></li><li data-type="method" id="Window-configureElement-nav"><a href="Window.html#configureElement">configureElement</a></li><li data-type="method" id="Window-dispatchFocus-nav"><a href="Window.html#dispatchFocus">dispatchFocus</a></li><li data-type="method" id="Window-focused-nav"><a href="Window.html#focused">focused</a></li><li data-type="method" id="Window-forceClose-nav"><a href="Window.html#forceClose">forceClose</a></li><li data-type="method" id="Window-getHeader-nav"><a href="Window.html#getHeader">getHeader</a></li><li data-type="method" id="Window-getHeaderText-nav"><a href="Window.html#getHeaderText">getHeaderText</a></li><li data-type="method" id="Window-getHeight-nav"><a href="Window.html#getHeight">getHeight</a></li><li data-type="method" id="Window-getHeightInEm-nav"><a href="Window.html#getHeightInEm">getHeightInEm</a></li><li data-type="method" id="Window-getWidth-nav"><a href="Window.html#getWidth">getWidth</a></li><li data-type="method" id="Window-getWidthInEm-nav"><a href="Window.html#getWidthInEm">getWidthInEm</a></li><li data-type="method" id="Window-getWindow-nav"><a href="Window.html#getWindow">getWindow</a></li><li data-type="method" id="Window-getWindowHeight-nav"><a href="Window.html#getWindowHeight">getWindowHeight</a></li><li data-type="method" id="Window-getWindowWidth-nav"><a href="Window.html#getWindowWidth">getWindowWidth</a></li><li data-type="method" id="Window-giveFocus-nav"><a href="Window.html#giveFocus">giveFocus</a></li><li data-type="method" id="Window-makeString-nav"><a href="Window.html#makeString">makeString</a></li><li data-type="method" id="Window-removeFocus-nav"><a href="Window.html#removeFocus">removeFocus</a></li><li data-type="method" id="Window-setBackgroundColor-nav"><a href="Window.html#setBackgroundColor">setBackgroundColor</a></li><li data-type="method" id="Window-setHeaderColor-nav"><a href="Window.html#setHeaderColor">setHeaderColor</a></li><li data-type="method" id="Window-setHeaderTextColor-nav"><a href="Window.html#setHeaderTextColor">setHeaderTextColor</a></li><li data-type="method" id="Window-setMinHeight-nav"><a href="Window.html#setMinHeight">setMinHeight</a></li><li data-type="method" id="Window-setMinWidth-nav"><a href="Window.html#setMinWidth">setMinWidth</a></li><li data-type="method" id="Window-setTitle-nav"><a href="Window.html#setTitle">setTitle</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#boot">boot</a></li><li><a href="global.html#outerHeight">outerHeight</a></li><li><a href="global.html#selectElement">selectElement</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        fileViewer.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>// CSS Classes
+// Design stuff
+GlobalStyle.newClass("file-folder::before", "content:'📁';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
+
+class FileViewer {
+    openFolderWindow(path) {
+        let win = new Window(100, 200, path, 40, 35);
+        this.window = win.getWindow();
+        this.header = win.getHeader();
+        this.win = win;
+        this.currentFolder = path;
+        this.win.setBackgroundColor("rgba(0,0,0,0)");
+
+        // Back Button
+        let back = document.createElement("div");
+        back.classList.add("file-back-container", "unselectable", "no-move");
+
+        let backImg = document.createElement("img");
+        backImg.classList.add("file-back");
+        backImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTMuMDI1IDFsLTIuODQ3IDIuODI4IDYuMTc2IDYuMTc2aC0xNi4zNTR2My45OTJoMTYuMzU0bC02LjE3NiA2LjE3NiAyLjg0NyAyLjgyOCAxMC45NzUtMTF6Ii8+PC9zdmc+";
+        back.appendChild(backImg);
+
+        this.header.insertBefore(back, win.getHeaderText());
+
+        this.back = back;
+        this.back.onclick = ()=>{this.goBackParent();};
+
+        this.win.setTitle(path);
+
+        this.contentContainer = document.createElement("div");
+        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.display = "flex";
+        this.window.appendChild(this.contentContainer);
+
+        // background (for right click menu/scrolling) cannot be inside display folders function or will be needlessly created and overwritten
+        this.background = document.createElement("div");
+        this.background.style.backgroundColor = "#fff";
+        this.background.style.flexGrow = "1";
+        this.background.style.overflow = "auto"; // scrolling
+
+        // Folder Display
+        this.displayFolders(path);
+        
+        // Sidebar
+        this.createSidebar();
+        this.window.addEventListener('window-resize', event=>{
+            if(this.window.clientWidth/em &lt; 27) {
+                if(this.sidebar) {
+                    this.destroySidebar();
+                }
+            } else {
+                if(!this.sidebar) {
+                    this.createSidebar();
+                }
+            }
+        });
+
+        this.generatedWindow = this.win.makeString();
+
+        // right click menu
+        this.rightClickMenu = rightClickMenu;
+
+        // icon right click
+        RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ // required?
+            var selected = document.querySelectorAll(".icon-selected");
+            let names = [];
+            selected.forEach((element)=>{
+                names.push(element.getAttribute("path"));
+            });
+            this.intelligentOpen(names);
+        });
+        
+        RightClickMenu.addToMenu("Open in New Window", this.generatedWindow+"-folder", ()=>{
+            var selected = document.querySelector(".icon-selected");
+            let n = new FileViewer;
+            n.openFolderWindow(selected.getAttribute("path"));
+        });
+
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+
+        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
+            console.log("Trash unavailable. 😬");
+        });
+
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+
+        RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
+            let selected = document.querySelectorAll(".icon-selected");
+            let copy = [];
+            selected.forEach((element)=>{
+                let filename = element.getAttribute("name");
+                let filepath = element.getAttribute("path");
+                if(element.querySelector("img").src.includes("folder")) {
+                    // file is a folder
+                    copy.push(this.getChildren(filepath, filename));
+                } else {
+                    // file is a file
+                    copy.push({"file": true, "filename": "Copy of "+filename, "dataPath":filepath});
+                }
+                
+            });
+            Clipboard.contents = ["file-list", copy];
+        });
+        
+        RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], ()=>{
+            let contents = Clipboard.contents;
+            if(contents[0] == "file-list") {
+                contents.shift();
+                contents = contents[0];
+                contents.forEach((element)=>{
+                    // "element" is an object in the form:
+                    //  { top: "topmost", subs:[{sub object 1}, {sub object 2}], sub1: ["sub2"]}
+                    if(element["file"]) { // is file
+                        this._addFileToStorage(element.filename, files[element.dataPath], folders[element.dataPath].kind); // TODO add file kind so it is known
+                    } else { // is folder (note that folders can contain files)
+                        let num = 2;
+                        let path = this.currentFolder+element["top"];
+                        let oldPath = path;
+                        let oldName = element["top"];
+                        if(!folders[path]) {
+                            path += "/";
+                        }
+                        while(folders[path]) { // already exists
+                            console.warn("There is already a folder with path "+path);
+                            path = oldPath+" "+num+"/";
+                            element["top"] = oldName+" "+num;
+                            num++;
+                        }
+
+                        this._addFolderToStorage(element["top"]);
+                        let subs = element["subs"];
+                        this.recursiveAddFromObject(subs, path, element);
+                    }
+                });
+                contents = [contents];
+                contents.unshift("file-list");
+                Clipboard.contents = contents;
+            }
+            
+        });
+
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
+        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
+
+        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder() });
+        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile() });
+        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
+            alert("Note: Apps cannot be added via this.")
+            let filename = prompt("Filename (with extension):");
+            let filedata = prompt("Filedata (if any):");
+            let filekind = prompt("Filekind:");
+            this._addFileToStorage(filename, filedata, filekind);
+        });
+        RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
+    }
+    createSidebar() {
+        this.sidebar = document.createElement("div");
+        this.sidebar.classList.add("heavy-blurred", "file-sidebar", "unselectable");
+
+        // heading 1
+        let favorites = document.createElement("file-heading");
+        favorites.classList.add("ellipsis-overflow", "unselectable");
+        favorites.innerHTML = "Favorites";
+        this.sidebar.appendChild(favorites);
+
+        let favoritesDiv = document.createElement("div");
+        this.sidebar.appendChild(favoritesDiv);
+
+        // heading 1 content
+        let documents = document.createElement("file-member");
+        documents.classList.add("ellipsis-overflow", "file-documents", "clickable", "unselectable");
+        documents.innerHTML = "Documents";
+        documents.setAttribute("path", "/Users/"+NAME+"/Documents/");
+        favoritesDiv.appendChild(documents);
+        
+        let applications = document.createElement("file-member");
+        applications.classList.add("ellipsis-overflow", "file-applications", "clickable", "unselectable");
+        applications.innerHTML = "Applications";
+        applications.setAttribute("path", "/Users/"+NAME+"/Applications/");
+        favoritesDiv.appendChild(applications);
+
+        let downloads = document.createElement("file-member");
+        downloads.classList.add("ellipsis-overflow", "file-downloads", "clickable", "unselectable");
+        downloads.innerHTML = "Downloads";
+        downloads.setAttribute("path", "/Users/"+NAME+"/Downloads/");
+        favoritesDiv.appendChild(downloads);
+
+        let folder1 = document.createElement("file-member");
+        folder1.classList.add("ellipsis-overflow", "file-folder", "clickable", "unselectable");
+        folder1.innerHTML = "WebSystem";
+        folder1.setAttribute("path", "/Users/"+NAME+"/Desktop/WebSystem/");
+        favoritesDiv.appendChild(folder1);
+
+        let favoritedElements = favoritesDiv.querySelectorAll("file-member");
+        if(favoritedElements) {
+            favoritedElements.forEach((element)=>{
+                // selection
+                if(element.innerHTML == folders[this.currentFolder].name) {
+                    element.classList.add("file-member-selected");
+                }
+
+                // Click handling
+                element.onclick = (event)=>{
+                    this.openFolder(element.getAttribute("path"));
+                }
+
+            });
+        }
+
+        this.contentContainer.insertBefore(this.sidebar, this.background);
+    }
+    destroySidebar() {
+        this.sidebar.remove();
+        this.sidebar = undefined; // unbind
+    }
+    recursiveAddFromObject(children, parent, object) {
+        console.log(object);
+        children.forEach((child)=>{
+            if(!child.reference.isFile) { // folder
+                this._addFolderToDifferentLocation(child.name, parent);
+                console.log("Added folder "+child.name+" as subfolder of "+parent+".");
+                if(object[child.name]) {
+                    this.recursiveAddFromObject(object[child.name], parent+child.name+"/", object);
+                }
+            } else { // file
+                // get value at child.path and set data to it.
+                let data = files[child.path];
+                this._addFileToDifferentLocation(child.name, data, child.reference.kind, parent);
+            }
+            // }
+        });
+    }
+    openFolder(path) {
+        this.currentFolder = path;
+        this.win.clear();
+        this.win.setTitle(path);
+        // clear past screen
+        this.contentContainer.innerHTML = "";
+        this.background.innerHTML = "";
+
+        this.contentContainer = document.createElement("div");
+        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.display = "flex";
+        this.window.appendChild(this.contentContainer);
+
+        this.displayFolders(path);
+        this.createSidebar();
+
+        // update right click menu
+        // ! I have no idea why this works or how this works. However, only this works. Not the commented out bit below, only this.
+        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
+        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
+    }
+    displayFolders(path) {
+        // background (for right click menu)
+        this.contentContainer.appendChild(this.background);
+        // Deselection
+        this.background.onclick = ()=>{ // not window to save on events
+            if(event.target == this.background) {
+                clearSelected();
+            }
+        }
+        if(folders[path]) { // has something
+            folders[path].subfolders.forEach(element =>{
+                let name = folders[element].name;
+                if(folders[element].isFile) { // is file
+                    switch(folders[element].kind) {
+                        case "Image":
+                            this.createFile(name, element, "image");
+                            break;
+                        case "App":
+                            this.createFile(name, element, "app");
+                            break;
+                        case "Music":
+                            this.createFile(name, element, "music");
+                            break;
+                        default:
+                            console.error("Error: Could not find file extension of file:");
+                            console.log(name);
+                            this.createFile(name, element, "unknown");
+                            break;
+                    }
+                } else { // is folder
+                    this.createFolder(name, element, this.background, "black", false);
+                }
+            });
+        }
+    }
+    /**
+     * Create a folder in the current window
+     * @param {String} name - The name of the folder to be made.
+     * @param {String} path - The path to the parent of the folder to be created at.
+     * @param {HTMLElement} appendee - The element to append the folder to.
+     * @param {String} color - A CSS Color for the text.
+     * @param {Boolean} newWindow - If true, creates a new window on open.
+     * @param {Boolean} before 
+     */
+    createFolder(name, path=this.currentFolder, appendee=this.background, color="black", newWindow=true, before=false) {
+        let newFolderContainer = document.createElement("div");
+        newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
+        newFolderContainer.setAttribute("path", path);
+        newFolderContainer.setAttribute("name", name);
+        // newFolderContainer.id = name;
+        if(before == true) {
+            appendee.insertBefore(newFolderContainer, appendee.firstChild);
+        } else {
+            appendee.appendChild(newFolderContainer);
+        }
+        
+    
+        // img
+        let newFolder = document.createElement("img");
+        newFolder.src = "assets/folder.png";
+        newFolder.classList.add("icon", "unselectable");
+        newFolderContainer.appendChild(newFolder);
+    
+        // text
+        let text = document.createElement("div");
+        text.classList.add(color, "sans-serif");
+        text.innerText = name;
+        newFolderContainer.appendChild(text);
+    
+        newFolderContainer.ondblclick = (event)=>{
+            if(newWindow == true) {
+                var n = new FileViewer;
+                n.openFolderWindow(newFolderContainer.getAttribute("path"));
+            } else {
+                this.openFolder(newFolderContainer.getAttribute("path"));
+            }
+        }
+
+        // select
+        newFolderContainer.onclick = function(event) {
+            selectElement(event, newFolderContainer);
+        }
+
+        newFolderContainer.oncontextmenu = (event)=>{
+            selectElement(event, newFolderContainer);
+        }
+        return newFolderContainer; // allows for adding to lists
+    }
+    createFile(name, path, filetype, appendee=this.background, color="black") {
+        let newFileContainer = document.createElement("div");
+        newFileContainer.classList.add("clickable", "icon-container", "file");
+        newFileContainer.setAttribute("path", path);
+        newFileContainer.setAttribute("name", name);
+        appendee.appendChild(newFileContainer);
+    
+        // img
+        let newFile = document.createElement("img");
+        if(filetype=="image") {
+            newFile.src = "assets/image.png";
+            // Poor man's lazy loading
+            let thumbed = newFile.cloneNode();
+            thumbed.classList.add("icon");
+            thumbed.onload = ()=>{
+                newFileContainer.replaceChild(thumbed, newFile);
+            };
+            thumbed.src = URL.createObjectURL(files[path]);
+        } else if(filetype=="app"){
+            if(appImagePaths[name]) {
+                newFile.src = appImagePaths[name];
+            } else {
+                newFile.src = "assets/unknown.png";
+            }
+        } else if(filetype == "music") {
+            if(folders[path].content.mediaTags) { // use thumbnail
+                newFile.src = Music.getThumbnail(folders[path].content.mediaTags);
+            } else {
+                newFile.src = "assets/music.png";
+            }
+        } else {
+            newFile.src = "assets/unknown.png";
+        }
+        newFile.classList.add("icon", "unselectable");
+        newFileContainer.appendChild(newFile);
+    
+        // text
+        let text = document.createElement("div");
+        text.classList.add(color, "sans-serif");
+        text.innerText = name;
+        newFileContainer.appendChild(text);
+    
+        newFileContainer.ondblclick = (event)=>{
+            if(filetype == "app") {
+                try {
+                    makeFunctions[name]();
+                } catch(e) {
+                    console.error("No function was provided for making the app named "+name+".");
+                }
+                
+            } else if(filetype == "image") {
+                new ImageViewer(name, path);
+            } else if(filetype == "music") {
+                new Music(name, path);
+            } else { // unknown filetype
+                alert("Opened File "+newFileContainer.getAttribute("name")+"!");
+            }
+            
+        }
+
+        newFileContainer.onclick = function(event) {
+            selectElement(event, newFileContainer);
+        }
+        newFileContainer.oncontextmenu = (event)=>{
+            selectElement(event, newFileContainer);
+        }
+
+        return newFileContainer; // allows for adding to lists
+    }
+
+    /**
+     * Open the file wih specified name
+     * @param {(string|string[])} path 
+     */
+    intelligentOpen(path) {
+        if(typeof path == "object") { // array
+            let oldFolder = this.currentFolder;
+            path.forEach((n)=>{
+                if(oldFolder != this.currentFolder) {
+                    this._intelligentOpenOnce(n, true);
+                } else {
+                    this._intelligentOpenOnce(n);
+                }
+            });
+        } else { // string
+            this._intelligentOpenOnce(path);
+        }
+    }
+
+    // Private
+    _intelligentOpenOnce(path, newFolderWindow=false) {
+        if(folders[path].kind != "Folder") {
+            if(folders[path].kind == "App") {
+                try {
+                    makeFunctions[path]();
+                } catch(e) {
+                    console.error("No function was provided for making the app named "+path+".");
+                }
+            } else if(folders[path].kind == "Image") {
+                new ImageViewer(folders[path].name, path);
+            } else if(folders[path].kind == "Music") {
+                new Music(folders[path].name, path);
+            } else {
+                alert("Opened File '"+folders[path].name+"'!");
+            }
+        } else { // folder
+            if(newFolderWindow) {
+                let n = new FileViewer;
+                n.openFolderWindow(path);
+            } else {
+                this.openFolder(path);
+            }
+            
+        }
+    }
+
+    getWindow() {
+        return this.window;
+    }
+
+    goBackParent() {
+        if(folders[this.currentFolder].parent) { // returns false in root directory
+            this.openFolder(folders[this.currentFolder].parent);
+        }
+    }
+
+    // FOLDER/FILE CREATION
+    makeNewFolder() {
+        try { // safety
+            let blankFolder = this.createFolder("untitled folder", "", this.background, "black", false, true);
+            blankFolder.classList.add("icon-selected", "icon-rename");
+            let blankFolderText = blankFolder.querySelector("div");
+
+            let invisibleInput = document.createElement("input");
+            invisibleInput.style.opacity = "0";
+            invisibleInput.style.width = "8.5em";
+            invisibleInput.style.height = "1.5em";
+            let pos = blankFolderText.getBoundingClientRect();
+            invisibleInput.style.position = "absolute";
+            invisibleInput.style.zIndex = blankFolder.parentNode.parentNode.parentNode.style.zIndex + 1;
+            invisibleInput.style.left = pos.left+"px";
+            invisibleInput.style.top = pos.top+"px";
+            invisibleInput.style.transform = "translate(5%, 0%)";
+            document.body.appendChild(invisibleInput);
+            
+            
+            setTimeout(()=>{
+                invisibleInput.focus(); // wait for object to be made
+            }, 50);
+            
+            invisibleInput.onkeyup = ()=>{
+                blankFolderText.innerText = invisibleInput.value;
+            }
+
+            invisibleInput.onkeydown = (event)=>{
+                if(event.key == "Enter") {
+                    invisibleInput.blur();
+                }
+            }
+
+            invisibleInput.onblur = ()=>{
+                let text = blankFolderText.innerText;
+                if(text === "") {
+                    text = "untitled folder";
+                }
+                let path = this.currentFolder+text+"/";
+                if(text.startsWith("file::")||Object.keys(folders).includes(path)) {
+                    if(Object.keys(folders).includes(path)) {
+                        let i = 2;
+                        while(Object.keys(folders).includes(path)) {
+                            blankFolderText.innerText = text+" "+i;
+                            i++;
+                            path = this.currentFolder+blankFolderText.innerText+"/";
+                        }
+                    } else {
+                        blankFolderText.innerText = text.replace(/file::/g, "");
+                    }
+                }
+                invisibleInput.remove();
+                blankFolder.classList.remove("icon-rename");
+                
+                this._addFolderToStorage(blankFolderText.innerText);
+                
+            }
+        } catch(e) {
+            console.error("There was an issue in processing the folder creation. Error:");
+            throw e;
+        }
+    }
+
+    _addFolderToStorage(name) {
+        FileSystem.addFolderAtLocation(name, this.currentFolder);
+        this.openFolder(this.currentFolder);
+    }
+
+    _addFolderToDifferentLocation(name, parentPath) {
+        FileSystem.addFolderAtLocation(name, parentPath);
+    }
+
+    _addFileToDifferentLocation(filename, filedata, filekind, filepath) {
+        if(filename.startsWith("file::")) {
+            filename = filename.substring(6, filename.length);
+        }
+        FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
+    }
+    /**
+     * 
+     * @param {String} filename - The name of the file to be added
+     * @param {(Blob|File)} filedata - The data to be added
+     * @param {String} filekind - The kind of the file to be added.
+     */
+    _addFileToStorage(filename, filedata, filekind) {
+        if(filekind == "Music") {
+            // read tags in worker
+            if(window.Worker) {
+                let reader = new Worker("js/getMusicTagsWorker.js");
+                reader.postMessage(filedata);
+                reader.onmessage = (message)=>{
+                    let options = message.data;
+                    FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
+                    this.openFolder(this.currentFolder);
+                }
+            } else {
+                jsmediatags.read(filedata, {
+                    onSuccess: (tag)=>{
+                        let options = {};
+                        options.mediaTags = tag;
+                        FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
+                        this.openFolder(this.currentFolder);
+                    },
+                    onError: (e) =>{
+                        console.error("There was an error trying to find the tags.");
+                        throw e;
+                    }
+                });
+            }
+        } else {
+            FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
+            this.openFolder(this.currentFolder);
+        }
+        
+        
+    }
+
+    uploadNewFile() {
+        let fileUpload = document.createElement("input");
+        fileUpload.type = "file";
+        fileUpload.multiple = true;
+        fileUpload.click();
+        var fileUploadEvent = function namelessName() {
+            let files = fileUpload.files;
+            files = [...files];
+            files.forEach((file)=>{
+                let extension = file.name.substring(file.name.lastIndexOf("."), file.name.length).toLowerCase();
+                switch(extension) {
+                    case ".png":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".gif":
+                    // Add more as image viewer can handle them
+                        this._addFileToStorage(file.name, file, "Image");
+                        break;
+                    case ".mp3":
+                    case ".wav":
+                    case ".aiff":
+                    case ".flac":
+                        this._addFileToStorage(file.name, file, "Music");
+                        break;
+                    default:
+                        this._addFileToStorage(file.name, file, "Unknown");
+                        break;
+                }
+               
+            });
+            this.openFolder(this.currentFolder);
+            fileUpload.removeEventListener('change', fileUploadEvent, false);
+        }.bind(this);
+
+        fileUpload.addEventListener('change', fileUploadEvent, false);
+        
+    }
+
+
+    getChildren(path, name) {
+        let pointerFolder = folders[path];
+        let children = [];
+        pointerFolder.subfolders.forEach((child)=>{
+            children.push({"name": folders[child]["name"], "path": child, reference: folders[child]});
+        });
+        let finishedObject = { top: name };
+        finishedObject["subs"] = children;
+        let obj = this.recursiveGetChildren(children, finishedObject);
+        console.log(obj);
+        obj.top = "Copy of "+obj.top;
+        return obj;
+    }
+    
+    recursiveGetChildren(children, finishedObject) {
+        children.forEach((child)=>{
+            // console.log(child);
+            if(child.reference.isFile) { // file
+                finishedObject[child.name] = {name: child.name, dataPath: child.path};
+            }
+            else if(folders[child.path].subfolders) { // folder
+                let subfolders = folders[child.path].subfolders.map((val)=>{
+                    return {"name": folders[val].name, "path": val, reference: folders[val]}
+                });
+                finishedObject[child.name] = subfolders;
+                
+                this.recursiveGetChildren(subfolders, finishedObject);
+            }
+        });
+        return finishedObject;
+    }
+}
+
+
+function createDesktopFolder(x, y, name, path, appendee=mainContent, color="white") {
+    let newFolderContainer = document.createElement("div");
+    newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
+    newFolderContainer.style.top = y+"em";
+    newFolderContainer.style.left = x+"em";
+    newFolderContainer.setAttribute("path", path);
+    // newFolderContainer.id = name;
+    appendee.appendChild(newFolderContainer);
+
+    // img
+    let newFolder = document.createElement("img");
+    newFolder.src = "assets/folder.png";
+    newFolder.classList.add("icon", "unselectable");
+    newFolderContainer.appendChild(newFolder);
+
+    // text
+    let text = document.createElement("div");
+    text.classList.add(color, "sans-serif");
+    text.innerText = name;
+    newFolderContainer.appendChild(text);
+
+    newFolderContainer.ondblclick = (event)=>{
+        var n = new FileViewer;
+        n.openFolderWindow(newFolderContainer.getAttribute("path"));
+        // n.addFolder();
+    }
+    newFolderContainer.onclick = (event)=>{
+        selectElement(event, newFolderContainer);
+    }
+}
+
+/**
+ * Select an element.
+ * @param {Click Event} event - Allows for shift key
+ * @param {HTMLElement} element 
+ */
+function selectElement(event, element) {
+    if(document.querySelectorAll(".icon-selected").length > 0) {
+        // shift must be down
+        if(event.shiftKey) {
+            element.classList.add("icon-selected");
+        } else {
+            clearSelected();
+            element.classList.add("icon-selected");
+        }
+    } else {
+        // first to be selected
+        element.classList.add("icon-selected");
+    }
+}</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>

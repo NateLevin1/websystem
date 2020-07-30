@@ -31,7 +31,7 @@ class Window {
       titleText.innerText = title;
       
       let close = document.createElement("div");
-      close.classList.add("close", "unselectable", "no-move");
+      close.classList.add("close", "unselectable", "no-move", "no-focus");
       
       let resize = document.createElement("div");
       resize.classList.add("resize");
@@ -60,24 +60,36 @@ class Window {
       // Focus/Unfocus
       this.dispatchFocus(); // when new window is opened focus by default
 
-      this.window.onmousedown = ()=>{
-        this.dispatchFocus();
+      this.window.onmousedown = (event)=>{
+        if(!event.target.classList.contains("no-focus")) {
+          this.dispatchFocus();
+        }
       }
 
       document.addEventListener('window-focus', (event)=>{
-        if(this.focused()) {
+        // if(this.focused()) {
           if(event.window == this.window) {
             this.giveFocus();
           } else {
             this.removeFocus();
           }
-        } else {
-          this.removeFocus();
-        }
+        // } else {
+        //   this.removeFocus();
+        // }
       });
 
       this.window.addEventListener('window-destroy', ()=>{
+        // reset topbar
         TopBar.clear();
+        // give focus to next most focused
+        let windows = document.querySelectorAll(".window");
+        windows.forEach((element)=>{
+          if(element.style.zIndex == "9" && element != this.window) {
+            focusEvent.window = element;
+            document.dispatchEvent(focusEvent);
+          }
+        });
+        
       });
     }
     /**
@@ -177,6 +189,11 @@ class Window {
     giveFocus() {
       this.hasFocus = true;
       this.window.style.zIndex = 10;
+      // correct topbar
+      TopBar.clear();
+      if(this.topBarCreator) {
+        this.topBarCreator.bind(this.thisContext)();
+      }
     }
     /**
      * Remove the focus from the window. Used internally, may be annoying to user if this is run.
@@ -195,11 +212,6 @@ class Window {
         this.giveFocus(); // give opened window focus
         focusEvent.window = this.window;
         document.dispatchEvent(focusEvent);
-        // correct topbar
-        TopBar.clear();
-        if(this.topBarCreator) {
-          this.topBarCreator.bind(this.thisContext)();
-        }
       }
     }
 

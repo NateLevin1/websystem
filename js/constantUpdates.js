@@ -14,3 +14,6 @@ setInterval(()=>{
     dayName = new Intl.DateTimeFormat('en-US', {weekday: "short"}).format(curDate);
     postMessage("T"+dayName+" "+curHours+":"+curDate.getMinutes().toString().padStart(2, "0")+" "+amOrPm);
 }, 1000);
+setInterval(()=>{ // every 15 seconds, check to se if user has wifi
+    postMessage(["O", navigator.onLine]);
+}, 15000);

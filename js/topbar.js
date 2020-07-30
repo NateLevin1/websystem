@@ -42,6 +42,19 @@ class TopBar {
             constantUpdates.onmessage = (event) => {
                 if(event.data[0] === "T") {
                     time.innerText = event.data.substring(1);
+                } else if(event.data[0] == "O") {
+                    switch(event.data[1]) {
+                        case true:
+                            if(wifi.src != "assets/filledWifi.svg") {
+                                wifi.src = "assets/filledWifi.svg";
+                            }
+                            break;
+                        case false:
+                            if(wifi.src != "assets/emptyWifi.svg") {
+                                wifi.src = "assets/emptyWifi.svg";
+                            }
+                            break;
+                    }
                 }
             }
         } else { // polyfill

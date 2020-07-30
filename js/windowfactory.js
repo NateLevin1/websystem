@@ -377,7 +377,6 @@ class RightClickMenu {
    * Adds an element to the menu. IDs are recommended.
    * Example usage:
    * RightClickMenu.addToMenu("Menu Item", ".window"); // will only show up when a window has been right clicked
-   * 
    * Note that you might need to add a class to your window to be able to reference it.
    * @param {(HTMLElement|String)} element - The element to be appended to the menu. If a string uses default element.
    * @param {Array} usage - An element instance (or instances with an array) representing where to use the menu item.
@@ -532,16 +531,13 @@ class RightClickMenu {
                           this.rightClickMenu.classList.remove("right-click-slow");
                           this.rightClickMenu.innerHTML = "";
                       }, 400);
-                      document.body.removeEventListener('pointerdown', removeOnClick, false);
                   }
 
-                  document.body.addEventListener('pointerdown', removeOnClick, false);
+                  document.body.addEventListener('pointerdown', removeOnClick, {once: true});
               }
-              // remove listener
-              document.body.removeEventListener('pointerup', pointerHandle, false);
           }
 
-          document.body.addEventListener('pointerup', pointerHandle, false);
+          document.body.addEventListener('pointerup', pointerHandle, {once: true});
         }
       }
     });

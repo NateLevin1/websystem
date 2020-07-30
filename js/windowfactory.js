@@ -4,13 +4,21 @@ class Window {
      * @param {Number} width - The minimum width in pixels.
      * @param {Number} height - The minimum height in pixels.
      * @param {String} title - The title of the window
-     * @param {Number} defaultWidth - The default width of the window in em.
-     * @param {Number} defaultHeight - The default width of the window in em.
-     * @param {Number} x - The default x position on the screen.
-     * @param {Number} y The default y position on the screen.
-     * @param {Boolean} keepAspectRatio - If true, keeps the aspect ratio when resizing.
+     * @param {Number} [defaultWidth=30] - The default width of the window in em.
+     * @param {Number} [defaultHeight=30] - The default width of the window in em.
+     * @param {Object} [options={ x: 3, y: 3, keepAspectRatio: false }] - The options object
+     * @param {Number} options.x - The default x position on the screen.
+     * @param {Number} options.y The default y position on the screen.
+     * @param {Boolean} options.keepAspectRatio - If true, keeps the aspect ratio when resizing.
+     * @param {Function} options.topBarCreator - The function to be called when a top bar is requested
+     * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      */
-    constructor(width, height, title, defaultWidth=30, defaultHeight=30, x=3, y=3, keepAspectRatio=false) {
+    constructor(width, height, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this }) {
+      // Take options into account
+      let {x, y, keepAspectRatio, topBarCreator, thisContext } = options;
+      this.topBarCreator = topBarCreator;
+      this.thisContext = thisContext;
+      
       let window = document.createElement("div");
       window.classList.add("window", "absolute", "window-slow");
       window.style.top = y+"em";
@@ -66,6 +74,10 @@ class Window {
         } else {
           this.removeFocus();
         }
+      });
+
+      this.window.addEventListener('window-destroy', ()=>{
+        TopBar.clear();
       });
     }
     /**
@@ -179,9 +191,20 @@ class Window {
      * Give the current window focus. Used internally, may be annoying to user if this is run.
      */
     dispatchFocus() {
-      this.giveFocus(); // give opened window focus
-      focusEvent.window = this.window;
-      document.dispatchEvent(focusEvent);
+      if(!this.hasFocus) {
+        this.giveFocus(); // give opened window focus
+        focusEvent.window = this.window;
+        document.dispatchEvent(focusEvent);
+        // correct topbar
+        TopBar.clear();
+        if(this.topBarCreator) {
+          this.topBarCreator.bind(this.thisContext)();
+        }
+      }
+    }
+
+    setTopBarCreator(func) {
+      this.topBarCreator = func;
     }
 
     /**

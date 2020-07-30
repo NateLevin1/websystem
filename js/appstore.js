@@ -22,7 +22,7 @@ GlobalStyle.newClass("appstore-installed:active", "background-color: rgb(13, 120
  */
 class Appstore {
     constructor() {
-        let win = new Window(400, 300, "App Store",25,25, 5,2.2);
+        let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;

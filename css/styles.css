@@ -413,24 +413,35 @@ button:active {
     color: black;
 }
 .top-bar-time {
-    display: inline-block;
-    position: absolute;
-    right:0.2em;
-    top:0.1em;
+    margin-top:0.2em;
+    float: right;
+}
+.top-bar-wifi {
+    margin-top:0.35em;
+    margin-right:0.4em;
+    max-height: 1em;
+    min-width:1em;
+    float: right;
 }
 .top-bar-top-item {
     display: inline-block;
     margin: 0 0.2em;
-    padding: 0em 0.5em;
+    padding: 0.1em 0.6em;
     padding-bottom: 0.1em;
     transition: background-color 0.1s, color 0.1s;
+}
+.top-bar-top-specific-item {
+    font-weight: bolder;
+}
+.top-bar-top-specific-item::first-letter {
+    text-decoration: underline;
 }
 .top-bar-top-item-selected {
     background-color:rgba(0, 89, 221, 1);
     color:white;
 }
 .top-bar-menu {
-    background-color: rgb(216, 216, 216);
+    background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid black;
     border-radius: 6px;
     position: absolute;
@@ -453,6 +464,13 @@ button:active {
     padding: 0.1em 0.5em;
     margin:0.2em 0;
     cursor: default;
+}
+.top-bar-menu-item-unavailable {
+    color: rgb(161, 161, 161);
+}
+.top-bar-menu-item-unavailable:hover {
+    color: rgb(161, 161, 161);
+    background-color:unset;
 }
 .top-bar-menu-line {
     width: 10em;

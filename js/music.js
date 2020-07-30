@@ -2,9 +2,9 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 24.375, 8.875, 20, 2.2, false);
+            win = new Window(390, 142, "Music", 24.375, 8.875, {x: 20, y: 2.2, keepAspectRatio: false});
         } else { // open standalone
-            win = new Window(280, 380, "Music", 25,25, 10, 2.2);
+            win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2});
         }
         
         this.window = win.getWindow();

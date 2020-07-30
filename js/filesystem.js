@@ -143,7 +143,7 @@ class FileSystem {
      */
     static requestFileByGUI(kind) {
         return new Promise((resolve, reject)=>{
-            let win = new Window(300, 300, "File Selection", 25,20, 5, 5);
+            let win = new Window(300, 300, "File Selection", 25,20, {x: 5, y: 5});
             let window = win.getWindow();
             window.classList.add("unselectable");
 

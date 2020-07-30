@@ -3,15 +3,15 @@ class TopBar {
         let bar = document.createElement("div");
         bar.classList.add("top-bar", "heavy-blurred");
         document.body.appendChild(bar);
-        this.bar = bar;
+        TopBar.bar = bar;
 
-        this.menuItems = {};
-        this.unclickables = [];
+        TopBar.menuItems = {};
+        TopBar.unclickables = [];
         let menu = document.createElement("div");
-        menu.classList.add("top-bar-menu", "unselectable");
+        menu.classList.add("top-bar-menu", "unselectable", "heavy-blurred");
         menu.style.display = "none";
         document.body.appendChild(menu);
-        this.menu = menu;
+        TopBar.menu = menu;
 
 
         let curDate = new Date;
@@ -27,6 +27,15 @@ class TopBar {
         time.innerText = dayName+" "+curHours+":"+curDate.getMinutes().toString().padStart(2, "0")+" "+amOrPm;
         time.classList.add("top-bar-time", "unselectable");
         bar.appendChild(time);
+
+        let wifi = document.createElement("img");
+        if(window.navigator.onLine) {
+            wifi.src = "assets/filledWifi.svg";
+        } else {
+            wifi.src = "assets/emptyWifi.svg";
+        }
+        wifi.classList.add("top-bar-wifi", "unselectable");
+        bar.appendChild(wifi);
 
         if(window.Worker) { // ? Do we even need this polyfill?
             let constantUpdates = new Worker('js/constantUpdates.js');
@@ -57,44 +66,44 @@ class TopBar {
 
         let info = document.createElement("div");
         info.innerText = "⚫";
-        info.classList.add("top-bar-top-item", "unselectable");
+        info.classList.add("top-bar-top-item", "unselectable", "top-bar-info");
         bar.appendChild(info);
-        this.addListenerForItem({el: info, name:"info"});
+        TopBar.addListenerForItem({el: info, name:"info"});
 
-        this.addToMenu("About WebSystem", "info", ()=>{ console.log("Hello World!"); });
-        this.addLineToMenu("info");
-        this.addToMenu("Go To Github", "info", ()=>{ console.log("Hello World 2!"); });
-        
-        let name = document.createElement("div");
-        name.innerText = "File";
-        name.classList.add("top-bar-top-item", "unselectable");
-        bar.appendChild(name);
-        this.addListenerForItem({el: name, name: "file"});
-
-        let newSelect = this.addToMenu("New  ▶", "file", undefined, {clickable: false});
-        this.addSecondaryListenerForItem({el: newSelect, name:"newSelect"});
-        this.addToMenu("Folder", "newSelect", ()=>{ console.log("New Folder!"); });
-        this.addToMenu("File", "newSelect", ()=>{ console.log("New File!"); });
-
-        let more = this.addToMenu("More Options ▶", "newSelect", undefined, {clickable: false});
-        this.addSecondaryListenerForItem({el: more, name:"more"});
-        this.addToMenu("Option 3", "more", ()=>{ console.log("Option 3!"); });
+        TopBar.addToMenu("About WebSystem", "info", ()=>{ 
+            console.log("Create new window with about");
+        });
+        TopBar.addLineToMenu("info");
+        TopBar.addToMenu("Go To Github", "info", ()=>{ 
+            window.open("https://github.com/UltimatePro-Grammer/websystem", '_blank');
+        });
     }
-
-    addLineToMenu(from) {
+    /**
+     * Clear the top bar of all things other than the time and info.
+     */
+    static clear() {
+        while(TopBar.bar.lastChild != document.querySelector(".top-bar-info")) {
+            TopBar.bar.lastChild.remove();
+        }
+    }
+    /**
+     * Show a line in a menu.
+     * @param {String} from - The key representing when to show the line.
+     */
+    static addLineToMenu(from) {
         let el = document.createElement("hr");
         el.classList.add("top-bar-menu-line");
-        this.menuItems[from].push(el);
+        this.menuItems[from].push({"el":el});
     }
 
-    addToMenu(element, from, callback, options={clickable: true}) {
+    static addToMenu(element, from, callback, options={clickable: true}) {
         if(typeof element == "string") {
             let newEl = document.createElement("div");
             newEl.innerText = element;
             newEl.classList.add("top-bar-menu-item");
             element = newEl;
         }
-        this.menuItems[from].push(element);
+        this.menuItems[from].push({el: element});
         if(options.clickable) {
             element.addEventListener("menu-select", ()=>{
                 callback();
@@ -105,7 +114,33 @@ class TopBar {
         return element; // allows for changing after creation
     }
 
-    addListenerForItem(obj) {
+    static addToMenuIf(booleanFunction, element, from, callback, options={clickable: true, thisContext: this}) {
+        if(typeof element == "string") {
+            let newEl = document.createElement("div");
+            newEl.innerText = element;
+            newEl.classList.add("top-bar-menu-item");
+            element = newEl;
+        }
+        this.menuItems[from].push({el: element, boolFunc: booleanFunction.bind(this)});
+        if(options.clickable) {
+            element.addEventListener("menu-select", ()=>{
+                callback();
+            });
+        } else {
+            this.unclickables.push(element);
+        }
+        return element; // allows for changing after creation
+    }
+
+    static addToTop(innerText, key) {
+        let el = document.createElement("div");
+        el.innerText = innerText;
+        el.classList.add("top-bar-top-item", "unselectable", "top-bar-top-specific-item");
+        TopBar.bar.appendChild(el);
+        TopBar.addListenerForItem({el: el, name: key});
+    }
+
+    static addListenerForItem(obj) {
         let item = obj.name;
         this.menuItems[item] = [];
         obj.el.onmousedown = (event)=>{
@@ -144,7 +179,7 @@ class TopBar {
         }
     }
 
-    addSecondaryListenerForItem(obj) {
+    static addSecondaryListenerForItem(obj) {
         let {el, name} = obj;
         let newMenu = document.createElement("div");
         this.menuItems[name] = [];
@@ -157,14 +192,20 @@ class TopBar {
                 newMenu = document.createElement("div");
                 addListenersToNewMenu(newMenu);
                 allowRemove = false;
-                newMenu.classList.add("top-bar-menu", "unselectable");
+                newMenu.classList.add("top-bar-menu", "unselectable", "heavy-blurred");
                 newMenu.style.left = Math.round(el.getBoundingClientRect().right+0.2*em)+"px";
                 newMenu.style.top = Math.round(el.getBoundingClientRect().top-0.2*em)+"px";
                 document.body.addEventListener("mousedown", removeIfAble, { once: true });
                 // add proper stuff to menu
                 let elementsToAdd = this.menuItems[name];
-                elementsToAdd.forEach((element)=>{
-                    newMenu.appendChild(element);
+                elementsToAdd.forEach((obj)=>{
+                    if(!obj.boolFunc || obj.boolFunc()) {
+                        newMenu.appendChild(obj.el);
+                        obj.el.classList.remove("top-bar-menu-item-unavailable");
+                    } else if(!obj.boolFunc()) { // gray out
+                        newMenu.appendChild(obj.el);
+                        obj.el.classList.add("top-bar-menu-item-unavailable");
+                    }
                 });
                 // display menu
                 document.body.appendChild(newMenu);
@@ -199,14 +240,25 @@ class TopBar {
         }
     }
 
-    showMenu(item, element) {
+    static showMenu(item, element) {
         this.menu.style.display = "inline-block";
         this.menu.style.left = Math.round(element.getBoundingClientRect().x-0.2*em)+"px";
         element.classList.add("top-bar-top-item-selected");
         let elementsToAdd = this.menuItems[item];
         this.menu.innerHTML = "";
-        elementsToAdd.forEach((element)=>{
-            this.menu.appendChild(element);
+        elementsToAdd.forEach((obj)=>{
+            if(!obj.boolFunc || obj.boolFunc()) {
+                this.menu.appendChild(obj.el);
+                obj.el.classList.remove("top-bar-menu-item-unavailable");
+                let elIn = this.unclickables.lastIndexOf(obj.el);
+                if(elIn != -1) { // was grayed out
+                    this.unclickables.splice(elIn, 1);
+                }
+            } else if(!obj.boolFunc()) { // gray out
+                this.menu.appendChild(obj.el);
+                obj.el.classList.add("top-bar-menu-item-unavailable");
+                this.unclickables.push(obj.el);
+            }
         });
     }
     /**
@@ -214,7 +266,7 @@ class TopBar {
      * @param {HTMLElement} menu - The menu for removing
      * @param {HTMLElement} [origin=undefined] - The origin of the removing. Removes 'selected' class from it.
      */
-    removeMenu(menu, origin=undefined) {
+    static removeMenu(menu, origin=undefined) {
         // get whatever is hovered
         // use that info to run callback
         let children = menu.children;

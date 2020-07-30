@@ -17,7 +17,7 @@ class Calculator {
         this.currentNumber = "";
         this.oldFontSize = "";
 
-        let win = new Window(117, 262, "Calculator", 20,35,20,2.2);
+        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;

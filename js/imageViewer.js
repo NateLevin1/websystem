@@ -40,7 +40,7 @@ class ImageViewer {
                 }
                 document.body.removeChild(sizeGetter);
 
-                win = new Window(size[0], size[1], name, size[2], size[3], 3, 3, false);
+                win = new Window(size[0], size[1], name, size[2], size[3], {x: 3, y: 3, keepAspectRatio: false});
                 win.setBackgroundColor("rgb(200, 200, 200)");
 
 
@@ -70,7 +70,7 @@ class ImageViewer {
     }
 
     openInStandalone() {
-        this.win = new Window(280, 280, "Image Viewer", 25,25, 10, 5);
+        this.win = new Window(280, 280, "Image Viewer", 25,25, {x: 10, y: 5});
         this.win.setBackgroundColor("rgb(230, 230, 230)");
         this.window = this.win.getWindow();
         this.header = this.win.getHeader();

@@ -147,8 +147,8 @@ class ImageViewer {
       }
 
       TopBar.addToTop("View", "view");
-      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom In", "view", this.zoomIn, {thisContext: this, clickable: true});
-      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom Out", "view", this.zoomOut, {thisContext: this, clickable: true});
+      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom In", "view", this.zoomIn.bind(this), {thisContext: this, clickable: true});
+      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom Out", "view", this.zoomOut.bind(this), {thisContext: this, clickable: true});
       
       if(!this.standalone) {
         let scrollSelect = TopBar.addToMenu("Scroll  ▶", "view", undefined, {clickable: false});

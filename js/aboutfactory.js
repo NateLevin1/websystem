@@ -11,6 +11,7 @@ class About {
 
         let thumb = document.createElement("img");
         thumb.src = thumbnailSrc;
+        thumb.style.maxWidth = "20%";
         thumbnailContainer.appendChild(thumb);
 
         containerDiv.appendChild(thumbnailContainer);

@@ -10,9 +10,11 @@ class ImageViewer {
      */
     constructor(name, path) {
         if(!name && !path) { // open in standalone mode
+            this.standalone = true;
             this.openInStandalone();
             return undefined; // prevent running of rest of code
         }
+        this.standalone = false;
         var img = document.createElement("img");
         if(files[path]) {
             img.src = URL.createObjectURL(files[path]);
@@ -39,8 +41,8 @@ class ImageViewer {
                     size[3] = 29;
                 }
                 document.body.removeChild(sizeGetter);
-
-                win = new Window(size[0], size[1], name, size[2], size[3], {x: 3, y: 3, keepAspectRatio: false});
+                this.zoomed = false;
+                win = new Window(size[0], size[1], name, size[2], size[3], {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
                 win.setBackgroundColor("rgb(200, 200, 200)");
 
 
@@ -51,6 +53,7 @@ class ImageViewer {
                 scrollContainer.classList.add("image-view-scroll");
                 scrollContainer.appendChild(img);
                 this.window.appendChild(scrollContainer);
+                this.scrollContainer = scrollContainer;
 
                 this.addListeners();
             }.bind(this);
@@ -60,17 +63,49 @@ class ImageViewer {
     addListeners() {
         this.window.classList.add("unselectable");
         this.window.addEventListener('window-resize', (event)=>{
-            let windowWidth = this.win.getWidth();
-            if(windowWidth < 30*em && this.img.style.maxWidth != "100%") {
-                this.img.style.maxWidth = "100%";
-            } else if(windowWidth > 30*em && this.img.style.maxWidth != "90%") {
-                this.img.style.maxWidth = "90%";
+            if(!this.zoomed) {
+                let windowWidth = this.win.getWidth();
+                if(windowWidth < 30*em && this.img.style.maxWidth != "100%") {
+                    this.img.style.maxWidth = "100%";
+                } else if(windowWidth > 30*em && this.img.style.maxWidth != "90%") {
+                    this.img.style.maxWidth = "90%";
+                }
+            }
+        });
+
+        // keyboard shortcuts
+        document.addEventListener("keydown", (event)=>{
+            if(this.win.focused()) {
+                if(event.metaKey || event.ctrlKey) {
+                    if(event.key == "=" || event.key == "+") {
+                        event.preventDefault();
+                        this.zoomIn();
+                    } else if(event.key == "-") {
+                        event.preventDefault();
+                        this.zoomOut();
+                    }
+                } else if(event.key == "ArrowUp" || event.key == "ArrowDown" || event.key == "ArrowLeft" || event.key == "ArrowRight") {
+                    switch(event.key) {
+                        case "ArrowUp":
+                            this.scrollContainer.scrollTop -= 40;
+                            break;
+                        case "ArrowDown":
+                            this.scrollContainer.scrollTop += 40;
+                            break;
+                        case "ArrowLeft":
+                            this.scrollContainer.scrollLeft -= 40;
+                            break;
+                        case "ArrowRight":
+                            this.scrollContainer.scrollLeft += 40;
+                            break;
+                    }
+                }
             }
         });
     }
 
     openInStandalone() {
-        this.win = new Window(280, 280, "Image Viewer", 25,25, {x: 10, y: 5});
+        this.win = new Window(280, 280, "Image Viewer", 25,25, {x: 10, y: 5, topBarCreator: this.createTopBar, thisContext: this});
         this.win.setBackgroundColor("rgb(230, 230, 230)");
         this.window = this.win.getWindow();
         this.header = this.win.getHeader();
@@ -94,8 +129,66 @@ class ImageViewer {
             });
         }
         contentContainer.appendChild(fileOpen);
+        this.fileOpen = fileOpen;
 
         this.window.appendChild(contentContainer);
+    }
+
+    createTopBar() {
+      TopBar.addToTop("File", "file");
+      if(this.standalone) {
+        TopBar.addToMenu("Choose Image", "file", ()=>{ 
+            this.fileOpen.click();
+        });
+      } else {
+        TopBar.addToMenu("Choose Image", "file", ()=>{ 
+            new ImageViewer;
+        });
+      }
+
+      TopBar.addToTop("View", "view");
+      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom In", "view", this.zoomIn, {thisContext: this, clickable: true});
+      TopBar.addToMenuIf(()=>{ return !this.standalone; }, "Zoom Out", "view", this.zoomOut, {thisContext: this, clickable: true});
+      
+      if(!this.standalone) {
+        let scrollSelect = TopBar.addToMenu("Scroll  ▶", "view", undefined, {clickable: false});
+        TopBar.addSecondaryListenerForItem({el: scrollSelect, name:"scrollSelect"});
+        TopBar.addToMenu("Up", "scrollSelect", ()=>{ 
+              this.scrollContainer.scrollTop -= 60;
+        });
+        TopBar.addToMenu("Down", "scrollSelect", ()=>{ 
+              this.scrollContainer.scrollTop += 60;
+        });
+        TopBar.addToMenu("Left", "scrollSelect", ()=>{ 
+              this.scrollContainer.scrollLeft -= 60;
+        });
+        TopBar.addToMenu("Right", "scrollSelect", ()=>{ 
+              this.scrollContainer.scrollLeft += 60;
+        });
+      }
+      
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+
+      TopBar.addToTop("Help", "help");
+      TopBar.addToMenu("About Image Viewer", "help", ()=>{ About.newWindow("Image Viewer", "The official Image Viewer for WebSystem.", "1.0", "assets/image.png"); });
+    }
+
+    zoomIn() {
+        this.zoomed = true;
+        this.img.style.maxWidth = "100em"; // practically infinite, allow scrolling
+        this.img.style.maxHeight = "100em";
+        this.img.style.height = (this.img.clientHeight + 9*em).toString() + "px";
+        this.img.style.objectFit = "cover";
+    }
+    zoomOut() {
+        this.zoomed = true;
+        this.img.style.maxWidth = "120em"; // practically infinite, allow scrolling
+        this.img.style.maxHeight = "120em";
+        this.img.style.height = (this.img.clientHeight - 9*em).toString() + "px";
+        if(this.img.clientHeight < 20) {
+            this.img.style.height = "40px";
+        }
+        this.img.style.objectFit = "cover";
     }
 }
 

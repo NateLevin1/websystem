@@ -17,7 +17,7 @@ class Calculator {
         this.currentNumber = "";
         this.oldFontSize = "";
 
-        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2});
+        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2, topBarCreator: this.createTopBar, thisContext: this });
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -345,6 +345,7 @@ class Calculator {
 
     /**
     * Fit text to div (from <a href="https://github.com/ricardobrg/fitText/">fitText</a>)
+    * @ignore
     * @param {HTMLElement} outputSelector - Element to select (changed from link above to not be id based)
     */
     fitText(output) {
@@ -383,7 +384,48 @@ class Calculator {
         }
     }
 
+    createTopBar() {
+        TopBar.addToTop("File", "file");
+        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
 
+        TopBar.addToTop("Edit", "edit");
+        TopBar.addToMenu("Copy Answer", "edit", ()=>{ navigator.clipboard.writeText(this.currentNumber); });
+        // pasting doesn't work in firefox. below is for fix.
+        let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+        TopBar.addToMenu("Paste", "edit", async ()=>{
+            var newNum;
+            if(!isFirefox) {
+                newNum = parseFloat(await navigator.clipboard.readText());
+            } else {
+                newNum = parseFloat(prompt("Please press ctrl+v or cmd+v."));
+            }
+
+            if(isNaN(newNum)) {
+                alert("Input must be a number.");
+            } else {
+                this.operation = "";
+                this.lastNumber = "";
+                this.currentNumber = newNum.toString(); // converted back to string to prevent non numbers
+                this.updateScreen();
+            }
+            
+        });
+
+        TopBar.addToTop("Help", "help");
+        TopBar.addToMenu("About Calculator", "help", ()=>{ 
+            About.newWindow("Calculator", "Do calculations, beautifully.", "1.0", "assets/calc.png")
+         });
+        TopBar.addToMenu("Keyboard Shortcuts", "help", ()=>{ 
+            let w = new Window(400, 270, "Calculator Keyboard Shortcuts", 400/em, 270/em, {resizeDisabled: true});
+            let newWindow = w.getWindow();
+            newWindow.classList.add("unselectable")
+            let text = document.createElement("p");
+            text.style.color = "black";
+            text.style.textAlign = "center";
+            text.innerHTML = "<span style='font-weight: bold; font-size: 1.4em;'>Keyboard Shortcuts:</span><br>C to clear<br>Shift+minus to invert sign<br>Percent (%) to get value as a percent<br>Slash (/) to divide<br>X or * to multiply<br>Minus (-) to subtract<br>Plus (+) to add<br>Enter/Return or equal sign (=) to get answer<br>Number keys to type numbers<br>Period (.) key to add a decimal";
+            newWindow.appendChild(text);
+        });
+    }
 }
 
 function makeCalculator() {

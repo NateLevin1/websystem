@@ -22,7 +22,7 @@ GlobalStyle.newClass("appstore-installed:active", "background-color: rgb(13, 120
  */
 class Appstore {
     constructor() {
-        let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2});
+        let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2, topBarCreator: this.createTopBar, thisContext: this });
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -36,10 +36,9 @@ class Appstore {
         search.placeholder = "Search...";
         search.classList.add("appstore-search");
         sidebar.appendChild(search);
+        this.search = search;
 
         search.onpointerdown = ()=>{
-            document.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
-            search.classList.add("appstore-menuitem-selected");
             this.newSelected("search");
         }
 
@@ -51,12 +50,10 @@ class Appstore {
         popular.classList.add("appstore-menuitem", "appstore-menuitem-selected");
         popular.innerHTML = "🎈Popular";
         sidebar.appendChild(popular);
-
+        this.popular = popular;
         this.menuLocation = "popular";
 
         popular.onpointerdown = ()=>{
-            document.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
-            popular.classList.add("appstore-menuitem-selected");
             this.newSelected("popular");
         }
 
@@ -64,10 +61,9 @@ class Appstore {
         recent.classList.add("appstore-menuitem");
         recent.innerHTML = "🎉 Recent";
         sidebar.appendChild(recent);
+        this.recent = recent;
 
         recent.onpointerdown = ()=>{
-            document.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
-            recent.classList.add("appstore-menuitem-selected");
             this.newSelected("recent");
         }
 
@@ -108,9 +104,11 @@ class Appstore {
     }
 
     newSelected(str) {
+        this.window.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
         this.apps = [];
         this.main.innerHTML = "";
         if(str == "popular") {
+            this.popular.classList.add("appstore-menuitem-selected");
             fetch("http://localhost:3000/applist/popular").then(function(response) {
                 return response.json();
             }).then(function(data) {
@@ -120,6 +118,7 @@ class Appstore {
                 this.showCurrentMenu();
             }.bind(this));
         } else if(str == "recent") {
+            this.recent.classList.add("appstore-menuitem-selected");
             fetch("http://localhost:3000/applist/recent").then(function(response) {
                 return response.json();
             }).then(function(data) {
@@ -129,6 +128,7 @@ class Appstore {
                 this.showCurrentMenu();
             }.bind(this));
         } else {
+            this.search.classList.add("appstore-menuitem-selected");
             // custom search
             fetch("http://localhost:3000/applist/search").then(function(response) {
                 return response.json();
@@ -250,6 +250,26 @@ class Appstore {
             }
         }
         
+    }
+
+    createTopBar() {
+        TopBar.addToTop("File", "file");
+        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+
+        TopBar.addToTop("View", "view");
+        TopBar.addToMenu("Popular", "view", ()=>{ this.newSelected("popular"); });
+        TopBar.addToMenu("Recent", "view", ()=>{ this.newSelected("recent"); });
+        TopBar.addToMenu("Search", "view", ()=>{
+            this.window.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
+            this.search.classList.add("appstore-menuitem-selected");
+            setTimeout(()=>{
+                this.search.focus();
+            }, 50);
+        });
+
+        TopBar.addToTop("Help", "help");
+        TopBar.addToMenu("About App Store", "help", ()=>{ About.newWindow("App Store", "The official App Store for WebSystem.", "1.0", "assets/appstore.png"); });
+
     }
 }
 function makeAppstore() {

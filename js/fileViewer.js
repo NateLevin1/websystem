@@ -147,6 +147,13 @@ class FileViewer {
             });
         });
         // END EDIT
+
+        // HELP
+        TopBar.addToTop("Help", "help");
+        TopBar.addToMenu("About File Viewer", "help", ()=>{
+            About.newWindow("File Viewer", "The official file viewer for WebSystem.", "1.0", "assets/folder.png");
+        });
+        // END HELP
     }
 
     createSidebar() {

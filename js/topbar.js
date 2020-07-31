@@ -57,24 +57,6 @@ class TopBar {
                     }
                 }
             }
-        } else { // polyfill
-            let s = document.createElement("script");
-            s.innerText = `
-            // timer
-            setInterval(()=>{
-                let curDate = new Date;
-                let curHours = curDate.getHours();
-                let amOrPm = "AM";
-                if(curHours > 12) {
-                    curHours -= 12;
-                    amOrPm = "PM"
-                }
-                let dayName = new Intl.DateTimeFormat('en-US', {weekday: "short"}).format(curDate);
-                let time = document.querySelector(".top-bar-time");
-                time.innerText = dayName+" "+curHours+":"+curDate.getMinutes().toString().padStart(2, "0")+" "+amOrPm;
-            }, 1000);
-            `;
-            document.body.appendChild(s);
         }
 
         let info = document.createElement("div");

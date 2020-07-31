@@ -414,6 +414,7 @@ button:active {
 }
 .top-bar-time {
     margin-top:0.2em;
+    margin-right:0.3em;
     float: right;
 }
 .top-bar-wifi {

@@ -2,9 +2,9 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false});
+            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
         } else { // open standalone
-            win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2});
+            win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2, topBarCreator: this.createStandaloneTopBar, thisContext: this});
         }
         
         this.window = win.getWindow();
@@ -30,13 +30,11 @@ class Music {
     }
     openSong(name, path) {
         let artist = "";
-        let genre = "";
         let tags = folders[path].content.mediaTags;
         if(tags) {
             // title, artist, genre, picture
             name = tags.tags.title;
             artist = tags.tags.artist;
-            genre = tags.tags.genre;
         }
 
         let thumb = document.createElement("img");
@@ -153,7 +151,7 @@ class Music {
 
             // LYRICS
             if(tags.tags.title) { // needed for lyrics
-              let lyricsButton = document.createElement("div");
+              let lyricsButton = document.createElement("button");
               this.contentContainer.style.maxHeight = "8em";
               lyricsButton.innerText = "Get Lyrics";
               lyricsButton.classList.add("music-song-lyrics-button");
@@ -247,18 +245,8 @@ class Music {
     openStandalone() {
       this.win.setBackgroundColor("rgba(250, 250, 250, 0.9)");
       // search for all music
-      let songPaths = [];
-      let sorted = [];
-      for(const path in files) {
-        try {
-          if(files[path].type.startsWith("audio")) { // is music
-            songPaths.push(path);
-            sorted.push({title: folders[path].content.mediaTags.tags.title, path:path});
-          }
-        } catch(e) {
-          // Optional chaining doesn't have widespread browser support yet so this is the only way to stop the error. As an error can be expected, this does nothing.
-        }
-      }
+      let songPaths = this.getAllMusic();
+      
 
       let top = document.createElement("div");
       top.classList.add("music-standalone-top");
@@ -268,7 +256,28 @@ class Music {
       let scroll = document.createElement("div");
       scroll.classList.add("music-standalone-scroll");
       this.contentContainer.appendChild(scroll);
+      this.scroll = scroll;
+      this.addSongsToDisplay(songPaths, scroll);
 
+      
+    }
+
+    getAllMusic() {
+      let songPaths = [];
+      for(const path in files) {
+        try {
+          if(files[path].type.startsWith("audio")) { // is music
+            songPaths.push(path);
+          }
+        } catch(e) {
+          // Optional chaining doesn't have widespread browser support yet so this is the only way to stop the error. As an error can be expected, this does nothing.
+        }
+      }
+      return songPaths;
+    }
+
+    addSongsToDisplay(songPaths, scroll) {
+      scroll.innerHTML = "";
       songPaths.forEach((path, index)=>{
         let mediaTags = folders[path].content.mediaTags;
 
@@ -299,7 +308,7 @@ class Music {
         artist.innerText = mediaTags.tags.artist;
         info.appendChild(artist);
 
-        let play = document.createElement("div");
+        let play = document.createElement("button");
         play.classList.add("music-standalone-song-play");
         play.innerText = "Play";
         play.onclick = ()=>{
@@ -327,6 +336,29 @@ class Music {
             return "assets/music.png";
         }
     }
+
+    createTopBar() {
+      TopBar.addToTop("File", "file");
+      TopBar.addToMenu("Find Songs", "file", ()=>{ 
+        new Music;
+      });
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+
+      TopBar.addToTop("Help", "help");
+      TopBar.addToMenu("About Music Player", "help", ()=>{ About.newWindow("Music Player", "The official Music Player for WebSystem.", "1.0", "assets/music.png"); });
+    }
+    createStandaloneTopBar() {
+      TopBar.addToTop("File", "file");
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+
+      TopBar.addToTop("View", "view");
+      TopBar.addToMenu("Scan For New Songs", "view", ()=>{ 
+        this.addSongsToDisplay(this.getAllMusic(), this.scroll);
+      });
+
+      TopBar.addToTop("Help", "help");
+      TopBar.addToMenu("About Music", "help", ()=>{ About.newWindow("Music", "The Music app finds all music on your device.", "1.0", "assets/music.png"); });
+    }
 }
 
 appImagePaths["Music"] = "assets/musicPlayer.png";
@@ -344,7 +376,7 @@ GlobalStyle.newClass("music-play-pause:hover", "width: 1.8em;");
 GlobalStyle.newClass("music-song-range", "position: absolute;", "top: 53%;", "right:3%;", "max-width:53%;");
 GlobalStyle.newClass("music-song-timestamp", "position: relative;", "top: 38%;", "left:2%;", "max-width:0%;"/* Max width zero makes it so that it doesn't cover up other stuff*/);
 GlobalStyle.newClass("music-searching-text", "position: absolute;", "top: 50%;", "left: 50%;", "transform: translate(-50%,-50%);", "font-size: 2em;", "text-align: center;");
-GlobalStyle.newClass("music-song-lyrics-button", "position: absolute;", "bottom:2%;", "right:2%;", "background-color:rgb(54, 207, 227);", "padding: 0.2em;", "border:2px solid black;", "cursor: pointer;", "font-size:0.7em;")
+GlobalStyle.newClass("music-song-lyrics-button", "position: absolute;", "bottom:2%;", "right:2%;", "font-size:0.7em;");
 GlobalStyle.newClass("music-song-lyrics-text", "width: 100%;", "padding-top: 2%;", "height: 50%;", "overflow: auto;", "color:black;", "margin-left:0.2em;");
 GlobalStyle.newClass("music-standalone-top", "border-bottom: 2px solid black;", "font-size:2em;", "text-align:center;");
 GlobalStyle.newClass("music-standalone-scroll", "overflow-y:auto;", "overflow-x: hidden;", "height:calc(100% - 2.9em);");
@@ -353,8 +385,7 @@ GlobalStyle.newClass("music-standalone-b", "background-color: rgb(230,230,230);"
 GlobalStyle.newClass("music-standalone-song", "width:100%;");
 GlobalStyle.newClass("music-standalone-song-info", "max-width: 45%;", "display: inline-block;", "vertical-align: top;", "margin-top:0.5em;");
 GlobalStyle.newClass("music-standalone-song-title", "display:inline-block;", "padding-left:4px;", "padding-top:4px;", "max-width: 100%;", /** Ellipsis ahead */ "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;");
-GlobalStyle.newClass("music-standalone-song-play", "padding:0.5em 1em;", "font-size:1em;", "background-color: rgb(0,250,40);", "border:2px solid black;", "float: right;", "margin:0.5em 0.5em;", "transition: background-color 0.1s;", "cursor: pointer;");
-GlobalStyle.newClass("music-standalone-song-play:active", "background-color:white;");
+GlobalStyle.newClass("music-standalone-song-play", "display: inline-block;", "vertical-align: top;", "margin-top:0.7em;", "float: right;", "font-size:1em;", "min-width:6em;", "margin-right:0.3em;");
 GlobalStyle.newClass("music-standalone-song-artist", "font-size:0.7em;", "display:block;", "padding-left:4px;", "max-width: 100%;", /** Ellipsis ahead */ "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;");
 GlobalStyle.newClass("music-standalone-thumbnail", "max-height:4em;");
 // Below generated using this awesome website: http://danielstern.ca/range.css/?ref=css-tricks#/

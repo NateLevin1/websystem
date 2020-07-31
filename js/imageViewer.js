@@ -18,6 +18,7 @@ class ImageViewer {
         var img = document.createElement("img");
         if(files[path]) {
             img.src = URL.createObjectURL(files[path]);
+            img.style.minHeight = "40px"
         } else {
             throw "No value for files[path]."
         }
@@ -42,7 +43,7 @@ class ImageViewer {
                 }
                 document.body.removeChild(sizeGetter);
                 this.zoomed = false;
-                win = new Window(size[0], size[1], name, size[2], size[3], {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
+                win = new Window(Math.max(size[0], 80), Math.max(size[1], 80+em/**Plus em because of top */), name, Math.max(size[2], 80/em), Math.max(size[3], (80/em)+1), {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
                 win.setBackgroundColor("rgb(200, 200, 200)");
 
 
@@ -185,7 +186,7 @@ class ImageViewer {
         this.img.style.maxWidth = "120em"; // practically infinite, allow scrolling
         this.img.style.maxHeight = "120em";
         this.img.style.height = (this.img.clientHeight - 9*em).toString() + "px";
-        if(this.img.clientHeight < 20) {
+        if(this.img.clientHeight < 40) {
             this.img.style.height = "40px";
         }
         this.img.style.objectFit = "cover";

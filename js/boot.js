@@ -77,25 +77,22 @@ function boot() {
     }
     
 }
-function showDesktopFolders() {
+function setFileSystem() {
     mainContent.classList.add("main-content");
     document.body.appendChild(mainContent);
     // Set folders{} to correct value
     filesystem.getItem("folders").then((result)=>{
         folders = result;
-        var yPos = 1;
-        result["/Users/"+NAME+"/Desktop/"].subfolders.forEach(el =>{
-            createDesktopFolder("1",yPos.toString(), result[el].name, el);
-            yPos += 8;
-        });
         // ! DEBUG
         console.log(folders);
         filesystem.iterate((value, key)=>{
             if(key != "folders") {
                 files[key] = value;
             }
+        }).then(()=>{
+            // add desktop once folders and files is done
+            new Desktop;
         });
-        
     });
 }
 function fadeAndRemove(element, start=false) {
@@ -138,7 +135,7 @@ function startDesktop() {
     // Add top bar
     new TopBar;
     // Show desktop + set folders to correct value
-    showDesktopFolders();
+    setFileSystem();
     
 
     // DOWNLOAD THINGS FROM DOWNLOAD LOCALSTORAGE

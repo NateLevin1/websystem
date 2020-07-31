@@ -6,6 +6,7 @@ class FileSystem {
      * Add a new folder as a subfolder of <code>parentPath</code>
      * @param {String} name - The name of the folder to be added.
      * @param {String} parentPath - The path to the parent of the folder to be added. *Must* end in a slash ('/').
+     * @returns {Promise} Returns the localForage setItem promise. Resolves once item has been added to localForage.
      */
     static addFolderAtLocation(name, parentPath) {
         let path = parentPath+name+"/";
@@ -50,7 +51,7 @@ class FileSystem {
             }
         };
         // update system
-        filesystem.setItem("folders", folders);
+        return filesystem.setItem("folders", folders);
     }
     /**
      * Add a file with the parent <code>parentPath</code>.
@@ -59,6 +60,7 @@ class FileSystem {
      * @param {String} kind - The kind of the data. E.g. "Image" or "App"
      * @param {String} parentPath - The path to the parent of the new file.
      * @param {JSON} options - The options to pass in.
+     * @returns {Promise[]} [0] == folder promise. [1] == file promise (if any). Returns the localForage setItem promises. Resolves once item has been added to localForage.
      */
     static addFileAtLocation(name, data, kind, parentPath, options={}) {
         let path = parentPath+name+"/";
@@ -68,6 +70,7 @@ class FileSystem {
         let num = 2;
         let oldPath = path;
         let oldName = name;
+        let resultArray = [];
         while(folders[path]) { // already exists
             console.warn("There is already a file with path "+path);
             path = oldPath+" "+num;
@@ -83,7 +86,7 @@ class FileSystem {
             // update files
             files[path] = data;
             // update storage
-            filesystem.setItem(path, data);
+            resultArray[1] = filesystem.setItem(path, data);
             content = options;
         }
 
@@ -126,7 +129,8 @@ class FileSystem {
         };
         
         // update system
-        filesystem.setItem("folders", folders);
+        resultArray[0] = filesystem.setItem("folders", folders);
+        return resultArray;
     }
     /**
      * Request a file for the user to select. Starts at the user's home directory.

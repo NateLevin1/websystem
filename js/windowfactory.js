@@ -86,17 +86,23 @@ class Window {
       });
 
       this.window.addEventListener('window-destroy', ()=>{
-        // reset topbar
-        TopBar.clear();
-        // give focus to next most focused
-        let windows = document.querySelectorAll(".window");
-        windows.forEach((element)=>{
-          if(element.style.zIndex == "9" && element != this.window) {
-            focusEvent.window = element;
+        if(this.window.style.zIndex == "10") { // prevents closing background windows from taking focus
+          // reset topbar
+          TopBar.clear();
+          // give focus to next most focused
+          let windows = document.querySelectorAll(".window");
+          if(windows.length == 1 && windows[0] == this.window) { // desktop
+            focusEvent.window = "DESKTOP";
             document.dispatchEvent(focusEvent);
+          } else {
+            windows.forEach((element)=>{
+              if(element.style.zIndex == "9" && element != this.window) {
+                focusEvent.window = element;
+                document.dispatchEvent(focusEvent);
+              }
+            });
           }
-        });
-        
+        }
       });
     }
     /**

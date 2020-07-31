@@ -9,6 +9,9 @@ GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Repla
  * The class which holds the interface for the file viewer.
  */
 class FileViewer {
+    constructor() {
+
+    }
     /**
      * Open a new file viewer <strong>window</strong> at the given path.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
@@ -67,9 +70,10 @@ class FileViewer {
 
         this.generatedWindow = this.win.makeString();
 
-        // right click menu
-        this.rightClickMenu = rightClickMenu;
+        this.addRightClickMenu();
+    }
 
+    addRightClickMenu() {
         // icon right click
         RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.openSelected.bind(this));
         
@@ -332,22 +336,22 @@ class FileViewer {
                 if(folders[element].isFile) { // is file
                     switch(folders[element].kind) {
                         case "Image":
-                            this.createFile(name, element, "image");
+                            this.createFile(name, element, "Image");
                             break;
                         case "App":
-                            this.createFile(name, element, "app");
+                            this.createFile(name, element, "App");
                             break;
                         case "Music":
-                            this.createFile(name, element, "music");
+                            this.createFile(name, element, "Music");
                             break;
                         default:
                             console.error("Error: Could not find file extension of file:");
                             console.log(name);
-                            this.createFile(name, element, "unknown");
+                            this.createFile(name, element, "Unknown");
                             break;
                     }
                 } else { // is folder
-                    this.createFolder(name, element, this.background, "black", false);
+                    this.createFolder(name, element, this.background, false);
                 }
             });
         }
@@ -357,11 +361,10 @@ class FileViewer {
      * @param {String} name - The name of the folder to be made.
      * @param {String} path - The path to the parent of the folder to be created at.
      * @param {HTMLElement} appendee - The element to append the folder to.
-     * @param {String} color - A CSS Color for the text.
      * @param {Boolean} newWindow - If true, creates a new window on open.
      * @param {Boolean} before 
      */
-    createFolder(name, path=this.currentFolder, appendee=this.background, color="black", newWindow=true, before=false) {
+    createFolder(name, path=this.currentFolder, appendee=this.background, newWindow=true, before=false) {
         let newFolderContainer = document.createElement("div");
         newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
         newFolderContainer.setAttribute("path", path);
@@ -382,9 +385,13 @@ class FileViewer {
     
         // text
         let text = document.createElement("div");
-        text.classList.add(color, "sans-serif");
+        text.classList.add("sans-serif");
         text.innerText = name;
         newFolderContainer.appendChild(text);
+
+        if(!this.win) { // desktop
+            text.classList.add("desktop-text");
+        }
     
         newFolderContainer.ondblclick = (event)=>{
             if(newWindow == true) {
@@ -411,18 +418,23 @@ class FileViewer {
      * @param {String} path - The path of the file
      * @param {String} filetype - The filetype of the file. e.g. 'Image' or 'Music'.
      * @param {HTMLElement} [appendee=this.background] - The element to append the new file to.
-     * @param {String} [color="black"] - The color of the text for the file. Any valid css color will work. e.g. 'rgb(10,10,10)'
+     * @param {Boolean} [before=false] - Whether to appendChild or insertBefore
      */
-    createFile(name, path, filetype, appendee=this.background, color="black") {
+    createFile(name, path, filetype, appendee=this.background, before=false) {
         let newFileContainer = document.createElement("div");
         newFileContainer.classList.add("clickable", "icon-container", "file");
         newFileContainer.setAttribute("path", path);
         newFileContainer.setAttribute("name", name);
-        appendee.appendChild(newFileContainer);
+        if(before) {
+            appendee.insertBefore(newFileContainer, appendee.firstChild);
+        } else {
+            appendee.appendChild(newFileContainer);
+        }
+        
     
         // img
         let newFile = document.createElement("img");
-        if(filetype=="image") {
+        if(filetype=="Image") {
             newFile.src = "assets/image.png";
             // Poor man's lazy loading
             let thumbed = newFile.cloneNode();
@@ -431,13 +443,13 @@ class FileViewer {
                 newFileContainer.replaceChild(thumbed, newFile);
             };
             thumbed.src = URL.createObjectURL(files[path]);
-        } else if(filetype=="app"){
+        } else if(filetype=="App"){
             if(appImagePaths[name]) {
                 newFile.src = appImagePaths[name];
             } else {
                 newFile.src = "assets/unknown.png";
             }
-        } else if(filetype == "music") {
+        } else if(filetype == "Music") {
             if(folders[path].content.mediaTags) { // use thumbnail
                 newFile.src = Music.getThumbnail(folders[path].content.mediaTags);
             } else {
@@ -451,21 +463,25 @@ class FileViewer {
     
         // text
         let text = document.createElement("div");
-        text.classList.add(color, "sans-serif");
+        text.classList.add("sans-serif");
         text.innerText = name;
         newFileContainer.appendChild(text);
+
+        if(!this.win) { // desktop
+            text.classList.add("desktop-text");
+        }
     
         newFileContainer.ondblclick = (event)=>{
-            if(filetype == "app") {
+            if(filetype == "App") {
                 try {
                     makeFunctions[name]();
                 } catch(e) {
                     console.error("No function was provided for making the app named "+name+".");
                 }
                 
-            } else if(filetype == "image") {
+            } else if(filetype == "Image") {
                 new ImageViewer(name, path);
-            } else if(filetype == "music") {
+            } else if(filetype == "Music") {
                 new Music(name, path);
             } else { // unknown filetype
                 alert("Opened File "+newFileContainer.getAttribute("name")+"!");
@@ -519,7 +535,7 @@ class FileViewer {
                 alert("Opened File '"+folders[path].name+"'!");
             }
         } else { // folder
-            if(newFolderWindow) {
+            if(newFolderWindow || !this.win) { // desktop returns true for second
                 let n = new FileViewer;
                 n.openFolderWindow(path);
             } else {
@@ -539,10 +555,17 @@ class FileViewer {
         }
     }
 
-    // FOLDER/FILE CREATION
+    // FOLDER/FILE CREATION BY USER
     makeNewFolder() {
         try { // safety
-            let blankFolder = this.createFolder("untitled folder", "", this.background, "black", false, true);
+            var blankFolder;
+            if(this.win) { // file viewer
+                blankFolder = this.createFolder("untitled folder", "", this.background, false, true);
+            } else { // desktop
+                blankFolder = this.createFolder("untitled folder", "", this.background, true, true);
+            }
+            blankFolder.setAttribute("path", this.currentFolder); // prevents opening before made
+            blankFolder.setAttribute("name", folders[this.currentFolder].name);
             blankFolder.classList.add("icon-selected", "icon-rename");
             let blankFolderText = blankFolder.querySelector("div");
 
@@ -593,8 +616,9 @@ class FileViewer {
                 }
                 invisibleInput.remove();
                 blankFolder.classList.remove("icon-rename");
-                
-                this._addFolderToStorage(blankFolderText.innerText);
+                blankFolder.setAttribute("path", this.currentFolder+blankFolderText.innerText+"/");
+                blankFolder.setAttribute("name", blankFolderText.innerText);
+                this._addFolderToStorage(blankFolderText.innerText, false);
                 
             }
         } catch(e) {
@@ -603,9 +627,11 @@ class FileViewer {
         }
     }
 
-    _addFolderToStorage(name) {
+    _addFolderToStorage(name, addFolder=true) {
         FileSystem.addFolderAtLocation(name, this.currentFolder);
-        this.openFolder(this.currentFolder);
+        if(addFolder) { // false on folder make
+            this.createFolder(name, this.currentFolder);
+        }
     }
 
     _addFolderToDifferentLocation(name, parentPath) {
@@ -629,31 +655,25 @@ class FileViewer {
     _addFileToStorage(filename, filedata, filekind) {
         if(filekind == "Music") {
             // read tags in worker
-            if(window.Worker) {
-                let reader = new Worker("js/getMusicTagsWorker.js");
-                reader.postMessage(filedata);
-                reader.onmessage = (message)=>{
-                    let options = message.data;
-                    FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
-                    this.openFolder(this.currentFolder);
-                }
-            } else {
-                jsmediatags.read(filedata, {
-                    onSuccess: (tag)=>{
-                        let options = {};
-                        options.mediaTags = tag;
-                        FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
-                        this.openFolder(this.currentFolder);
-                    },
-                    onError: (e) =>{
-                        console.error("There was an error trying to find the tags.");
-                        throw e;
-                    }
-                });
+            let reader = new Worker("js/getMusicTagsWorker.js");
+            reader.postMessage(filedata);
+            reader.onmessage = (message)=>{
+                let options = message.data;
+                FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
+                this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
             }
         } else {
-            FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
-            this.openFolder(this.currentFolder);
+            let prom = FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
+            if(prom[1]) { // if binary
+                prom[1].then(()=>{
+                    this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
+                });
+            } else { // if text based
+                prom[0].then(()=>{
+                    this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
+                });
+            }
+            
         }
         
         
@@ -691,7 +711,6 @@ class FileViewer {
                 }
                
             });
-            this.openFolder(this.currentFolder);
             fileUpload.removeEventListener('change', fileUploadEvent, false);
         }.bind(this);
 
@@ -730,45 +749,13 @@ class FileViewer {
         });
         return finishedObject;
     }
-}
-
-/**
- * Add a folder to the desktop's screen.
- * @param {String} x - The position of the new folders left side in em.
- * @param {String} y - The position of the new folders top side in em.
- * @param {String} name - The name of the new folder
- * @param {String} path - The path of the new folder
- * @param {HTMLElement} [appendee=mainContent] - The element to append the new folder to.
- * @param {String} [color="white"] - The color of the new folder's text. Can be any valid css rule for 'color', e.g. 'red' or 'rgb(10,10,10)'
- */
-function createDesktopFolder(x, y, name, path, appendee=mainContent, color="white") {
-    let newFolderContainer = document.createElement("div");
-    newFolderContainer.classList.add("absolute", "clickable", "icon-container", "desktop-folder", "folder");
-    newFolderContainer.style.top = y+"em";
-    newFolderContainer.style.left = x+"em";
-    newFolderContainer.setAttribute("path", path);
-    // newFolderContainer.id = name;
-    appendee.appendChild(newFolderContainer);
-
-    // img
-    let newFolder = document.createElement("img");
-    newFolder.src = "assets/folder.png";
-    newFolder.classList.add("icon", "unselectable");
-    newFolderContainer.appendChild(newFolder);
-
-    // text
-    let text = document.createElement("div");
-    text.classList.add(color, "sans-serif");
-    text.innerText = name;
-    newFolderContainer.appendChild(text);
-
-    newFolderContainer.ondblclick = (event)=>{
-        var n = new FileViewer;
-        n.openFolderWindow(newFolderContainer.getAttribute("path"));
-        // n.addFolder();
-    }
-    newFolderContainer.onclick = (event)=>{
-        selectElement(event, newFolderContainer);
+    /**
+     * @ignore
+     * Set the value of this.currentFolder. Used ion the desktop class.
+     * @param {String} str - The string to have it set to
+     */
+    setCurrentFolder(str) {
+        this.currentFolder = str;
     }
 }
 

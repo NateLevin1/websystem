@@ -193,6 +193,19 @@ button:active {
 /* END LOADING */
 
 /* DESKTOP */
+.desktop {
+    height:100%;
+    width:100%;
+    padding: 1em 1em;
+}
+.desktop-background {
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: -1;
+    max-height: 100%;
+    min-width:100%;
+}
 .main-content {
     position:absolute;
     top:1.7em;
@@ -229,8 +242,14 @@ button:active {
     overflow: hidden;
     border: 2px solid rgba(0, 0, 0, 0);
     text-shadow: 1px 1px 10px rgba(151, 151, 151, 0.5);
+    padding: 0 3px;
+    color: black;
     /* white-space: nowrap; Adds ellipsis but constrains to one line.
     text-overflow: ellipsis; */
+}
+.desktop-text {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1) !important;
+    color: white !important;
 }
 .icon-selected img {
     background-color:rgba(0, 0, 0, 0.1);
@@ -393,7 +412,7 @@ button:active {
     display: block;
 }
 .file-sidebar file-member.file-member-selected { /* Selected subheading things */
-    background-color: rgba(170, 170, 170, 0.98);
+    background-color: rgba(0, 0, 0, 0.08);
 }
 .ellipsis-overflow {
     text-overflow: ellipsis;

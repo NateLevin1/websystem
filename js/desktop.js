@@ -1,7 +1,10 @@
+let desktopFocused = true;
 document.onclick = (event)=>{
     // TODO Add support for background image
     if(event.target == document.querySelector(".main-content")) { 
         clearSelected();
+        // focus + show topbar
+        
     } // clicked anywhere
 }
 /**

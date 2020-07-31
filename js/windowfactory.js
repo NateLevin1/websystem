@@ -12,10 +12,17 @@ class Window {
      * @param {Boolean} options.keepAspectRatio - If true, keeps the aspect ratio when resizing.
      * @param {Function} options.topBarCreator - The function to be called when a top bar is requested
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
+     * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
      */
-    constructor(width, height, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this }) {
+    constructor(width, height, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false }) {
       // Take options into account
-      let {x, y, keepAspectRatio, topBarCreator, thisContext } = options;
+      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled } = options;
+      if(!topBarCreator) { // use default 'file -> quit'
+        topBarCreator = ()=>{
+          TopBar.addToTop("File", "file");
+          TopBar.addToMenu("Close Window", "file", ()=>{ this.forceClose(); });
+        }
+      }
       this.topBarCreator = topBarCreator;
       this.thisContext = thisContext;
       
@@ -57,6 +64,10 @@ class Window {
       this.window.header = header;
       this.window.titleText = titleText;
 
+      if(resizeDisabled) {
+        this.disableResize();
+      }
+
       // Focus/Unfocus
       this.dispatchFocus(); // when new window is opened focus by default
 
@@ -67,15 +78,11 @@ class Window {
       }
 
       document.addEventListener('window-focus', (event)=>{
-        // if(this.focused()) {
           if(event.window == this.window) {
             this.giveFocus();
           } else {
             this.removeFocus();
           }
-        // } else {
-        //   this.removeFocus();
-        // }
       });
 
       this.window.addEventListener('window-destroy', ()=>{
@@ -112,6 +119,14 @@ class Window {
      */
     getHeaderText() {
       return this.window.titleText;
+    }
+
+    disableResize() {
+      this.window.querySelector(".resize").remove();
+      let noResize = document.createElement("div");
+      noResize.classList.add("resize");
+      noResize.style.cursor = "url(assets/licensed/no.cur), url(assets/licensed/no.png), not-allowed";
+      this.window.appendChild(noResize);
     }
 
     /**

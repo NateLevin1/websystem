@@ -2,7 +2,7 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 24.375, 8.875, {x: 20, y: 2.2, keepAspectRatio: false});
+            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false});
         } else { // open standalone
             win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2});
         }
@@ -22,13 +22,7 @@ class Music {
 
         if(name && path) {
             // disable resize
-            this.window.querySelector(".resize").remove();
-
-            let noResize = document.createElement("div");
-            noResize.classList.add("resize");
-            noResize.style.cursor = "url(assets/licensed/no.cur), url(assets/licensed/no.png), not-allowed";
-            this.window.appendChild(noResize);
-
+            this.win.disableResize();
             this.openSong(name, path);
         } else {
             this.openStandalone();

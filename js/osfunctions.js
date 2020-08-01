@@ -81,7 +81,7 @@ function jsonEscapeNewlines(source) {
 
 // Via StackOverflow: https://stackoverflow.com/a/54095466/ Fabian von Ellerts
 /**
- * Returns the element height * including margins *
+ * Returns the element height <strong>including margins</strong>
  * If margins aren't required, use <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetHeight">offsetHeight</a>
  * @param {HTMLElement} element - The element to get the height
  * @returns {number} - in pixels
@@ -89,7 +89,6 @@ function jsonEscapeNewlines(source) {
 function outerHeight(element) {
     const height = element.offsetHeight,
         style = window.getComputedStyle(element)
-
     return ['top', 'bottom']
         .map(side => parseInt(style[`margin-${side}`]))
         .reduce((total, side) => total + side, height)

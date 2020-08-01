@@ -6,6 +6,7 @@ body {
     font-family: 'Lato', sans-serif;
     animation: bg-anim 30s infinite;
     overflow:hidden;
+    font-size: 1em;
 }
 
 @keyframes bg-anim {
@@ -371,7 +372,8 @@ button:active {
     box-sizing: border-box;
     transition: background-color 0.1s, color 0.1s;
     height:0.15em;
-    margin:0.3em 0;
+    margin-top:0.3em;
+    margin-bottom:0px;
     background-color:rgba(0, 0, 0, 0.12);
     border:none;
 }

@@ -90,7 +90,7 @@ class Desktop extends FileViewer {
             return !!selected;
         }, "Open Selection", "file", this.openSelected.bind(this));
 
-        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+        TopBar.addToMenuIf(()=>{ return false; }, "Close Window", "file", undefined);
         // END FILE
 
         // EDIT

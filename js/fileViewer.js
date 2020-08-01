@@ -337,7 +337,7 @@ class FileViewer {
                             this.createFile(name, element, "Music");
                             break;
                         default:
-                            console.error("Error: Could not find file extension of file:");
+                            console.warn("Could not find file extension of file:");
                             console.log(name);
                             this.createFile(name, element, "Unknown");
                             break;
@@ -518,9 +518,9 @@ class FileViewer {
         if(folders[path].kind != "Folder") {
             if(folders[path].kind == "App") {
                 try {
-                    makeFunctions[path]();
+                    makeFunctions[folders[path].name]();
                 } catch(e) {
-                    console.error("No function was provided for making the app named "+path+".");
+                    console.error("No function was provided for making the app named "+folders[path].name+".");
                 }
             } else if(folders[path].kind == "Image") {
                 new ImageViewer(folders[path].name, path);

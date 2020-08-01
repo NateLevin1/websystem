@@ -5,6 +5,9 @@
 // The NAME variable is used to get the current user's name.
 var NAME = localStorage.getItem("name");
 
+// Used to determine whether the user can access the internet. Re-evaluated every 15 seconds in 'constantUpdates.js'
+var OFFLINE = !navigator.onLine;
+
 /**
  * The global clipboard object.
  * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.

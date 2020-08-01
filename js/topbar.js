@@ -47,11 +47,14 @@ class TopBar {
                         case true:
                             if(wifi.src != "assets/filledWifi.svg") {
                                 wifi.src = "assets/filledWifi.svg";
+                                OFFLINE = false;
+                                
                             }
                             break;
                         case false:
                             if(wifi.src != "assets/emptyWifi.svg") {
                                 wifi.src = "assets/emptyWifi.svg";
+                                OFFLINE = true;
                             }
                             break;
                     }

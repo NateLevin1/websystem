@@ -520,7 +520,8 @@ class FileViewer {
                 try {
                     makeFunctions[folders[path].name]();
                 } catch(e) {
-                    console.error("No function was provided for making the app named "+folders[path].name+".");
+                    console.error("No function was provided for making the app named "+folders[path].name+" OR there was an error from creating the app. The error thrown was ", e);
+                    
                 }
             } else if(folders[path].kind == "Image") {
                 new ImageViewer(folders[path].name, path);

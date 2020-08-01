@@ -29,16 +29,21 @@ class Music {
         }
     }
     openSong(name, path) {
-        let artist = "";
+        let artist = "Unknown";
+        if(name.includes(".")) {
+          name = name.substring(0, name.lastIndexOf(".")); // remove extension
+        }
         let tags = folders[path].content.mediaTags;
+        var thumbnail = "assets/music.png";
         if(tags) {
             // title, artist, genre, picture
             name = tags.tags.title;
             artist = tags.tags.artist;
+            thumbnail = Music.getThumbnail(tags);
         }
 
         let thumb = document.createElement("img");
-        thumb.src = Music.getThumbnail(tags);
+        thumb.src = thumbnail;
         thumb.classList.add("music-song-thumbnail");
         this.contentContainer.appendChild(thumb);
 
@@ -95,6 +100,7 @@ class Music {
             seeker.classList.add("music-song-range");
             seeker.min = 0;
             seeker.max = duration;
+            seeker.step = "0.05";
             seeker.value = audio.currentTime;
 
             let minutes = Math.floor(duration / 60).toString();
@@ -118,14 +124,14 @@ class Music {
                     this.playPause.src = "assets/licensed/pause.png";
                 }
                 this.songAnimation = setInterval(()=>{
-                    let c = audio.currentTime;
-                    seeker.value = c;
-
-                    // Update timestamp
-                    let mins = Math.floor(c / 60).toString();
-                    let secs = Math.floor(c % 60).toString();
-                    timestamp.innerText = mins+":"+secs.padStart(2, '0')+"/"+prettyDuration;
-                }, 100);
+                    window.requestAnimationFrame(()=>{((c, prettyDuration)=>{
+                      seeker.value = c;
+                      // Update timestamp
+                      let mins = Math.floor(c / 60).toString();
+                      let secs = Math.floor(c % 60).toString();
+                      timestamp.innerText = mins+":"+secs.padStart(2, '0')+"/"+prettyDuration;
+                    })(audio.currentTime, prettyDuration)});
+                }, 50);
             }
 
             info.appendChild(seeker);
@@ -133,14 +139,14 @@ class Music {
             // Animation
 
             this.songAnimation = setInterval(()=>{
-                let c = audio.currentTime;
+              window.requestAnimationFrame(()=>{((c, prettyDuration)=>{
                 seeker.value = c;
-
                 // Update timestamp
                 let mins = Math.floor(c / 60).toString();
                 let secs = Math.floor(c % 60).toString();
                 timestamp.innerText = mins+":"+secs.padStart(2, '0')+"/"+prettyDuration;
-            }, 100);
+              })(audio.currentTime, prettyDuration)});
+            }, 50);
 
 
             // cancel interval on window close
@@ -150,94 +156,96 @@ class Music {
 
 
             // LYRICS
-            if(tags.tags.title) { // needed for lyrics
-              let lyricsButton = document.createElement("button");
-              this.contentContainer.style.maxHeight = "8em";
-              lyricsButton.innerText = "Get Lyrics";
-              lyricsButton.classList.add("music-song-lyrics-button");
-  
-              let lyricsShown = false;
-              let lyrics = "";
-  
-              let lyricsText = document.createElement("div");
-              lyricsText.innerText = lyrics;
-              lyricsText.classList.add("music-song-lyrics-text");
-              lyricsText.style.display = "none";
-              this.window.appendChild(lyricsText);
-  
-              lyricsButton.onclick = ()=>{
-                lyricsShown = !lyricsShown;
-                if(!lyricsShown) {
-                  lyricsText.style.display = "none";
-                  lyricsButton.innerText = "Show Lyrics"; // lyrics are hidden
-                  this.window.style.height = "8.875em";
-                  seeker.style.top = "53%";
-                  playPause.style.top = "50%";
-                }
-                if(lyricsShown) {
-                  lyricsText.style.display = "block";
-                  if(!lyrics) {
-                    lyrics = "";
-                    lyricsText.innerText = "Fetching lyrics... (This may take a few seconds)";
-                    let control = new AbortController();
-                    let signal = control.signal;
-                    let requestTimeout = setTimeout(()=>{
-                      control.abort();
-                      lyrics = "Could not find any lyrics for this song.";
-                      lyricsText.innerText = lyrics;
-                    }, 7000); // abort after seven seconds. Safety.
-                    // This is the Canarado api.
-                    fetch(`https://canarado-lyrics.p.rapidapi.com/lyrics/${encodeURIComponent(name.toLowerCase().substring(0,name.indexOf("("))+" "+artist.toLowerCase())}`, {
-                      signal,
-                      "method": "GET",
-                      "headers": {
-                        "x-rapidapi-host": "canarado-lyrics.p.rapidapi.com",
-                        "x-rapidapi-key": keys.lyrics
-                      }
-                    })
-                    .then(response => {
-                      return response.json();
-                    })
-                    .then((data)=>{
-                      clearTimeout(requestTimeout);
-                      if(data.status.code == "200") {
-                        data.content.forEach((obj)=>{
-                          if(!lyrics) {
-                            if(artist.toLowerCase().includes(obj.artist.toLowerCase())||name.toLowerCase().includes(obj.title.toLowerCase())) {
-                              if(obj.lyrics == "[Instrumental]") {
-                                obj.lyrics = "This song is instrumental.";
+            if(tags && !OFFLINE) {
+              if(tags.tags.title) { // needed for lyrics
+                let lyricsButton = document.createElement("button");
+                this.contentContainer.style.maxHeight = "8em";
+                lyricsButton.innerText = "Get Lyrics";
+                lyricsButton.classList.add("music-song-lyrics-button");
+    
+                let lyricsShown = false;
+                let lyrics = "";
+    
+                let lyricsText = document.createElement("div");
+                lyricsText.innerText = lyrics;
+                lyricsText.classList.add("music-song-lyrics-text");
+                lyricsText.style.display = "none";
+                this.window.appendChild(lyricsText);
+    
+                lyricsButton.onclick = ()=>{
+                  lyricsShown = !lyricsShown;
+                  if(!lyricsShown) {
+                    lyricsText.style.display = "none";
+                    lyricsButton.innerText = "Show Lyrics"; // lyrics are hidden
+                    this.window.style.height = "8.875em";
+                    seeker.style.top = "53%";
+                    playPause.style.top = "50%";
+                  }
+                  if(lyricsShown) {
+                    lyricsText.style.display = "block";
+                    if(!lyrics) {
+                      lyrics = "";
+                      lyricsText.innerText = "Fetching lyrics... (This may take a few seconds)";
+                      let control = new AbortController();
+                      let signal = control.signal;
+                      let requestTimeout = setTimeout(()=>{
+                        control.abort();
+                        lyrics = "Could not find any lyrics for this song.";
+                        lyricsText.innerText = lyrics;
+                      }, 7000); // abort after seven seconds. Safety.
+                      // This is the Canarado api.
+                      fetch(`https://canarado-lyrics.p.rapidapi.com/lyrics/${encodeURIComponent(name.toLowerCase().substring(0,name.indexOf("("))+" "+artist.toLowerCase())}`, {
+                        signal,
+                        "method": "GET",
+                        "headers": {
+                          "x-rapidapi-host": "canarado-lyrics.p.rapidapi.com",
+                          "x-rapidapi-key": keys.lyrics
+                        }
+                      })
+                      .then(response => {
+                        return response.json();
+                      })
+                      .then((data)=>{
+                        clearTimeout(requestTimeout);
+                        if(data.status.code == "200") {
+                          data.content.forEach((obj)=>{
+                            if(!lyrics) {
+                              if(artist.toLowerCase().includes(obj.artist.toLowerCase())||name.toLowerCase().includes(obj.title.toLowerCase())) {
+                                if(obj.lyrics == "[Instrumental]") {
+                                  obj.lyrics = "This song is instrumental.";
+                                }
+                                lyrics = obj.lyrics;
+                                lyricsText.innerText = lyrics;
                               }
-                              lyrics = obj.lyrics;
-                              lyricsText.innerText = lyrics;
                             }
+                          });
+                          if(!lyrics) {
+                            lyrics = "Could not find any matching lyrics for this song.";
+                            lyricsText.innerText = lyrics;
                           }
-                        });
-                        if(!lyrics) {
-                          lyrics = "Could not find any matching lyrics for this song.";
+                        } else {
+                          lyrics = "There was an error fetching the lyrics.";
                           lyricsText.innerText = lyrics;
                         }
-                      } else {
+                      })
+                      .catch(err => {
                         lyrics = "There was an error fetching the lyrics.";
                         lyricsText.innerText = lyrics;
-                      }
-                    })
-                    .catch(err => {
-                      lyrics = "There was an error fetching the lyrics.";
-                      lyricsText.innerText = lyrics;
-                      console.log(err);
-                    });
-
-
+                        console.log(err);
+                      });
+  
+  
+                    }
+                    lyricsButton.innerText = "Hide Lyrics"; // lyrics are shown
+                    this.window.style.height = "25em";
+                    seeker.style.top = "19%";
+                    playPause.style.top = "17.8%";
                   }
-                  lyricsButton.innerText = "Hide Lyrics"; // lyrics are shown
-                  this.window.style.height = "25em";
-                  seeker.style.top = "19%";
-                  playPause.style.top = "17.8%";
+                  // make window bigger
+                  // this.window.style.height = "25em";
                 }
-                // make window bigger
-                // this.window.style.height = "25em";
+                this.window.appendChild(lyricsButton);
               }
-              this.window.appendChild(lyricsButton);
             }
         }
     }
@@ -281,6 +289,17 @@ class Music {
       songPaths.forEach((path, index)=>{
         let mediaTags = folders[path].content.mediaTags;
 
+        let artistName = "Unknown";
+        let name = folders[path].name;
+        name = folders[path].name.substring(0, name.lastIndexOf(".")); // remove extension
+        let thumbnailSrc = "assets/music.png";
+        if(mediaTags) {
+          artistName = mediaTags.tags.artist;
+          thumbnailSrc = Music.getThumbnail(mediaTags);
+          name = mediaTags.tags.title;
+        }
+
+
         let container = document.createElement("div");
         container.classList.add("music-standalone-song");
         if(index % 2 == 0) {
@@ -290,7 +309,7 @@ class Music {
         }
 
         let thumbnail = document.createElement("img");
-        thumbnail.src = Music.getThumbnail(mediaTags);
+        thumbnail.src = thumbnailSrc;
         thumbnail.classList.add("music-standalone-thumbnail");
         container.appendChild(thumbnail);
 
@@ -300,12 +319,12 @@ class Music {
 
         let title = document.createElement("div");
         title.classList.add("music-standalone-song-title");
-        title.innerText = mediaTags.tags.title;
+        title.innerText = name;
         info.appendChild(title);
 
         let artist = document.createElement("div");
         artist.classList.add("music-standalone-song-artist");
-        artist.innerText = mediaTags.tags.artist;
+        artist.innerText = artistName;
         info.appendChild(artist);
 
         let play = document.createElement("button");
@@ -313,7 +332,7 @@ class Music {
         play.innerText = "Play";
         play.onclick = ()=>{
           // create new player
-          new Music(mediaTags.tags.title, path);
+          new Music(name, path);
         }
         container.appendChild(play);
 

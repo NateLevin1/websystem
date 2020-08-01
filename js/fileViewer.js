@@ -51,6 +51,10 @@ class FileViewer {
         this.background.style.flexGrow = "1";
         this.background.style.overflow = "auto"; // scrolling
 
+        // Right Click
+        this.generatedWindow = this.win.makeString();
+        this.addRightClickMenu();
+
         // Folder Display
         this.displayFolders(path);
         
@@ -67,10 +71,6 @@ class FileViewer {
                 }
             }
         });
-
-        this.generatedWindow = this.win.makeString();
-
-        this.addRightClickMenu();
     }
 
     addRightClickMenu() {
@@ -95,9 +95,6 @@ class FileViewer {
         RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], this.pasteFiles.bind(this));
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
-
-        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
-        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder(); });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile(); });
@@ -315,11 +312,6 @@ class FileViewer {
 
         this.displayFolders(path);
         this.createSidebar();
-
-        // update right click menu
-        // ! I have no idea why this works or how this works. However, only this works. Not the commented out bit below, only this.
-        RightClickMenu.addRightClickForClass(".folder", this.generatedWindow+"-folder", this.background);
-        RightClickMenu.addRightClickForClass(".file", this.generatedWindow+"-file", this.background);
     }
     displayFolders(path) {
         // background (for right click menu)
@@ -410,6 +402,7 @@ class FileViewer {
         newFolderContainer.oncontextmenu = (event)=>{
             selectElement(event, newFolderContainer);
         }
+        RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-folder");
         return newFolderContainer; // allows for adding to lists
     }
     /**
@@ -495,6 +488,8 @@ class FileViewer {
         newFileContainer.oncontextmenu = (event)=>{
             selectElement(event, newFileContainer);
         }
+
+        RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
 
         return newFileContainer; // allows for adding to lists
     }
@@ -630,7 +625,7 @@ class FileViewer {
     _addFolderToStorage(name, addFolder=true) {
         FileSystem.addFolderAtLocation(name, this.currentFolder);
         if(addFolder) { // false on folder make
-            this.createFolder(name, this.currentFolder);
+            this.createFolder(name, this.currentFolder+name+"/", this.background, !this.win, true);
         }
     }
 

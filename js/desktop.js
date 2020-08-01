@@ -12,6 +12,10 @@ class Desktop extends FileViewer {
     constructor() {
         super();
         let desktopDiv = document.createElement("div");
+        this.background = desktopDiv;
+        this.generatedWindow = "DESKTOP";
+        this.addRightClickMenu();
+        
         desktopDiv.classList.add("desktop");
         folders["/Users/"+NAME+"/Desktop/"].subfolders.forEach((el) =>{
             if(!folders[el].isFile) {
@@ -29,14 +33,11 @@ class Desktop extends FileViewer {
 
         this.createTopBar();
 
-        this.background = desktopDiv;
-
         // set current folder for both use cases
         super.setCurrentFolder("/Users/"+NAME+"/Desktop/");
         this.setCurrentFolder("/Users/"+NAME+"/Desktop/");
 
-        this.generatedWindow = "DESKTOP";
-        this.addRightClickMenu();
+        
 
         document.addEventListener("window-focus", (event)=>{
             if(event.window != "DESKTOP") { // there is a window

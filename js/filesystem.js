@@ -132,6 +132,34 @@ class FileSystem {
         resultArray[0] = filesystem.setItem("folders", folders);
         return resultArray;
     }
+    static deleteFolderAtLocation(path) {
+        let shouldDelete = FileSystem.recurseThroughSubfolders(path);
+        shouldDelete.forEach((path)=>{
+            FileSystem.deleteAnyAtLocation(path);
+        });
+    }
+    static deleteAnyAtLocation(path) {
+        if(folders[path].isFile) {// is file, delete from folders{} and files{}
+            delete folders[path];
+            filesystem.setItem("folders", folders);
+            delete files[path];
+            filesystem.removeItem(path).catch((e)=>{
+                    console.error("Error deleting file "+path, e);
+                });
+        } else { // is folder, delete normally
+            delete folders[path];
+            filesystem.setItem("folders", folders);
+        }
+    }
+    static recurseThroughSubfolders(path) {
+        let subs = [path];
+        if(!folders[path].isFile) {
+            folders[path].subfolders.forEach((element)=>{
+                subs.push(...FileSystem.recurseThroughSubfolders(element));
+            });
+        }
+        return subs;
+    }
     /**
      * Request a file for the user to select. Starts at the user's home directory.
      * <br> 
@@ -303,3 +331,6 @@ setTimeout(()=>{ // allows browser to fully run the globalStyle.js script. Witho
     GlobalStyle.newClass("select-gui-subfolder-container", "max-height: 1.3em;", "height: 1.3em;", "font-size: 0.9em;", "color: black;", "cursor: pointer;", "padding: 0.2em 0.1em;", "margin: 0.2em 0;");
     GlobalStyle.newClass("select-gui-selected", "background-color: rgba(0, 89, 221, 1);", "color: white;");
 }, 10);
+
+// The path to the trash. May become an array later.
+var trashPath = "";

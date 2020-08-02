@@ -75,30 +75,41 @@ class FileViewer {
 
     addRightClickMenu() {
         // icon right click
-        RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.openSelected.bind(this));
+        RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], this.openSelected.bind(this));
         
-        RightClickMenu.addToMenu("Open in New Window", this.generatedWindow+"-folder", ()=>{
+        RightClickMenu.addToMenu("Open in New Window", [this.generatedWindow+"-folder", this.generatedWindow+"-trash"], ()=>{
             var selected = document.querySelector(".icon-selected");
             let n = new FileViewer;
             n.openFolderWindow(selected.getAttribute("path"));
         });
 
-        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
 
         RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
             console.log("Trash unavailable. 😬");
         });
 
-        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+        
+
+        RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
+            let subs = folders[trashPath].subfolders;
+            subs.forEach((path)=>{
+                FileSystem.deleteFolderAtLocation(path);
+            });
+            folders[trashPath].subfolders = []; // remove old subfolders
+            mainContent.querySelector(".trash-can").src = "assets/emptyTrash.png";
+        });
+
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
 
         RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.copyFiles.bind(this));
         RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], this.pasteFiles.bind(this));
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
 
-        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.makeNewFolder(); });
-        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{ this.uploadNewFile(); });
-        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
+        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{ this.makeNewFolder(); });
+        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{ this.uploadNewFile(); });
+        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{
             alert("Note: Apps cannot be added via this.");
             let filename = prompt("Filename (with extension):");
             let filedata = prompt("Filedata (if any):");
@@ -371,7 +382,17 @@ class FileViewer {
     
         // img
         let newFolder = document.createElement("img");
-        newFolder.src = "assets/folder.png";
+        if(folders[path] && folders[path].isTrash) {
+            if(folders[path].subfolders.length != 0) {
+                newFolder.src = "assets/trash.png";
+            } else {
+                newFolder.src = "assets/emptyTrash.png";
+            }
+            newFolder.classList.add("trash-can");
+            trashPath = path;
+        } else {
+            newFolder.src = "assets/folder.png";
+        }
         newFolder.classList.add("icon", "unselectable");
         newFolderContainer.appendChild(newFolder);
     
@@ -399,10 +420,14 @@ class FileViewer {
             selectElement(event, newFolderContainer);
         }
 
-        newFolderContainer.oncontextmenu = (event)=>{
+        newFolderContainer.addEventListener('contextmenu', ()=>{
             selectElement(event, newFolderContainer);
+        });
+        if(folders[path] && folders[path].isTrash) {
+            RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-trash");
+        } else {
+            RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-folder");
         }
-        RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-folder");
         return newFolderContainer; // allows for adding to lists
     }
     /**
@@ -625,6 +650,10 @@ class FileViewer {
 
     _addFolderToStorage(name, addFolder=true) {
         FileSystem.addFolderAtLocation(name, this.currentFolder);
+        if(folders[this.currentFolder].isTrash == true) {
+            // fill trash
+            mainContent.querySelector(".trash-can").src = "assets/trash.png";
+        }
         if(addFolder) { // false on folder make
             this.createFolder(name, this.currentFolder+name+"/", this.background, !this.win, true);
         }
@@ -649,6 +678,12 @@ class FileViewer {
      * @param {String} filekind - The kind of the file to be added.
      */
     _addFileToStorage(filename, filedata, filekind) {
+
+        if(folders[this.currentFolder].isTrash == true) {
+            // fill trash
+            mainContent.querySelector(".trash-can").src = "assets/trash.png";
+        }
+
         if(filekind == "Music") {
             // read tags in worker
             let reader = new Worker("js/getMusicTagsWorker.js");
@@ -673,6 +708,10 @@ class FileViewer {
         }
         
         
+    }
+
+    _delete(path) {
+        console.log("Deleted "+path);
     }
     /**
      * Allows the user to upload one or more files and will add it to the current folder.

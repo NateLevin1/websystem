@@ -157,7 +157,7 @@ onmessage = function (event) {
                 name: "Desktop",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/"],
+                subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/", "/Users/"+NAME+"/Desktop/Trash Can/"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: folderMeta
@@ -168,6 +168,17 @@ onmessage = function (event) {
                 kind: "Folder",
     
                 subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/file::logo.png"],
+                parent: "/Users/"+NAME+"/Desktop/",
+    
+                meta: folderMeta
+            },
+
+            ["/Users/"+NAME+"/Desktop/Trash Can/"]: { // WebSystem
+                name: "Trash Can",
+                kind: "Folder",
+                isTrash: true,
+    
+                subfolders: [],
                 parent: "/Users/"+NAME+"/Desktop/",
     
                 meta: folderMeta

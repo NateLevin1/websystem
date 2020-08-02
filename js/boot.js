@@ -5,6 +5,7 @@
 function boot() {
     let name = localStorage.getItem("name");
     if(!name) {
+        firstLogin = true;
         // main box
         let dialogboxcontainer = document.createElement("div");
         dialogboxcontainer.classList.add("small-window");
@@ -90,6 +91,19 @@ function setFileSystem() {
                 files[key] = value;
             }
         }).then(()=>{
+            if(isSafari && firstLogin) { // add the websystem logo.png file
+                FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
+                FileSystem.removeAsSubfolder("/Users/"+NAME+"/Desktop/WebSystem/", "/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
+                fetch("../assets/trash.png")
+                .then(function(response) {
+                    return response.blob();
+                })
+                .then(function(blob) {
+                    // convert to file
+                    let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
+                    FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
+                });
+            }
             // add desktop once folders and files is done
             new Desktop;
         });
@@ -188,6 +202,7 @@ function startDesktop() {
 }
 
 var mainContent = document.createElement("div");
+var firstLogin = false;
 
 // * Debug
 //localStorage.clear();

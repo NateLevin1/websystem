@@ -2,6 +2,8 @@
 importScripts("thirdparty/localForage/localforage.js");
 importScripts("instances.js");
 
+
+
 onmessage = function (event) {
     localforage.clear().then(()=>{ // wait until cleared
     const NAME = event.data;
@@ -219,19 +221,22 @@ onmessage = function (event) {
     
         }).then(()=>{
             // FILES
-            fetch("../assets/websystem128x128.png")
-             .then(function(response) {
-                return response.blob()
-              })
-              .then(function(blob) { // below is a callback hell, but it works
-                // convert to file
-                let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
-                filesystem.setItem("/Users/"+NAME+"/Desktop/WebSystem/logo.png/", data).then(()=>{
-                    filesystem.getItem("folders").then((result)=>{
-                        postMessage(result);
-                    });
-                });
-              });
+            if(!isSafari) {
+                fetch("../assets/trash.png")
+                .then(function(response) {
+                   return response.blob();
+                 })
+                 .then(function(blob) { // below is a callback hell, but it works
+                   // convert to file
+                   let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
+                   filesystem.setItem("/Users/"+NAME+"/Desktop/WebSystem/logo.png/", data).then(()=>{
+                       filesystem.getItem("folders").then((result)=>{
+                           postMessage(result);
+                       });
+                   });
+                 });
+            }
+            
         });
     });
 }

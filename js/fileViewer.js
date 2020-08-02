@@ -237,7 +237,6 @@ class FileViewer {
                 }
             } else { // file
                 // get value and set data to it.
-                console.log(child);
                 let data = child.data;
                 this._addFileToDifferentLocation(child.name, data, child.reference.kind, parent);
             }
@@ -799,7 +798,7 @@ class FileViewer {
         let pointerFolder = folders[path];
         let children = [];
         pointerFolder.subfolders.forEach((child)=>{
-            children.push({"name": folders[child]["name"], "path": child, reference: folders[child]});
+            children.push({"name": folders[child]["name"], "path": child, reference: folders[child], data: files[child]});
         });
         let finishedObject = { top: name };
         finishedObject["subs"] = children;

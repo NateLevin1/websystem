@@ -95,13 +95,13 @@ onmessage = function (event) {
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/file::Calculator.app", "/Users/"+NAME+"/Applications/file::App Store.app", "/Users/"+NAME+"/Applications/file::Music.app", "/Users/"+NAME+"/Applications/file::Image Viewer.app"],
+                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app", "/Users/"+NAME+"/Applications/App Store.app", "/Users/"+NAME+"/Applications/Music.app", "/Users/"+NAME+"/Applications/Image Viewer.app"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/file::Calculator.app"]: {
+            ["/Users/"+NAME+"/Applications/Calculator.app"]: {
                 isFile: true,
                 name:"Calculator",
                 kind:"App",
@@ -114,7 +114,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/file::Music.app"]: {
+            ["/Users/"+NAME+"/Applications/Music.app"]: {
                 isFile: true,
                 name:"Music",
                 kind:"App",
@@ -127,7 +127,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/file::App Store.app"]: {
+            ["/Users/"+NAME+"/Applications/App Store.app"]: {
                 isFile: true,
                 name:"App Store",
                 kind:"App",
@@ -140,7 +140,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/file::Image Viewer.app"]: {
+            ["/Users/"+NAME+"/Applications/Image Viewer.app"]: {
                 isFile: true,
                 name:"Image Viewer",
                 kind:"App",
@@ -167,7 +167,7 @@ onmessage = function (event) {
                 name: "WebSystem",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/file::logo.png"],
+                subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/logo.png/"],
                 parent: "/Users/"+NAME+"/Desktop/",
     
                 meta: folderMeta
@@ -184,15 +184,15 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Desktop/WebSystem/file::logo.png"]: {
+            ["/Users/"+NAME+"/Desktop/WebSystem/logo.png/"]: {
                 isFile: true,
                 name:"logo.png",
                 kind:"Image",
-                extension:"png",
+                extension:".png",
 
-                parent: "/Users/"+NAME+"/Desktop/",
+                parent: "/Users/"+NAME+"/Desktop/WebSystem/",
                 isBinary: true,
-                content: "",
+                content: {},
 
                 meta: folderMeta
             },
@@ -223,8 +223,10 @@ onmessage = function (event) {
              .then(function(response) {
                 return response.blob()
               })
-              .then(function(blob) { // below is a callback hell, but it just works
-                filesystem.setItem("/Users/"+NAME+"/Desktop/WebSystem/file::logo.png", blob).then(()=>{
+              .then(function(blob) { // below is a callback hell, but it works
+                // convert to file
+                let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
+                filesystem.setItem("/Users/"+NAME+"/Desktop/WebSystem/logo.png/", data).then(()=>{
                     filesystem.getItem("folders").then((result)=>{
                         postMessage(result);
                     });

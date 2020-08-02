@@ -98,7 +98,7 @@ class Desktop extends FileViewer {
         TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
         TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
         TopBar.addLineToMenu("edit");
-        TopBar.addToMenu("Cut", "edit", ()=>{ console.log("Cut not implemented"); });
+        TopBar.addToMenu("Cut", "edit", this.cutFiles.bind(this));
         TopBar.addToMenu("Copy", "edit", this.copyFiles.bind(this));
         TopBar.addToMenuIf(()=>{
             return Clipboard.contents[0] == "file-list";

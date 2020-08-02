@@ -49,7 +49,8 @@ class FileViewer {
         this.background = document.createElement("div");
         this.background.style.backgroundColor = "#fff";
         this.background.style.flexGrow = "1";
-        this.background.style.overflow = "auto"; // scrolling
+        this.background.style.overflowY = "auto"; // scrolling
+        this.background.style.overflowX = "hidden"; // scrolling
 
         // Right Click
         this.generatedWindow = this.win.makeString();
@@ -85,9 +86,7 @@ class FileViewer {
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
 
-        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], ()=>{
-            console.log("Trash unavailable. 😬");
-        });
+        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.moveSelectedToTrash.bind(this));
 
         
 
@@ -103,6 +102,7 @@ class FileViewer {
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
 
         RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.copyFiles.bind(this));
+        RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.cutFiles.bind(this));
         RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], this.pasteFiles.bind(this));
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
@@ -146,7 +146,7 @@ class FileViewer {
         TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
         TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
         TopBar.addLineToMenu("edit");
-        TopBar.addToMenu("Cut", "edit", ()=>{ console.log("Cut not implemented"); });
+        TopBar.addToMenuIf(()=>{this.background.querySelector(".icon-selected")}, "Cut", "edit", this.cutFiles.bind(this), {thisContext: this});
         TopBar.addToMenu("Copy", "edit", this.copyFiles.bind(this));
         TopBar.addToMenuIf(()=>{
             return Clipboard.contents[0] == "file-list";
@@ -236,11 +236,20 @@ class FileViewer {
                     this.recursiveAddFromObject(object[child.name], parent+child.name+"/", object);
                 }
             } else { // file
-                // get value at child.path and set data to it.
-                let data = files[child.path];
+                // get value and set data to it.
+                console.log(child);
+                let data = child.data;
                 this._addFileToDifferentLocation(child.name, data, child.reference.kind, parent);
             }
             // }
+        });
+    }
+    moveSelectedToTrash() {
+        mainContent.querySelector(".trash-can").src = "assets/trash.png";
+        let selected = mainContent.querySelectorAll(".icon-selected");
+        selected.forEach((element)=>{
+            FileSystem.moveFile(element.getAttribute("path"), trashPath);
+            this.background.removeChild(element);
         });
     }
     copyFiles() {
@@ -249,16 +258,22 @@ class FileViewer {
             selected.forEach((element)=>{
                 let filename = element.getAttribute("name");
                 let filepath = element.getAttribute("path");
-                if(element.querySelector("img").src.includes("folder")) {
+                if(!folders[filepath].isFile) {
                     // file is a folder
                     copy.push(this.getChildren(filepath, filename));
                 } else {
                     // file is a file
-                    copy.push({"file": true, "filename": "Copy of "+filename, "dataPath":filepath});
+                    copy.push({"file": true, "filename": "Copy of "+filename, "data":files[filepath], kind:folders[filepath].kind});
                 }
                 
             });
             Clipboard.contents = ["file-list", copy];
+    }
+    cutFiles() {
+        // copy
+        this.copyFiles();
+        // remove
+        this.moveSelectedToTrash();
     }
     pasteFiles() {
         let contents = Clipboard.contents;
@@ -269,7 +284,7 @@ class FileViewer {
                 // "element" is an object in the form:
                 //  { top: "topmost", subs:[{sub object 1}, {sub object 2}], sub1: ["sub2"]}
                 if(element["file"]) { // is file
-                    this._addFileToStorage(element.filename, files[element.dataPath], folders[element.dataPath].kind); // TODO add file kind so it is known
+                    this._addFileToStorage(element.filename, element.data, element.kind);
                 } else { // is folder (note that folders can contain files)
                     let num = 2;
                     let path = this.currentFolder+element["top"];
@@ -279,9 +294,9 @@ class FileViewer {
                         path += "/";
                     }
                     while(folders[path]) { // already exists
-                        console.warn("There is already a folder with path "+path);
                         path = oldPath+" "+num+"/";
                         element["top"] = oldName+" "+num;
+                        console.warn("Warning caught in fileViewer, there is already a folder with path "+path+"."+"Changed to "+path);
                         num++;
                     }
 
@@ -361,15 +376,18 @@ class FileViewer {
     }
     /**
      * Add a folder to the screen in the current window
-     * @param {String} name - The name of the folder to be made.
+     * @param {String} name - The name of the folder to be made. If an empty string will be auto determined from path
      * @param {String} path - The path to the parent of the folder to be created at.
      * @param {HTMLElement} appendee - The element to append the folder to.
      * @param {Boolean} newWindow - If true, creates a new window on open.
      * @param {Boolean} before 
      */
-    createFolder(name, path=this.currentFolder, appendee=this.background, newWindow=true, before=false) {
+    createFolder(name="", path=this.currentFolder, appendee=this.background, newWindow=true, before=false) {
         let newFolderContainer = document.createElement("div");
         newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
+        if(name === "") {
+            name = folders[path].name;
+        }
         newFolderContainer.setAttribute("path", path);
         newFolderContainer.setAttribute("name", name);
         // newFolderContainer.id = name;
@@ -460,7 +478,11 @@ class FileViewer {
             thumbed.onload = ()=>{
                 newFileContainer.replaceChild(thumbed, newFile);
             };
-            thumbed.src = URL.createObjectURL(files[path]);
+            try {
+                thumbed.src = URL.createObjectURL(files[path]);
+            } catch(e) {
+                console.error("There was an issue loading the thumbnail. The file "+path+" may be corrupted.");
+            }
         } else if(filetype=="App"){
             if(appImagePaths[name]) {
                 newFile.src = appImagePaths[name];
@@ -649,13 +671,22 @@ class FileViewer {
     }
 
     _addFolderToStorage(name, addFolder=true) {
+        let oldName = name;
+        let path = this.currentFolder+name+"/";
+        let num = 2;
+        while(folders[path]) { // already exists
+            name = oldName+" "+num;
+            path = this.currentFolder+name+"/";
+            console.warn("Warning caught in fileViewer, There is already a file with path. Changed to "+path+". New name is "+name);
+            num++;
+        }
         FileSystem.addFolderAtLocation(name, this.currentFolder);
         if(folders[this.currentFolder].isTrash == true) {
             // fill trash
             mainContent.querySelector(".trash-can").src = "assets/trash.png";
         }
         if(addFolder) { // false on folder make
-            this.createFolder(name, this.currentFolder+name+"/", this.background, !this.win, true);
+            this.createFolder("", this.currentFolder+name+"/", this.background, !this.win, true);
         }
     }
 
@@ -678,6 +709,16 @@ class FileViewer {
      * @param {String} filekind - The kind of the file to be added.
      */
     _addFileToStorage(filename, filedata, filekind) {
+        let oldName = filename;
+        let path = this.currentFolder+filename+"/";
+        let num = 2;
+        while(folders[path]) { // already exists
+            filename = oldName+" "+num;
+            path = this.currentFolder+filename+"/";
+            console.warn("Warning caught in fileViewer, There is already a file with path. Changed to "+path+". New name is "+filename);
+            num++;
+        }
+
 
         if(folders[this.currentFolder].isTrash == true) {
             // fill trash
@@ -769,13 +810,12 @@ class FileViewer {
     
     recursiveGetChildren(children, finishedObject) {
         children.forEach((child)=>{
-            // console.log(child);
             if(child.reference.isFile) { // file
-                finishedObject[child.name] = {name: child.name, dataPath: child.path};
+                finishedObject[child.name] = {name: child.name, data: files[child.path], kind: folders[child.path].kind};
             }
             else if(folders[child.path].subfolders) { // folder
-                let subfolders = folders[child.path].subfolders.map((val)=>{
-                    return {"name": folders[val].name, "path": val, reference: folders[val]}
+                let subfolders = folders[child.path].subfolders.map((p)=>{
+                    return {"name": folders[p].name, "path": p, reference: folders[p], data: files[p]};
                 });
                 finishedObject[child.name] = subfolders;
                 

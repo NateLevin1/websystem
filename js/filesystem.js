@@ -60,6 +60,7 @@ class FileSystem {
      * @param {String} kind - The kind of the data. E.g. "Image" or "App"
      * @param {String} parentPath - The path to the parent of the new file.
      * @param {JSON} options - The options to pass in.
+     * @param {String} options.alias - A name to be set instead of the given name. May cause issues.
      * @returns {Promise[]} [0] == folder promise. [1] == file promise (if any). Returns the localForage setItem promises. Resolves once item has been added to localForage.
      */
     static addFileAtLocation(name, data, kind, parentPath, options={}) {
@@ -72,9 +73,9 @@ class FileSystem {
         let oldName = name;
         let resultArray = [];
         while(folders[path]) { // already exists
-            console.warn("There is already a file with path "+path);
-            path = oldPath+" "+num;
+            path = oldPath.substring(0,oldPath.length-1)/*<- Remove ending '/'*/+" "+num+"/";
             name = oldName+" "+num;
+            console.warn("There is already a file with path. Changed to "+path+". New name is "+name);
             num++;
         }
 
@@ -140,12 +141,15 @@ class FileSystem {
     }
     static deleteAnyAtLocation(path) {
         if(folders[path].isFile) {// is file, delete from folders{} and files{}
-            delete folders[path];
-            filesystem.setItem("folders", folders);
-            delete files[path];
-            filesystem.removeItem(path).catch((e)=>{
+            if(folders[path].isBinary) {
+                delete files[path];
+                filesystem.removeItem(path).catch((e)=>{
                     console.error("Error deleting file "+path, e);
                 });
+            }
+
+            delete folders[path];
+            filesystem.setItem("folders", folders);
         } else { // is folder, delete normally
             delete folders[path];
             filesystem.setItem("folders", folders);
@@ -159,6 +163,74 @@ class FileSystem {
             });
         }
         return subs;
+    }
+    static moveFile(oldPath, newParentPath) {
+        let name = folders[oldPath].name;
+        let kind = folders[oldPath].kind;
+        let path = newParentPath+name+"/";
+        let oldName = name;
+        while(folders[path]) { // already exists
+            name = oldName+" "+num;
+            path = newParentPath+name+"/";
+            console.warn("There is already a file with path. Changed to "+path+". New name is "+name);
+            num++;
+        }
+        if(folders[oldPath].isFile) { // is file
+            // remove as subfile
+            FileSystem.removeAsSubfolder(folders[oldPath].parent, oldPath);
+            // add as an actual file
+            if(folders[oldPath].isBinary) {
+                FileSystem.addFileAtLocation(name, files[oldPath], kind, newParentPath)[1].catch((err)=>{
+                    console.error("There was an error adding the file to the new location. Error: "+err);
+                });
+                delete files[oldPath];
+                filesystem.removeItem(oldPath).catch((e)=>{
+                        console.error("Error deleting file "+path, e);
+                    });
+            } else {
+                FileSystem.addFileAtLocation(name, folders[oldPath].content, kind, newParentPath);
+            }
+            // delete old file in folders{}
+            delete folders[oldPath];
+            // set filesystem to correct value
+            filesystem.setItem("folders", folders);
+        } else { // is not file
+            FileSystem.addFolderAtLocation(name, newParentPath);
+            // remove oldPath as a subfolder of its parent
+            FileSystem.removeAsSubfolder(folders[oldPath].parent, oldPath);
+            FileSystem.moveWithSubfolders(oldPath, newParentPath+name+"/");
+            // only setItem after everything is done
+            filesystem.setItem("folders", folders);
+        }
+    }
+    static moveWithSubfolders(recreationPath, newParent) {
+        let subs = folders[recreationPath].subfolders;
+        if(subs) {
+            subs.forEach((element)=>{
+                let fRef = folders[element];
+                if(fRef.isFile) {
+                    if(fRef.isBinary) {
+                        FileSystem.addFileAtLocation(fRef.name, files[element], fRef.kind, newParent);
+                        delete files[element];
+                        filesystem.removeItem(element).catch((e)=>{
+                                console.error("Error deleting file "+element, e);
+                            });
+                    } else {
+                        FileSystem.addFileAtLocation(fRef.name, fRef.content, fRef.kind, newParent);
+                        delete folders[element];
+                    }
+                } else {
+                    FileSystem.addFolderAtLocation(fRef.name, newParent);
+                    FileSystem.moveWithSubfolders(element, newParent+fRef.name+"/");
+                }
+            });
+        }
+        delete folders[recreationPath];
+    }
+
+    static removeAsSubfolder(parentPath, removePath) {
+        let oldParentSubs = folders[parentPath].subfolders;
+        folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1);
     }
     /**
      * Request a file for the user to select. Starts at the user's home directory.

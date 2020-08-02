@@ -88,8 +88,6 @@ class FileViewer {
 
         RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.moveSelectedToTrash.bind(this));
 
-        
-
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
             let subs = folders[trashPath].subfolders;
             subs.forEach((path)=>{
@@ -100,6 +98,10 @@ class FileViewer {
         });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
+        
+        RightClickMenu.addToMenu("Rename", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.rename.bind(this));
+        
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]);
 
         RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.copyFiles.bind(this));
         RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.cutFiles.bind(this));
@@ -250,6 +252,80 @@ class FileViewer {
             FileSystem.moveFile(element.getAttribute("path"), trashPath);
             this.background.removeChild(element);
         });
+    }
+    rename() {
+        // input
+        let selected = this.background.querySelector(".icon-selected");
+        let oldPath = selected.getAttribute("path");
+        let oldName = selected.getAttribute("name");
+
+        // interface
+        selected.classList.add("icon-selected", "icon-rename");
+        let text = selected.querySelector("div");
+        let invisibleInput = document.createElement("input");
+        invisibleInput.style.opacity = "0";
+        invisibleInput.style.textAlign = "center";
+        invisibleInput.style.width = "8.5em";
+        invisibleInput.style.fontSize = "1em";
+        invisibleInput.style.height = "1.5em";
+        let pos = text.getBoundingClientRect();
+        invisibleInput.style.position = "absolute";
+        invisibleInput.style.zIndex = selected.parentNode.parentNode.parentNode.style.zIndex + 1;
+        invisibleInput.style.left = pos.left+"px";
+        invisibleInput.style.top = pos.top+"px";
+        invisibleInput.style.transform = "translate(-12.8%, -6%)";
+        if(folders[oldPath].isFile && folders[oldPath].extension) {
+            invisibleInput.value = oldName.replace(folders[oldPath].extension, "");
+        } else {
+            invisibleInput.value = oldName;
+        }
+        document.body.appendChild(invisibleInput);
+
+        setTimeout(()=>{
+            invisibleInput.focus(); // wait for object to be made
+            invisibleInput.setSelectionRange(0, invisibleInput.value.length);
+            if(folders[oldPath].isFile && folders[oldPath].extension) {
+                invisibleInput.value += folders[oldPath].extension;
+                invisibleInput.setSelectionRange(0, invisibleInput.value.length - folders[oldPath].extension.length);
+            }
+        }, 50);
+        
+        invisibleInput.onkeyup = ()=>{
+            text.innerText = invisibleInput.value;
+        }
+
+        invisibleInput.onkeydown = (event)=>{
+            if(event.key == "Enter") {
+                invisibleInput.blur();
+            }
+        }
+
+        invisibleInput.onblur = ()=>{
+            let txt = text.innerText;
+            if(txt === "") {
+                txt = "untitled";
+            }
+            let path = this.currentFolder+txt+"/";
+            if(Object.keys(folders).includes(path)) {
+                let i = 2;
+                while(Object.keys(folders).includes(path)) {
+                    text.innerText = txt+" "+i;
+                    i++;
+                    path = this.currentFolder+text.innerText+"/";
+                }
+            }
+            invisibleInput.remove();
+            selected.classList.remove("icon-rename");
+            
+            let newName = text.textContent;
+            // actually changing stuff
+            FileSystem.renameAny(oldPath, path, newName);
+
+            selected.setAttribute("path", path);
+            selected.setAttribute("name", newName);
+
+            selected.querySelector("div").textContent = newName;
+        }
     }
     copyFiles() {
         let selected = document.querySelectorAll(".icon-selected");
@@ -415,7 +491,7 @@ class FileViewer {
     
         // text
         let text = document.createElement("div");
-        text.classList.add("sans-serif");
+        text.classList.add("sans-serif", "unselectable");
         text.innerText = name;
         newFolderContainer.appendChild(text);
 
@@ -502,15 +578,18 @@ class FileViewer {
     
         // text
         let text = document.createElement("div");
-        text.classList.add("sans-serif");
+        text.classList.add("sans-serif", "unselectable");
         text.innerText = name;
         newFileContainer.appendChild(text);
 
         if(!this.win) { // desktop
             text.classList.add("desktop-text");
         }
-    
+        name = null; // no longer needed
+        path = null;
         newFileContainer.ondblclick = (event)=>{
+            let name = newFileContainer.getAttribute("name");
+            let path = newFileContainer.getAttribute("path");
             if(filetype == "App") {
                 try {
                     makeFunctions[name]();
@@ -523,7 +602,7 @@ class FileViewer {
             } else if(filetype == "Music") {
                 new Music(name, path);
             } else { // unknown filetype
-                alert("Opened File "+newFileContainer.getAttribute("name")+"!");
+                alert("Opened File "+name+"!");
             }
             
         }
@@ -620,7 +699,7 @@ class FileViewer {
             invisibleInput.style.zIndex = blankFolder.parentNode.parentNode.parentNode.style.zIndex + 1;
             invisibleInput.style.left = pos.left+"px";
             invisibleInput.style.top = pos.top+"px";
-            invisibleInput.style.transform = "translate(5%, 0%)";
+            invisibleInput.style.transform = "translate(-12.8%, -6%)";
             document.body.appendChild(invisibleInput);
             
             
@@ -644,16 +723,12 @@ class FileViewer {
                     text = "untitled folder";
                 }
                 let path = this.currentFolder+text+"/";
-                if(text.startsWith("file::")||Object.keys(folders).includes(path)) {
-                    if(Object.keys(folders).includes(path)) {
-                        let i = 2;
-                        while(Object.keys(folders).includes(path)) {
-                            blankFolderText.innerText = text+" "+i;
-                            i++;
-                            path = this.currentFolder+blankFolderText.innerText+"/";
-                        }
-                    } else {
-                        blankFolderText.innerText = text.replace(/file::/g, "");
+                if(Object.keys(folders).includes(path)) {
+                    let i = 2;
+                    while(Object.keys(folders).includes(path)) {
+                        blankFolderText.innerText = text+" "+i;
+                        i++;
+                        path = this.currentFolder+blankFolderText.innerText+"/";
                     }
                 }
                 invisibleInput.remove();
@@ -694,9 +769,6 @@ class FileViewer {
     }
 
     _addFileToDifferentLocation(filename, filedata, filekind, filepath) {
-        if(filename.startsWith("file::")) {
-            filename = filename.substring(6, filename.length);
-        }
         FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
     }
     /**

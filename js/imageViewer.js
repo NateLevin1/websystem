@@ -20,7 +20,7 @@ class ImageViewer {
             img.src = URL.createObjectURL(files[path]);
             img.style.minHeight = "40px"
         } else {
-            throw "No value for files[path]."
+            console.error("No value for files[path] with path "+path);
         }
         
         this.img = img;

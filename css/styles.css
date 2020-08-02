@@ -248,6 +248,9 @@ button:active {
     /* white-space: nowrap; Adds ellipsis but constrains to one line.
     text-overflow: ellipsis; */
 }
+:not(.icon-container[name*=" "]).icon-container div { /* Selects all text in 'icon-container's that doesn't have spaces, and makes it so they break at the end of the width so they don't just cut off */
+    word-break: break-all;
+}
 .desktop-text {
     text-shadow: 0 0 4px rgba(0, 0, 0, 1) !important;
     color: white !important;

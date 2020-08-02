@@ -212,6 +212,7 @@ class FileSystem {
                     if(fRef.isBinary) {
                         FileSystem.addFileAtLocation(fRef.name, files[element], fRef.kind, newParent);
                         delete files[element];
+                        delete folders[element];
                         filesystem.removeItem(element).catch((e)=>{
                                 console.error("Error deleting file "+element, e);
                             });
@@ -228,9 +229,62 @@ class FileSystem {
         delete folders[recreationPath];
     }
 
-    static removeAsSubfolder(parentPath, removePath) {
+    static removeAsSubfolder(parentPath, removePath, replacement=undefined) {
         let oldParentSubs = folders[parentPath].subfolders;
-        folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1);
+        if(replacement) {
+            folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1, replacement);
+        } else {
+            folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1);
+        }
+    }
+
+    static renameAny(oldPath, newPath, newName) {
+        let fRef = folders[oldPath];
+        if(fRef.isFile) { // changing a file does not require recursion so it is separated
+            FileSystem.renameFile(oldPath, newPath, newName, fRef.parent);
+        } else {
+            FileSystem.removeAsSubfolder(fRef.parent, oldPath, newPath);
+            FileSystem.recursiveRenameFolder(oldPath, newPath, fRef.parent);
+            folders[newPath].name = newName;
+        }
+        filesystem.setItem("folders", folders);
+    }
+    /**
+     * Rename a folder and its subfolders. Use renameAny() instead of this because this function won't update the filesystem.
+     * @param {String} oldPath - The path to the folder before it is renamed
+     * @param {String} newPath - The path the folder should be at after the folder is renamed
+     */
+    static recursiveRenameFolder(oldPath, newPath, newParent) {
+        folders[newPath] = folders[oldPath];
+        folders[newPath].parent = newParent;
+        folders[newPath].subfolders.forEach((path, index)=>{
+            let fRef = folders[path];
+            if(fRef.isFile) {
+                FileSystem.renameFile(path, newPath+fRef.name+"/", fRef.name, newPath);
+            } else {
+                FileSystem.recursiveRenameFolder(path, newPath+fRef.name+"/", newPath);
+            }
+            folders[newPath].subfolders[index] = newPath+fRef.name+"/";
+        });
+        delete folders[oldPath];
+    }
+
+    static renameFile(oldPath, newPath, newName, newParent) {
+        FileSystem.removeAsSubfolder(folders[oldPath].parent, oldPath, newPath);
+        let fRef = folders[oldPath];
+        folders[newPath] = folders[oldPath];
+        folders[newPath].name = newName;
+        folders[newPath].parent = newParent;
+        delete folders[oldPath];
+        if(fRef.isBinary) {
+            files[newPath] = files[oldPath]; // set new item as a copy of old one
+            filesystem.setItem(newPath, files[oldPath]).then(()=>{ // add new item
+                filesystem.removeItem(oldPath).catch((e)=>{ // remove old item
+                    console.error("Error deleting file "+oldPath, e);
+                });
+            }); 
+            delete files[oldPath]; // remove old item
+        }
     }
     /**
      * Request a file for the user to select. Starts at the user's home directory.

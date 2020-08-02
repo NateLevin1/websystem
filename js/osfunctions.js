@@ -13,7 +13,7 @@ var OFFLINE = !navigator.onLine;
  * NOTE: If copying to the actual clipboard (for interaction with other websites) is desired, this is not the option.
  * This is used internally for copying and pasting of files. Everything else that can be represented as text should
  * go to the actual user's clipboard so WebSystem plays nice with other sites.
- * @property {any} contents - The contents of the clipboard. Alternative to using get() and set().
+ * @property {any} contents - The contents of the clipboard. Alternative to using get() and set(), though does <strong>not</strong> store in sessionStorage.
  */
 class Clipboard {
     /**
@@ -31,10 +31,19 @@ class Clipboard {
      */
     static set(item) {
         Clipboard.contents = item;
+        if(typeof Clipboard.contents == "object") {
+            sessionStorage.setItem("clipboard", "JSON-"+JSON.stringify(Clipboard.contents));
+        } else {
+            sessionStorage.setItem("clipboard", Clipboard.contents);
+        }
     }
 }
+let clip = sessionStorage.getItem("clipboard");
+Clipboard.contents = clip ? clip : "";
+if(Clipboard.contents.startsWith("JSON-")) {
+    Clipboard.contents = JSON.parse(clip.substring(5));
+}
 
-Clipboard.contents = "";
 
 /**
  * Returns true if the string is a number. Otherwise it returns false.

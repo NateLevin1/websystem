@@ -77,6 +77,7 @@ class TopBar {
         });
         TopBar.addToMenu("DEBUG: Delete All Data", "info", ()=>{ 
             FileSystem.clearAll();
+            sessionStorage.clear();
             setTimeout(()=>{
                 location.reload(false);
             }, 100);

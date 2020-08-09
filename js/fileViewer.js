@@ -410,37 +410,71 @@ class FileViewer {
         box.classList.add("file-box-selection");
         this.background.appendChild(box);
         this.background.addEventListener("mousedown", (event)=>{
-            box.style.display = "block";
-            box.style.left = event.x+"px";
-            left = event.x;
-            box.style.top = event.y+"px";
-            top = event.y;
-            document.body.style.cursor = "default";
-            document.body.classList.add("unselectable");
-            isShown = true;
+            if(event.target == this.background) { // prevent on folders
+                box.style.display = "block";
+                box.style.left = event.x+"px";
+                left = event.x;
+                box.style.top = event.y+"px";
+                top = event.y;
+                document.body.style.cursor = "default";
+                document.body.classList.add("unselectable");
+                isShown = true;
+
+                // disable pointer events on all windows
+                document.querySelectorAll(".window").forEach((element)=>{
+                    if(element != this.window) {
+                        element.style.pointerEvents = "none";
+                    }
+                });
+            }
         });
         var left = 0;
         var top = 0;
         var isShown = false;
 
-        this.background.addEventListener("mousemove", (event)=>{
-            // Below is from 1st comment on https://stackoverflow.com/a/48970682. It returns true if the left mouse button is down, regardless of the other buttons.
-            if(event.buttons & 1 === 1) {
-                if(event.x < left) { // inspired by http://jsfiddle.net/RSYTq/34/ 
-                    box.style.left = event.x+"px";
+        document.addEventListener("mousemove", (event)=>{
+            if(isShown) {
+                 // Below is from 1st comment on https://stackoverflow.com/a/48970682. It returns true if the left mouse button is down, regardless of the other buttons.
+                if(event.buttons & 1 === 1) {
+                    width = Math.abs(event.x - left);
+                    height = Math.abs(event.y - top);
+
+                    // window.requestAnimationFrame causes an issue with fast mouse movements, so less performance it is.
+                    let backgroundRect = this.background.getBoundingClientRect();
+                    let boxRect = box.getBoundingClientRect();
+                    if(boxRect.left + width <= backgroundRect.right && boxRect.right - width >= backgroundRect.left) {
+                        box.style.width = width+"px";
+                        if(event.x < left) { // inspired by http://jsfiddle.net/RSYTq/34/ 
+                            box.style.left = event.x+"px";
+                        }
+                    }
+                    if(boxRect.top + height <= backgroundRect.bottom && boxRect.bottom - height >= backgroundRect.top) {
+                        box.style.height = height+"px";
+                        if(event.y < top) { // inspired by http://jsfiddle.net/RSYTq/34/ 
+                            box.style.top = event.y+"px";
+                        }
+                    }
+                    let divider = 1.1;
+                    //* New Solution:
+                    this.background.childNodes.forEach((node)=>{
+                        let rect = node.getBoundingClientRect();
+                        let w = rect.right - rect.left;
+                        let h = rect.bottom - rect.top;
+                        if((rect.left + w/divider >= boxRect.left && rect.right - w/divider <= boxRect.right && rect.top + h/divider >= boxRect.top && rect.bottom - h/divider <= boxRect.bottom) && !node.classList.contains("icon-selected")) {
+                            node.classList.add("icon-selected");
+                        } else if(!event.shiftKey && node.classList.contains("icon-selected") && !(rect.left + w/divider >= boxRect.left && rect.right - w/divider <= boxRect.right && rect.top + h/divider >= boxRect.top && rect.bottom - h/divider <= boxRect.bottom)) {
+                            // remove it if it is no longer in the box
+                            node.classList.remove("icon-selected");
+                        }
+                    });
                 }
-                if(event.y < top) { // inspired by http://jsfiddle.net/RSYTq/34/ 
-                    box.style.top = event.y+"px";
-                }
-                width = Math.abs(event.x - left);
-                box.style.width = width+"px";
-                height = Math.abs(event.y - top);
-                box.style.height = height+"px";
             }
+           
         });
 
         document.addEventListener("mouseup", ()=>{ // the document because the mouseup doesn't have to occur on the background
             if(isShown) {
+                isShown = false;
                 box.style.display = "none";
                 width = 0;
                 height = 0;
@@ -448,6 +482,12 @@ class FileViewer {
                 box.style.height = height+"px";
                 document.body.style.cursor = "auto";
                 document.body.classList.remove("unselectable");
+                // disable pointer events on all windows
+                document.querySelectorAll(".window").forEach((element)=>{
+                    if(element != this.window) {
+                        element.style.pointerEvents = "initial";
+                    }
+                });
             }
         });
     }
@@ -471,13 +511,14 @@ class FileViewer {
 
         this.displayFolders(path);
         this.createSidebar();
+        this.addBoxSelection();
     }
     displayFolders(path) {
         // background (for right click menu)
         this.contentContainer.appendChild(this.background);
         // Deselection
-        this.background.onclick = ()=>{ // not window to save on events
-            if(event.target == this.background) {
+        this.background.onmousedown = (event)=>{ // not window to save on events
+            if(event.target == this.background && !event.shiftKey) {
                 clearSelected();
             }
         }

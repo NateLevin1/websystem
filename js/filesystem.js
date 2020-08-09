@@ -164,6 +164,12 @@ class FileSystem {
         }
         return subs;
     }
+    /**
+     * Move a file
+     * @param {String} oldPath - The path of the file to be moved
+     * @param {String} newParentPath - The new parent of the file
+     * @returns {Boolean} Whether or not the moving is possible. Note that this has nothing to do with whether it actually succeeded. False is returned if the old folder is a parent of the new one (which would otherwise cause an infinite loop).
+     */
     static moveFile(oldPath, newParentPath) {
         let name = folders[oldPath].name;
         let kind = folders[oldPath].kind;
@@ -175,6 +181,17 @@ class FileSystem {
             console.warn("There is already a file with path. Changed to "+path+". New name is "+name);
             num++;
         }
+
+        // make sure is not own parent, if it is then just stop the function
+        let curParent = folders[newParentPath].parent;
+        while(curParent != "/") { // go to highest up
+            if(curParent == oldPath) {
+                return false; // stop execution of the rest of the function
+            }
+            curParent = folders[curParent].parent;
+        }
+
+
         if(folders[oldPath].isFile) { // is file
             // remove as subfile
             FileSystem.removeAsSubfolder(folders[oldPath].parent, oldPath);
@@ -202,6 +219,8 @@ class FileSystem {
             // only setItem after everything is done
             filesystem.setItem("folders", folders);
         }
+
+        return true;
     }
     static moveWithSubfolders(recreationPath, newParent) {
         let subs = folders[recreationPath].subfolders;

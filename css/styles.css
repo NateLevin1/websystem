@@ -276,6 +276,45 @@ button:active {
     padding-right:3px;
 }
 
+.folder-move-in img {
+    background-color:rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.411);
+    z-index:1;
+}
+.folder-move-in div {
+    background-color:rgb(114, 114, 114);
+    border: 2px solid rgb(110, 110, 110);
+
+    color:white;
+    border-radius:4px;
+    z-index:0;
+    display:inline-block;
+}
+.background-drop-move-in[path$="Desktop/"] { /* Matches the desktop when moved in */
+    -webkit-backdrop-filter: brightness(0.95);
+    backdrop-filter: brightness(0.95);
+}
+:not(.background-drop-move-in[path$="Desktop/"]).background-drop-move-in { /* Matches anything else when moved in */
+    -webkit-filter: brightness(0.95);
+    filter: brightness(0.95);
+}
+.multiple-text {
+    text-align: center;
+    color:white;
+    background-color:rgba(0, 89, 221, 1);
+    border: 2px solid rgba(0, 89, 221, 1);
+    border-radius:10px;
+    display: inline-block;
+    padding: 0.2em 0.4em;
+    margin-bottom: 0.3em;
+    font-size:1.4em;
+    font-weight:bold;
+}
+.file-box-selection {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.2);
+    outline: 1.5px solid rgba(255, 255, 255, 0.9);
+}
 .window {
     background-color:white;
     z-index:1;

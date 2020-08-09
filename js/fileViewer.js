@@ -51,6 +51,8 @@ class FileViewer {
         this.background.style.flexGrow = "1";
         this.background.style.overflowY = "auto"; // scrolling
         this.background.style.overflowX = "hidden"; // scrolling
+        this.background.setAttribute("path", this.currentFolder);
+        this.background.classList.add("background-drop");
 
         // Right Click
         this.generatedWindow = this.win.makeString();
@@ -61,7 +63,7 @@ class FileViewer {
         
         // Sidebar
         this.createSidebar();
-        this.window.addEventListener('window-resize', event=>{
+        this.window.addEventListener('window-resize', (event)=>{
             if(this.window.clientWidth/em < 27) {
                 if(this.sidebar) {
                     this.destroySidebar();
@@ -72,6 +74,12 @@ class FileViewer {
                 }
             }
         });
+
+        this.background.addEventListener("file-system-change", ()=>{
+            this.openFolder(this.currentFolder);
+        });
+
+        this.addBoxSelection();
     }
 
     addRightClickMenu() {
@@ -394,6 +402,55 @@ class FileViewer {
         });
         this.intelligentOpen(names);
     }
+    addBoxSelection() {
+        var box = document.createElement("div");
+        box.style.display = "none";
+        var width = 0;
+        var height = 0;
+        box.classList.add("file-box-selection");
+        this.background.appendChild(box);
+        this.background.addEventListener("mousedown", (event)=>{
+            box.style.display = "block";
+            box.style.left = event.x+"px";
+            left = event.x;
+            box.style.top = event.y+"px";
+            top = event.y;
+            document.body.style.cursor = "default";
+            document.body.classList.add("unselectable");
+            isShown = true;
+        });
+        var left = 0;
+        var top = 0;
+        var isShown = false;
+
+        this.background.addEventListener("mousemove", (event)=>{
+            // Below is from 1st comment on https://stackoverflow.com/a/48970682. It returns true if the left mouse button is down, regardless of the other buttons.
+            if(event.buttons & 1 === 1) {
+                if(event.x < left) { // inspired by http://jsfiddle.net/RSYTq/34/ 
+                    box.style.left = event.x+"px";
+                }
+                if(event.y < top) { // inspired by http://jsfiddle.net/RSYTq/34/ 
+                    box.style.top = event.y+"px";
+                }
+                width = Math.abs(event.x - left);
+                box.style.width = width+"px";
+                height = Math.abs(event.y - top);
+                box.style.height = height+"px";
+            }
+        });
+
+        document.addEventListener("mouseup", ()=>{ // the document because the mouseup doesn't have to occur on the background
+            if(isShown) {
+                box.style.display = "none";
+                width = 0;
+                height = 0;
+                box.style.width = width+"px";
+                box.style.height = height+"px";
+                document.body.style.cursor = "auto";
+                document.body.classList.remove("unselectable");
+            }
+        });
+    }
     /**
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
@@ -405,6 +462,7 @@ class FileViewer {
         // clear past screen
         this.contentContainer.innerHTML = "";
         this.background.innerHTML = "";
+        this.background.setAttribute("path", this.currentFolder);
 
         this.contentContainer = document.createElement("div");
         this.contentContainer.style.height = "calc(100% - 1em)";
@@ -465,14 +523,14 @@ class FileViewer {
         }
         newFolderContainer.setAttribute("path", path);
         newFolderContainer.setAttribute("name", name);
+        newFolderContainer.draggable = true; // even though draggable is enumerated, in js it still has to be like this. ???
         // newFolderContainer.id = name;
         if(before == true) {
             appendee.insertBefore(newFolderContainer, appendee.firstChild);
         } else {
             appendee.appendChild(newFolderContainer);
         }
-        
-    
+
         // img
         let newFolder = document.createElement("img");
         if(folders[path] && folders[path].isTrash) {
@@ -481,17 +539,21 @@ class FileViewer {
             } else {
                 newFolder.src = "assets/emptyTrash.png";
             }
+            newFolder.id = "trash";
             newFolder.classList.add("trash-can");
             trashPath = path;
+            newFolderContainer.draggable = false;
         } else {
             newFolder.src = "assets/folder.png";
         }
-        newFolder.classList.add("icon", "unselectable");
+        newFolder.classList.add("icon", "unselectable", "folder-img");
+        newFolder.draggable = false;
         newFolderContainer.appendChild(newFolder);
     
         // text
         let text = document.createElement("div");
         text.classList.add("sans-serif", "unselectable");
+        text.draggable = false; 
         text.innerText = name;
         newFolderContainer.appendChild(text);
 
@@ -536,6 +598,7 @@ class FileViewer {
         newFileContainer.classList.add("clickable", "icon-container", "file");
         newFileContainer.setAttribute("path", path);
         newFileContainer.setAttribute("name", name);
+        newFileContainer.draggable = true;
         if(before) {
             appendee.insertBefore(newFileContainer, appendee.firstChild);
         } else {
@@ -549,7 +612,8 @@ class FileViewer {
             newFile.src = "assets/image.png";
             // Poor man's lazy loading
             let thumbed = newFile.cloneNode();
-            thumbed.classList.add("icon");
+            thumbed.classList.add("icon", "unselectable");
+            thumbed.draggable = false;
             thumbed.onload = ()=>{
                 newFileContainer.replaceChild(thumbed, newFile);
             };
@@ -574,12 +638,14 @@ class FileViewer {
             newFile.src = "assets/unknown.png";
         }
         newFile.classList.add("icon", "unselectable");
+        newFile.draggable = false;
         newFileContainer.appendChild(newFile);
     
         // text
         let text = document.createElement("div");
         text.classList.add("sans-serif", "unselectable");
         text.innerText = name;
+        text.draggable = false;
         newFileContainer.appendChild(text);
 
         if(!this.win) { // desktop

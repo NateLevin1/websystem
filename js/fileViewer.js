@@ -795,6 +795,7 @@ class FileViewer {
             blankFolder.setAttribute("path", this.currentFolder); // prevents opening before made
             blankFolder.setAttribute("name", folders[this.currentFolder].name);
             blankFolder.classList.add("icon-selected", "icon-rename");
+            blankFolder.scrollIntoView(true);
             let blankFolderText = blankFolder.querySelector("div");
 
             let invisibleInput = document.createElement("input");

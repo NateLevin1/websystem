@@ -442,11 +442,14 @@ class FileViewer {
                     // window.requestAnimationFrame causes an issue with fast mouse movements, so less performance it is.
                     let backgroundRect = this.background.getBoundingClientRect();
                     let boxRect = box.getBoundingClientRect();
-                    if(boxRect.left + width <= backgroundRect.right && boxRect.right - width >= backgroundRect.left) {
+                    if(boxRect.left + width <= backgroundRect.right - event.movementX && boxRect.right - width >= backgroundRect.left - event.movementX) {
                         box.style.width = width+"px";
                         if(event.x < left) { // inspired by http://jsfiddle.net/RSYTq/34/ 
                             box.style.left = event.x+"px";
                         }
+                        console.log("Worked  because ", Math.round(boxRect.right - width), Math.round(backgroundRect.left));
+                    } else {
+                        console.log("Stopped because ", Math.round(boxRect.right - width), Math.round(backgroundRect.left), event.movementX);
                     }
                     if(boxRect.top + height <= backgroundRect.bottom && boxRect.bottom - height >= backgroundRect.top) {
                         box.style.height = height+"px";
@@ -455,7 +458,6 @@ class FileViewer {
                         }
                     }
                     let divider = 1.1;
-                    //* New Solution:
                     this.background.childNodes.forEach((node)=>{
                         let rect = node.getBoundingClientRect();
                         let w = rect.right - rect.left;

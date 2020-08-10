@@ -4,6 +4,7 @@ GlobalStyle.newClass("file-folder::before", "content:'📁';"); // TODO Replace 
 GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-desktop::before", "content:'🖥 ';"); // TODO Replace with nice graphics
 
 /**
  * The class which holds the interface for the file viewer.
@@ -84,7 +85,7 @@ class FileViewer {
 
     addRightClickMenu() {
         // icon right click
-        RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], this.openSelected.bind(this));
+        RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], this.openSelected.bind(this));
         
         RightClickMenu.addToMenu("Open in New Window", [this.generatedWindow+"-folder", this.generatedWindow+"-trash"], ()=>{
             var selected = document.querySelector(".icon-selected");
@@ -92,9 +93,9 @@ class FileViewer {
             n.openFolderWindow(selected.getAttribute("path"));
         });
 
-        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
 
-        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.moveSelectedToTrash.bind(this));
+        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.moveSelectedToTrash.bind(this));
 
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
             let subs = folders[trashPath].subfolders;
@@ -105,21 +106,21 @@ class FileViewer {
             mainContent.querySelector(".trash-can").src = "assets/emptyTrash.png";
         });
 
-        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"]); // breaking line
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
         
         RightClickMenu.addToMenu("Rename", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.rename.bind(this));
         
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]);
 
-        RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.copyFiles.bind(this));
-        RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.cutFiles.bind(this));
-        RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow], this.pasteFiles.bind(this));
+        RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.copyFiles.bind(this));
+        RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.cutFiles.bind(this));
+        RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow, this.generatedWindow+"-app"], this.pasteFiles.bind(this));
 
-        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]); // breaking line
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"]); // breaking line
 
-        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{ this.makeNewFolder(); });
-        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{ this.uploadNewFile(); });
-        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash"], ()=>{
+        RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.makeNewFolder(); });
+        RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.uploadNewFile(); });
+        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{
             alert("Note: Apps cannot be added via this.");
             let filename = prompt("Filename (with extension):");
             let filedata = prompt("Filedata (if any):");
@@ -209,6 +210,12 @@ class FileViewer {
         downloads.innerHTML = "Downloads";
         downloads.setAttribute("path", "/Users/"+NAME+"/Downloads/");
         favoritesDiv.appendChild(downloads);
+
+        let desktop = document.createElement("file-member");
+        desktop.classList.add("ellipsis-overflow", "file-desktop", "clickable", "unselectable");
+        desktop.innerHTML = "Desktop";
+        desktop.setAttribute("path", "/Users/"+NAME+"/Desktop/");
+        favoritesDiv.appendChild(desktop);
 
         let folder1 = document.createElement("file-member");
         folder1.classList.add("ellipsis-overflow", "file-folder", "clickable", "unselectable");
@@ -449,7 +456,7 @@ class FileViewer {
                         }
                     }
 
-                    if(boxRect.top + height <= backgroundRect.bottom && boxRect.bottom - height >= backgroundRect.top) {
+                    if(boxRect.top + height <= backgroundRect.bottom - event.movementY && boxRect.bottom - height >= backgroundRect.top - event.movementY) {
                         box.style.height = height+"px";
                         if(event.y < top) { // inspired by http://jsfiddle.net/RSYTq/34/ 
                             box.style.top = event.y+"px";
@@ -605,7 +612,7 @@ class FileViewer {
         }
     
         // double vs single click logic
-        var previousSelection;
+        // var previousSelection;
 
         newFolderContainer.ondblclick = (event)=>{
             if(newWindow == true) {
@@ -614,32 +621,32 @@ class FileViewer {
             } else {
                 this.openFolder(newFolderContainer.getAttribute("path"));
             }
-            if(previousSelection) {
-                previousSelection.forEach((element)=>{
-                    if(element != newFolderContainer) {
-                        this.intelligentOpen(element.getAttribute("path"));
-                    }
-                    if(!element.classList.contains("icon-selected")) {
-                        element.classList.add("icon-selected");
-                    }
-                });
-                previousSelection = null;
-            }
+            // if(previousSelection) {
+            //     previousSelection.forEach((element)=>{
+            //         if(element != newFolderContainer) {
+            //             this.intelligentOpen(element.getAttribute("path"));
+            //         }
+            //         if(!element.classList.contains("icon-selected")) {
+            //             element.classList.add("icon-selected");
+            //         }
+            //     });
+            //     previousSelection = null;
+            // }
         }
 
         // select
         newFolderContainer.onclick = function(event) {
             if(event.detail === 1) { // only run if single click
-                previousSelection = document.querySelectorAll(".icon-selected");
+                // previousSelection = document.querySelectorAll(".icon-selected");
                 selectElement(event, newFolderContainer);
-                setTimeout(()=>{
-                    previousSelection = null; // prevent weird stuff
-                }, 250);
+                // setTimeout(()=>{
+                //     previousSelection = null; // prevent weird stuff
+                // }, 250);
             }
         }
 
         newFolderContainer.addEventListener('contextmenu', ()=>{
-            selectElement(event, newFolderContainer, false);
+            selectElement(event, newFolderContainer, true);
         });
         if(folders[path] && folders[path].isTrash) {
             RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-trash");
@@ -691,6 +698,8 @@ class FileViewer {
             } else {
                 newFile.src = "assets/unknown.png";
             }
+            newFileContainer.classList.remove("file");
+            newFileContainer.classList.add("app");
         } else if(filetype == "Music") {
             if(folders[path].content.mediaTags) { // use thumbnail
                 newFile.src = Music.getThumbnail(folders[path].content.mediaTags);
@@ -718,75 +727,42 @@ class FileViewer {
         path = null;
 
         // double vs single click logic
-        var previousSelection;
+        // var previousSelection;
 
         newFileContainer.ondblclick = (event)=>{
             let path = newFileContainer.getAttribute("path");
             this.intelligentOpen(path);
-            if(previousSelection) {
-                previousSelection.forEach((element)=>{
-                    if(element != newFileContainer) {
-                        this.intelligentOpen(element.getAttribute("path"));
-                    }
-                    if(!element.classList.contains("icon-selected")) {
-                        element.classList.add("icon-selected");
-                    }
-                });
-                previousSelection = null;
-            }
+            // if(previousSelection) {
+            //     previousSelection.forEach((element)=>{
+            //         if(element != newFileContainer) {
+            //             this.intelligentOpen(element.getAttribute("path"));
+            //         }
+            //         if(!element.classList.contains("icon-selected")) {
+            //             element.classList.add("icon-selected");
+            //         }
+            //     });
+            //     previousSelection = null;
+            // }
         }
 
 
         newFileContainer.onclick = function(event) {
             if(event.detail === 1) { // only run if single click
-                previousSelection = document.querySelectorAll(".icon-selected");
+                // previousSelection = document.querySelectorAll(".icon-selected");
                 selectElement(event, newFileContainer);
-                setTimeout(()=>{
-                    previousSelection = null; // prevent weird stuff
-                }, 250);
+                // setTimeout(()=>{
+                //     previousSelection = null; // prevent weird stuff
+                // }, 250);
             }
         }
         newFileContainer.oncontextmenu = (event)=>{
-            selectElement(event, newFileContainer, false);
+            selectElement(event, newFileContainer, true);
         }
-        /*
-
-        // double vs single click logic
-        var previousSelection;
-
-        newFolderContainer.ondblclick = (event)=>{
-            if(newWindow == true) {
-                let n = new FileViewer;
-                n.openFolderWindow(newFolderContainer.getAttribute("path"));
-            } else {
-                this.openFolder(newFolderContainer.getAttribute("path"));
-            }
-            if(previousSelection) {
-                previousSelection.forEach((element)=>{
-                    if(element != newFolderContainer) {
-                        this.intelligentOpen(element.getAttribute("path"));
-                    }
-                    if(!element.classList.contains("icon-selected")) {
-                        element.classList.add("icon-selected");
-                    }
-                });
-                previousSelection = null;
-            }
+        if(filetype == "App") {
+            RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-app");
+        } else {
+            RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
         }
-
-        // select
-        newFolderContainer.onclick = function(event) {
-            if(event.detail === 1) { // only run if single click
-                previousSelection = document.querySelectorAll(".icon-selected");
-                selectElement(event, newFolderContainer);
-                setTimeout(()=>{
-                    previousSelection = null; // prevent weird stuff
-                }, 400);
-            }
-        }
-        */
-
-        RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
 
         return newFileContainer; // allows for adding to lists
     }

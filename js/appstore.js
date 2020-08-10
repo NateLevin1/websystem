@@ -10,12 +10,8 @@ GlobalStyle.newClass("appstore-thumbnail", "width:4em; height:4em;");
 GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%; vertical-align:top; margin-top:0.8em;");
 GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
 GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
-GlobalStyle.newClass("appstore-install", "padding:0.3em; background-color: rgb(3, 161, 252); border: 2px solid black; border-radius: 0.3em;color: white; display: inline-block; vertical-align: top; margin-top:1.6em; transition: background-color 0.3s; min-width:4em; text-align: center;");
-GlobalStyle.newClass("appstore-install:hover", "background-color: rgb(11, 145, 222);");
-GlobalStyle.newClass("appstore-install:active", "background-color: rgb(20, 103, 150);");
-GlobalStyle.newClass("appstore-installed", "background-color: rgb(18, 181, 18);");
-GlobalStyle.newClass("appstore-installed:hover", "background-color: rgb(20, 196, 20);");
-GlobalStyle.newClass("appstore-installed:active", "background-color: rgb(13, 120, 13);");
+GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; vertical-align: top; margin-top:1em; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
+GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254)); border-color: rgb(7,84,207); color: white;");
 
 /**
  * WebSystem's App store. Includes the interface and installApp method, which is used internally to save space.
@@ -179,7 +175,7 @@ class Appstore {
         textContainer.appendChild(description);
 
         
-        let install = document.createElement("div");
+        let install = document.createElement("button");
         install.classList.add("appstore-install");
         if(makeFunctions[title]) { // app exists
             install.classList.add("appstore-installed");
@@ -230,13 +226,9 @@ class Appstore {
         var scr = document.createElement("script");
         scr.innerHTML = script;
         document.body.appendChild(scr);
-        // next, add to filesystem
-        FileSystem.addFileAtLocation(title+".app", "", "App", "/Users/"+NAME+"/Applications/", { alias: title });
-
-        // next, add to localStorage download apps TODO: Change below to use localForage
-        let oldDownloads = localStorage.getItem('downloads');
-        if(!oldDownloads.includes("app::"+title)) { // duplication happens without this
-            localStorage.setItem('downloads', oldDownloads+",app::"+title);
+        if(!folders["/Users/"+NAME+"/Applications/"+title+".app/"]) {
+            // next, add to filesystem
+            FileSystem.addFileAtLocation(title+".app", script, "App", "/Users/"+NAME+"/Applications/", { alias: title });
         }
 
         // ? Dispatch event on document to update open fileViewer windows
@@ -269,15 +261,10 @@ class Appstore {
 
         TopBar.addToTop("Help", "help");
         TopBar.addToMenu("About App Store", "help", ()=>{ About.newWindow("App Store", "The official App Store for WebSystem.", "1.0", "assets/appstore.png"); });
-
     }
 }
-function makeAppstore() {
-    new Appstore;
-}
-// makeAppstore();
 appImagePaths["App Store"] = "assets/appstore.png";
-makeFunctions["App Store"] = ()=>{ makeAppstore(); };
+makeFunctions["App Store"] = ()=>{ new Appstore; };
 
 
 //jsonEscapeNewlines(Appstore+"\n"+makeAppstore+"\nappImagePaths[\"App Store\"] = \"assets/appstore.png\";\nmakeFunctions[\"App Store\"] = ()=>{ makeAppstore(); };");

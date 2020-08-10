@@ -97,13 +97,13 @@ onmessage = function (event) {
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app", "/Users/"+NAME+"/Applications/App Store.app", "/Users/"+NAME+"/Applications/Music.app", "/Users/"+NAME+"/Applications/Image Viewer.app"],
+                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app/", "/Users/"+NAME+"/Applications/App Store.app/", "/Users/"+NAME+"/Applications/Music.app/", "/Users/"+NAME+"/Applications/Image Viewer.app/"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/Calculator.app"]: {
+            ["/Users/"+NAME+"/Applications/Calculator.app/"]: {
                 isFile: true,
                 name:"Calculator",
                 kind:"App",
@@ -116,7 +116,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/Music.app"]: {
+            ["/Users/"+NAME+"/Applications/Music.app/"]: {
                 isFile: true,
                 name:"Music",
                 kind:"App",
@@ -129,7 +129,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/App Store.app"]: {
+            ["/Users/"+NAME+"/Applications/App Store.app/"]: {
                 isFile: true,
                 name:"App Store",
                 kind:"App",
@@ -142,7 +142,7 @@ onmessage = function (event) {
                 meta: folderMeta
             },
 
-            ["/Users/"+NAME+"/Applications/Image Viewer.app"]: {
+            ["/Users/"+NAME+"/Applications/Image Viewer.app/"]: {
                 isFile: true,
                 name:"Image Viewer",
                 kind:"App",

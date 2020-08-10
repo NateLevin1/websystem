@@ -84,11 +84,25 @@ function setFileSystem() {
     // Set folders{} to correct value
     filesystem.getItem("folders").then((result)=>{
         folders = result;
+
         // ! DEBUG
         console.log(folders);
+
+        // add all app scripts to the document
+        for(const val in folders) {
+            let file = folders[val];
+            if(file.kind == "App" && !makeFunctions[file.name]) { // if is an app and not installed by default
+                Appstore.installApp(file.name, file.content);
+            }
+        }
+
         filesystem.iterate((value, key)=>{
             if(key != "folders") {
-                files[key] = value;
+                if(key != "account") {
+                    files[key] = value;
+                } else {
+                    account = value;
+                }
             }
         }).then(()=>{
             if(isSafari && firstLogin) { // add the websystem logo.png file
@@ -152,43 +166,6 @@ function startDesktop() {
     setFileSystem();
     
 
-    // DOWNLOAD THINGS FROM DOWNLOAD LOCALSTORAGE
-    // WAIT UNTIL WORKER IS DONE
-    setTimeout(()=>{
-        try{
-            let downloads = localStorage.getItem('downloads');
-            downloads = downloads.split(",");
-            downloads.forEach((element)=>{
-                if(element.startsWith("app::")) {
-                    // search app store for app and download it
-                    fetch("http://localhost:3000/applist/popular").then(function(response) { // TODO: CHANGE TO SEARCH
-                        return response.json();
-                    }).then(function(data) {
-                        // get the data from server
-                        // set the data to the app array
-                        var apps = [];
-                        for(const app in data) {
-                            apps.push(data[app]);
-                        }
-                        apps.forEach((app)=>{
-                            if(app.name == element.substring(5, element.length)) {
-                                // download this one
-                                Appstore.installApp(app.name, app.script);
-                            }
-                        });
-                        
-                        
-                    }.bind(this));
-                } // else {
-                    // ? Download stuff from server
-                // }
-            });
-        } catch(error) {
-            alert("There was an issue processing your downloaded apps. Please restart your page.");
-        }
-    }, 80);
-    
-
     setTimeout(()=>{
         let faders = document.querySelectorAll(".load-fade");
         faders.forEach(element =>{
@@ -203,6 +180,13 @@ function startDesktop() {
 
 var mainContent = document.createElement("div");
 var firstLogin = false;
+
+/**
+ * The account object. Holds data about the account.
+ * @property accounts - All accounts on this browser.
+ * @property admin - The admin account on this browser.
+ */
+var account = {};
 
 // * Debug
 //localStorage.clear();

@@ -65,7 +65,12 @@ class FileSystem {
      */
     static addFileAtLocation(name, data, kind, parentPath, options={}) {
         let path = parentPath+name+"/";
-        let extension = name.match(/\.[^.]+$/)[0];
+        var extension;
+        if(kind != "App") { // app files don't have extensions in their names
+            extension = name.match(/\.[^.]+$/)[0];
+        } else {
+            extension = ".app";
+        }
         let binary = true;
         let content = "";
         let num = 2;
@@ -92,7 +97,7 @@ class FileSystem {
         }
 
         if(options.alias) {
-            name = alias;
+            name = options.alias;
         }
 
         // Set new folder as subfolder of parent
@@ -304,6 +309,17 @@ class FileSystem {
             }); 
             delete files[oldPath]; // remove old item
         }
+    }
+    /**
+     * Change the name of a file or folder. Note that this does not change its path, it only changes the name that is displayed.
+     * To actually rename a file look into the <code>renameAny()</code> function.
+     * @param {String} path - The path of the file for the display name to be changed
+     * @param {String} newName - The new name for the file
+     */
+    static changeDisplayName(path, newName) {
+        // since all that is happening is changing the name (and not the path) this is pretty simple
+        folders[path].name = newName;
+        return filesystem.setItem("folders", folders);
     }
     /**
      * Request a file for the user to select. Starts at the user's home directory.

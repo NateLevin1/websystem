@@ -149,6 +149,7 @@ class TopBar {
         let item = obj.name;
         this.menuItems[item] = [];
         obj.el.onmousedown = (event)=>{
+            this.removeOnUp = false;
             this.show = true;
             // Remove anything old
             this.menu.classList.remove("top-bar-menu-invisible");
@@ -166,6 +167,7 @@ class TopBar {
                 let pressedTime = event.timeStamp - startTime;
                 if(pressedTime > 200) {
                     this.show = false;
+                    this.removeOnUp = true;
                     runSelected(event);
                 } else { // otherwise keep it there, wait for a mouse down to get info
                     document.body.addEventListener("mousedown", runSelected, { once: true });
@@ -214,6 +216,19 @@ class TopBar {
                 });
                 // display menu
                 document.body.appendChild(newMenu);
+
+                // add listener for removing on pointerup
+                document.addEventListener("pointerup", ()=>{
+                    setTimeout(()=>{
+                        if(this.removeOnUp) {
+                            this.removeMenu(newMenu);
+                            setTimeout(()=>{
+                                newMenu.remove();
+                                menuCreated = false;
+                            }, 200);
+                        }
+                    },2);
+                }, {once: true});
             }
         }
         

@@ -91,16 +91,17 @@ class Window {
           TopBar.clear();
           // give focus to next most focused
           let windows = document.querySelectorAll(".window");
+          windows = Array.from(windows);
           if(windows.length == 1 && windows[0] == this.window) { // desktop
             focusEvent.window = "DESKTOP";
             document.dispatchEvent(focusEvent);
           } else {
-            windows.forEach((element)=>{
-              if(element.style.zIndex == "9" && element != this.window) {
-                focusEvent.window = element;
-                document.dispatchEvent(focusEvent);
-              }
+            let zIndices = windows.map((element)=>{
+              return parseInt(element.style.zIndex);
             });
+            let element = windows[zIndices.indexOf(Math.max(...zIndices))] // find window with highest z index
+            focusEvent.window = element;
+            document.dispatchEvent(focusEvent);
           }
         }
       });

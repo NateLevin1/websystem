@@ -248,73 +248,13 @@ class Desktop extends FileViewer {
                 
                 // move dragged elem to the selected drop target
                 if (event.target.className.includes("folder-img")) {
-                    // event.target == the element that the drag was ended on
+                    // event.target == the element that the drag was ended on (the img in this case, so parentNode is needed)
                     event.target.parentNode.classList.remove("folder-move-in");
-                    let eventTargetPath = event.target.parentNode.getAttribute("path");
-
-                    // move file
-                    let successful = FileSystem.moveFile(draggedPath, eventTargetPath);
-                    if(successful) {
-                        // fill trash
-                        if(eventTargetPath == trashPath) {
-                            event.target.src = "assets/trash.png";
-                        }
-                        // after moving file, remove from display
-                        dragged.remove();
-                    }
-
-                    // also do all the selected ones
-                    let selected = document.querySelectorAll(".icon-selected");
-                    if(selected) {
-                        selected.forEach((element)=>{
-                            let elPath = element.getAttribute("path");
-                            if(elPath != draggedPath /*<- don't duplicate */ && folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
-                                var successful = FileSystem.moveFile(elPath, eventTargetPath);
-                                if(successful) {
-                                    // after moving file, remove from display
-                                    element.remove();
-                                }
-                            } else if(!folders[elPath]) {
-                                element.remove();
-                            }
-                        });
-                    }
+                    moveByDrop(event.target.parentNode, draggedPath, dragged);
                 } else if(event.target.className.includes("background-drop") && event.target.getAttribute("path") != draggedPath && folders[draggedPath].parent != event.target.getAttribute("path")) {
                     // event.target == the element that the drag was ended on
                     event.target.classList.remove("background-drop-move-in");
-                    let eventTargetPath = event.target.getAttribute("path");
-                    // move file
-                    let successful = FileSystem.moveFile(draggedPath, eventTargetPath);
-                    if(successful) {
-                        setTimeout(()=>{
-                            event.target.dispatchEvent(fileSystemChange);
-                        }, 20);
-    
-                        // fill trash
-                        if(eventTargetPath == trashPath && document.getElementById("trash").src != "assets/trash.png") {
-                            document.getElementById("trash").src = "assets/trash.png";
-                        }
-    
-                        // after moving file, remove from display
-                        dragged.remove();
-                    }
-
-                    // also do all the selected ones
-                    let selected = document.querySelectorAll(".icon-selected");
-                    if(selected) {
-                        selected.forEach((element)=>{
-                            let elPath = element.getAttribute("path");
-                            if(elPath != draggedPath /*<- don't duplicate */ && folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
-                                let successful = FileSystem.moveFile(elPath, eventTargetPath);
-                                if(successful) {
-                                    // after moving file, remove from display
-                                    element.remove();
-                                }
-                            } else if(!folders[elPath]) {
-                                element.remove();
-                            }
-                        });
-                    }
+                    moveByDrop(event.target, draggedPath, dragged);
                 }
             } catch(e) {
                 console.error(e, "Dragged:",dragged, "draggedPath:"+dragged.getAttribute("path"), "Folders[draggedPath]", folders[dragged.getAttribute("path")]);
@@ -322,6 +262,71 @@ class Desktop extends FileViewer {
         }, false);
         
     }
+}
+
+function moveByDrop(target, draggedPath, dragged) {
+    let eventTargetPath = target.getAttribute("path");
+
+    let fls = []; // holds files that need to be done at some point after folders are done
+
+    if(folders[draggedPath].kind == "Folder") { // do folders first
+        // move file
+        let successful = FileSystem.moveFile(draggedPath, eventTargetPath);
+        if(successful) {
+            setTimeout(()=>{
+                target.dispatchEvent(fileSystemChange);
+            }, 20);
+
+            // fill trash
+            if(eventTargetPath == trashPath && document.getElementById("trash").src != "assets/trash.png") {
+                document.getElementById("trash").src = "assets/trash.png";
+            }
+
+            // after moving file, remove from display
+            dragged.remove();
+        }
+    } else {
+        // add to the fls list
+        fls.push(dragged);
+    }
+    
+
+    // do all the selected ones
+    let selected = document.querySelectorAll(".icon-selected");
+    if(selected) {
+        selected.forEach((element)=>{
+            let elPath = element.getAttribute("path");
+            if(folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
+                if(folders[elPath].kind == "Folder") { // if folder, do it now
+                    if(elPath != draggedPath /* <- don't duplicate */) {
+                        let successful = FileSystem.moveFile(elPath, eventTargetPath);
+                        if(successful) {
+                            // after moving file, remove from display
+                            element.remove();
+                        }
+                    }
+                } else { // add to fls
+                    fls.push(element);
+                }
+            } else if(!folders[elPath]) {
+                element.remove();
+            }
+        });
+    }
+
+    // once done moving all folders, move the files
+    fls.forEach((element)=>{
+        let elPath = element.getAttribute("path");
+        if(elPath != draggedPath /* <- don't duplicate */ && folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
+            let successful = FileSystem.moveFile(elPath, eventTargetPath);
+            if(successful) {
+                // after moving file, remove from display
+                element.remove();
+            }
+        } else if(!folders[elPath]) {
+            element.remove();
+        }
+    });
 }
 
 var fileSystemChange = new Event("file-system-change");

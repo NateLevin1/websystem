@@ -447,10 +447,8 @@ class FileViewer {
                         if(event.x < left) { // inspired by http://jsfiddle.net/RSYTq/34/ 
                             box.style.left = event.x+"px";
                         }
-                        console.log("Worked  because ", Math.round(boxRect.right - width), Math.round(backgroundRect.left));
-                    } else {
-                        console.log("Stopped because ", Math.round(boxRect.right - width), Math.round(backgroundRect.left), event.movementX);
                     }
+                    
                     if(boxRect.top + height <= backgroundRect.bottom && boxRect.bottom - height >= backgroundRect.top) {
                         box.style.height = height+"px";
                         if(event.y < top) { // inspired by http://jsfiddle.net/RSYTq/34/ 

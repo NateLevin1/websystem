@@ -277,10 +277,7 @@ function moveByDrop(target, draggedPath, dragged) {
                 target.dispatchEvent(fileSystemChange);
             }, 20);
 
-            // fill trash
-            if(eventTargetPath == trashPath && document.getElementById("trash").src != "assets/trash.png") {
-                document.getElementById("trash").src = "assets/trash.png";
-            }
+            updateTrash(draggedPath, eventTargetPath);
 
             // after moving file, remove from display
             dragged.remove();
@@ -301,6 +298,7 @@ function moveByDrop(target, draggedPath, dragged) {
                     if(elPath != draggedPath /* <- don't duplicate */) {
                         let successful = FileSystem.moveFile(elPath, eventTargetPath);
                         if(successful) {
+                            updateTrash(elPath, eventTargetPath);
                             // after moving file, remove from display
                             element.remove();
                         }
@@ -308,25 +306,38 @@ function moveByDrop(target, draggedPath, dragged) {
                 } else { // add to fls
                     fls.push(element);
                 }
-            } else if(!folders[elPath]) {
+            } else {
                 element.remove();
             }
         });
     }
 
+
     // once done moving all folders, move the files
     fls.forEach((element)=>{
         let elPath = element.getAttribute("path");
-        if(elPath != draggedPath /* <- don't duplicate */ && folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
+        if(folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
             let successful = FileSystem.moveFile(elPath, eventTargetPath);
             if(successful) {
+                updateTrash(elPath, eventTargetPath);
                 // after moving file, remove from display
                 element.remove();
             }
-        } else if(!folders[elPath]) {
+        } else {
             element.remove();
         }
     });
+}
+
+function updateTrash(draggedPath, eventTargetPath) {
+    // fill trash
+    if(eventTargetPath == trashPath && document.getElementById("trash").src != "assets/trash.png") {
+        document.getElementById("trash").src = "assets/trash.png";
+    }
+    // empty trash
+    if(draggedPath.startsWith(trashPath) && document.getElementById("trash").src != "assets/emptyTrash.png") { // if coming from trashPath and the trash is filled
+        document.getElementById("trash").src = "assets/emptyTrash.png";
+    }
 }
 
 var fileSystemChange = new Event("file-system-change");

@@ -342,19 +342,30 @@ class Music {
     }
 
     static getThumbnail(tags) {
+      if(musicThumbnailsMemoizer.get(tags)) { // serve from "cache"
+        return musicThumbnailsMemoizer.get(tags);
+      } else {
         if(tags.tags.picture) {
-            // jsmediatags thumbnail array to src: https://stackoverflow.com/a/45859810/
-            let picture = tags.tags.picture; // create reference to track art
-            let base64String = "";
-            for (var i = 0; i < picture.data.length; i++) {
-                base64String += String.fromCharCode(picture.data[i]);
-            }
-            return "data:" + picture.format + ";base64," + window.btoa(base64String);
-        } else {
-            // unknown, replace with "no track art" later
-            return "assets/music.png";
-        }
+          // jsmediatags thumbnail array to src: https://stackoverflow.com/a/45859810/
+          let picture = tags.tags.picture; // create reference to track art
+          let base64String = "";
+          for (var i = 0; i < picture.data.length; i++) {
+              base64String += String.fromCharCode(picture.data[i]);
+          }
+          let data = "data:" + picture.format + ";base64," + window.btoa(base64String);
+
+          musicThumbnailsMemoizer.set(tags, data);
+          
+          return data;
+      } else {
+          // generic, replace with "no track art" later
+          musicThumbnailsMemoizer.set("assets/music.png");
+          return "assets/music.png";
+      }
+      }
     }
+
+    // modified (to remove jquery) from https://stackoverflow.com/a/20382559
 
     createTopBar() {
       TopBar.addToTop("File", "file");
@@ -383,6 +394,7 @@ class Music {
 appImagePaths["Music"] = "assets/musicPlayer.png";
 makeFunctions["Music"] = ()=>{ new Music };
 
+var musicThumbnailsMemoizer = new WeakMap; // WeakMap as the keys are tag objects
 
 
 // STYLES

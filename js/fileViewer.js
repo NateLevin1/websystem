@@ -686,9 +686,13 @@ class FileViewer {
             thumbed.draggable = false;
             thumbed.onload = ()=>{
                 newFileContainer.replaceChild(thumbed, newFile);
-            };
+            }
             try {
-                thumbed.src = URL.createObjectURL(files[path]);
+                if(!objectURLS[path]) { // if there is not already an object url for that path, then make one. this prevents memory leaks (though memory leaks still can happen if the files are moved)
+                    let url = URL.createObjectURL(files[path]);
+                    objectURLS[path] = url;
+                }
+                thumbed.src = objectURLS[path];
             } catch(e) {
                 console.error("There was an issue loading the thumbnail. The file "+path+" may be corrupted.");
             }
@@ -836,7 +840,11 @@ class FileViewer {
             blankFolder.setAttribute("path", this.currentFolder); // prevents opening before made
             blankFolder.setAttribute("name", folders[this.currentFolder].name);
             blankFolder.classList.add("icon-selected", "icon-rename");
-            blankFolder.scrollIntoView(true);
+            
+            // scroll into view
+            this.background.scrollTop = 0;
+            this.background.scrollLeft = 0;
+
             let blankFolderText = blankFolder.querySelector("div");
 
             let invisibleInput = document.createElement("input");
@@ -1076,3 +1084,6 @@ function selectElement(event, element, shiftCare=true) {
         element.classList.add("icon-selected");
     }
 }
+
+
+var objectURLS = {}; // key is path, value is the object url

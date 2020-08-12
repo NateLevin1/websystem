@@ -89,9 +89,11 @@ class FileViewer {
         RightClickMenu.addToMenu("Open", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], this.openSelected.bind(this));
         
         RightClickMenu.addToMenu("Open in New Window", [this.generatedWindow+"-folder", this.generatedWindow+"-trash"], ()=>{
-            var selected = document.querySelector(".icon-selected");
-            let n = new FileViewer;
-            n.openFolderWindow(selected.getAttribute("path"));
+            var selected = document.querySelectorAll(".icon-selected");
+            selected.forEach((element)=>{
+                let tmp = new FileViewer;
+                tmp.openFolderWindow(element.getAttribute("path"));
+            });
         });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
@@ -696,7 +698,7 @@ class FileViewer {
         }
 
         newFolderContainer.addEventListener('contextmenu', ()=>{
-            selectElement(event, newFolderContainer, true);
+            selectElement(event, newFolderContainer, false);
         });
         if(folders[path] && folders[path].isTrash) {
             RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-trash");
@@ -810,9 +812,9 @@ class FileViewer {
                 // }, 250);
             }
         }
-        newFileContainer.oncontextmenu = (event)=>{
-            selectElement(event, newFileContainer, true);
-        }
+        newFileContainer.addEventListener("contextmenu", (event)=>{
+            selectElement(event, newFileContainer, false);
+        });
         if(filetype == "App") {
             RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-app");
         } else {

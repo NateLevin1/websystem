@@ -18,7 +18,7 @@ class FileViewer {
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
     openFolderWindow(path) {
-        let win = new Window(100, 200, path, 40, 35, { topBarCreator: this.createTopBar, thisContext: this });
+        let win = new Window(273, 290, path, 41, 35, { topBarCreator: this.createTopBar, thisContext: this });
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -81,6 +81,7 @@ class FileViewer {
         });
 
         this.addBoxSelection();
+        this.addSystemUpdateListeners();
     }
 
     addRightClickMenu() {
@@ -103,7 +104,6 @@ class FileViewer {
                 FileSystem.deleteFolderAtLocation(path);
             });
             folders[trashPath].subfolders = []; // remove old subfolders
-            mainContent.querySelector(".trash-can").src = "assets/emptyTrash.png";
         });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
@@ -261,11 +261,10 @@ class FileViewer {
         });
     }
     moveSelectedToTrash() {
-        mainContent.querySelector(".trash-can").src = "assets/trash.png";
         let selected = mainContent.querySelectorAll(".icon-selected");
         selected.forEach((element)=>{
-            FileSystem.moveFile(element.getAttribute("path"), trashPath);
             this.background.removeChild(element);
+            FileSystem.moveFile(element.getAttribute("path"), trashPath);
         });
     }
     rename() {
@@ -333,13 +332,17 @@ class FileViewer {
             selected.classList.remove("icon-rename");
             
             let newName = text.textContent;
-            // actually changing stuff
-            FileSystem.renameAny(oldPath, path, newName);
 
             selected.setAttribute("path", path);
             selected.setAttribute("name", newName);
 
+            this.shownSubfolders.splice(this.shownSubfolders.indexOf(oldPath), 1, path);
+
+
             selected.querySelector("div").textContent = newName;
+
+            // actually changing stuff
+            FileSystem.renameAny(oldPath, path, newName);
         }
     }
     copyFiles() {
@@ -500,6 +503,52 @@ class FileViewer {
             }
         });
     }
+    addSystemUpdateListeners() {
+        document.addEventListener("file-system-update", (event)=>{
+            if(event.parentPath == this.currentFolder) {
+                let { type, pathAffected, renameOldPath } = event.actions;
+                let fRef = folders[pathAffected];
+
+                if(type == "add" && !this.shownSubfolders.includes(pathAffected)) { // if adding and it doesn't exist
+                    fRef = folders[pathAffected];
+                    if(!fRef.isFile) {
+                        this.createFolder(fRef.name, pathAffected, !this.win, true);
+                    } else {
+                        this.createFile(fRef.name, pathAffected, fRef.kind, true);
+                    }
+                    this.shownSubfolders.push(pathAffected);                    
+                } else if(type == "remove" && this.shownSubfolders.includes(pathAffected)) { // if removing and it does exist
+                    let subs = this.background.querySelectorAll(".icon-container");
+                    subs.forEach((e)=>{ // remove if is affected
+                        if(e.getAttribute("path") == pathAffected) {
+                            e.remove();
+                        }
+                    });
+                    this.shownSubfolders.splice(this.shownSubfolders.indexOf(pathAffected), 1);
+                } else if(type == "rename" && this.shownSubfolders.includes(renameOldPath)) {
+
+                    // TODO: Change this so that it does not delete and re-add. Make it so that it *changes* the element e that is removed on line 536 instead of removing it and re adding its renamed version
+
+                    let subs = this.background.querySelectorAll(".icon-container");
+                    subs.forEach((e)=>{ // remove if is affected
+                        if(e.getAttribute("path") == renameOldPath) {
+                            e.remove();
+                        }
+                    });
+                    this.shownSubfolders.splice(this.shownSubfolders.indexOf(renameOldPath), 1);
+
+
+                    fRef = folders[pathAffected];
+                    if(!fRef.isFile) {
+                        this.createFolder(fRef.name, pathAffected, !this.win, true);
+                    } else {
+                        this.createFile(fRef.name, pathAffected, fRef.kind, true);
+                    }
+                    this.shownSubfolders.push(pathAffected);
+                }
+            }
+        });
+    }
     /**
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
@@ -531,28 +580,27 @@ class FileViewer {
                 clearSelected();
             }
         }
+
+        this.shownSubfolders = [];
+        
         if(folders[path]) { // has something
-            folders[path].subfolders.forEach(element =>{
-                let name = folders[element].name;
-                if(folders[element].isFile) { // is file
-                    switch(folders[element].kind) {
+            folders[path].subfolders.forEach(subPath =>{
+                let name = folders[subPath].name;
+                if(folders[subPath].isFile) { // is file
+                    switch(folders[subPath].kind) {
                         case "Image":
-                            this.createFile(name, element, "Image");
-                            break;
                         case "App":
-                            this.createFile(name, element, "App");
-                            break;
                         case "Music":
-                            this.createFile(name, element, "Music");
+                            this.createFile(name, subPath, folders[subPath].kind);
                             break;
                         default:
                             console.warn("Could not find file extension of file:");
                             console.log(name);
-                            this.createFile(name, element, "Unknown");
+                            this.createFile(name, subPath, "Unknown");
                             break;
                     }
                 } else { // is folder
-                    this.createFolder(name, element, this.background, false);
+                    this.createFolder(name, subPath, false);
                 }
             });
         }
@@ -561,11 +609,12 @@ class FileViewer {
      * Add a folder to the screen in the current window
      * @param {String} name - The name of the folder to be made. If an empty string will be auto determined from path
      * @param {String} path - The path to the parent of the folder to be created at.
-     * @param {HTMLElement} appendee - The element to append the folder to.
-     * @param {Boolean} newWindow - If true, creates a new window on open.
-     * @param {Boolean} before 
+     * @param {Boolean} [newWindow=true] - If true, creates a new window on open.
+     * @param {Boolean} [before=false] 
      */
-    createFolder(name="", path=this.currentFolder, appendee=this.background, newWindow=true, before=false) {
+    createFolder(name="", path=this.currentFolder, newWindow=true, before=false) {
+        this.shownSubfolders.push(path);
+        
         let newFolderContainer = document.createElement("div");
         newFolderContainer.classList.add("clickable", "icon-container", "folder"); // ? class desktop-folder
         if(name === "") {
@@ -576,9 +625,9 @@ class FileViewer {
         newFolderContainer.draggable = true; // even though draggable is enumerated, in js it still has to be like this. ???
         // newFolderContainer.id = name;
         if(before == true) {
-            appendee.insertBefore(newFolderContainer, appendee.firstChild);
+            this.background.insertBefore(newFolderContainer, this.background.firstChild);
         } else {
-            appendee.appendChild(newFolderContainer);
+            this.background.appendChild(newFolderContainer);
         }
 
         // img
@@ -589,9 +638,10 @@ class FileViewer {
             } else {
                 newFolder.src = "assets/emptyTrash.png";
             }
-            newFolder.id = "trash";
             newFolder.classList.add("trash-can");
-            trashPath = path;
+            if(trashPath != path) {
+                trashPath = path;
+            }
             newFolderContainer.draggable = false;
         } else {
             newFolder.src = "assets/folder.png";
@@ -660,19 +710,20 @@ class FileViewer {
      * @param {String} name - The name of the file
      * @param {String} path - The path of the file
      * @param {String} filetype - The filetype of the file. e.g. 'Image' or 'Music'.
-     * @param {HTMLElement} [appendee=this.background] - The element to append the new file to.
      * @param {Boolean} [before=false] - Whether to appendChild or insertBefore
      */
-    createFile(name, path, filetype, appendee=this.background, before=false) {
+    createFile(name, path, filetype, before=false) {
+        this.shownSubfolders.push(path);
+
         let newFileContainer = document.createElement("div");
         newFileContainer.classList.add("clickable", "icon-container", "file");
         newFileContainer.setAttribute("path", path);
         newFileContainer.setAttribute("name", name);
         newFileContainer.draggable = true;
         if(before) {
-            appendee.insertBefore(newFileContainer, appendee.firstChild);
+            this.background.insertBefore(newFileContainer, this.background.firstChild);
         } else {
-            appendee.appendChild(newFileContainer);
+            this.background.appendChild(newFileContainer);
         }
         
     
@@ -833,14 +884,14 @@ class FileViewer {
         try { // safety
             var blankFolder;
             if(this.win) { // file viewer
-                blankFolder = this.createFolder("untitled folder", "", this.background, false, true);
+                blankFolder = this.createFolder("untitled folder", "", false, true);
             } else { // desktop
-                blankFolder = this.createFolder("untitled folder", "", this.background, true, true);
+                blankFolder = this.createFolder("untitled folder", "", true, true);
             }
             blankFolder.setAttribute("path", this.currentFolder); // prevents opening before made
             blankFolder.setAttribute("name", folders[this.currentFolder].name);
             blankFolder.classList.add("icon-selected", "icon-rename");
-            
+
             // scroll into view
             this.background.scrollTop = 0;
             this.background.scrollLeft = 0;
@@ -890,10 +941,10 @@ class FileViewer {
                 }
                 invisibleInput.remove();
                 blankFolder.classList.remove("icon-rename");
-                blankFolder.setAttribute("path", this.currentFolder+blankFolderText.innerText+"/");
-                blankFolder.setAttribute("name", blankFolderText.innerText);
-                this._addFolderToStorage(blankFolderText.innerText, false);
-                
+                blankFolder.setAttribute("path", this.currentFolder+blankFolderText.textContent+"/");
+                blankFolder.setAttribute("name", blankFolderText.textContent);
+                this.shownSubfolders.splice(this.shownSubfolders.indexOf(""), 1, this.currentFolder+blankFolderText.textContent+"/")
+                this._addFolderToStorage(blankFolderText.textContent, false);
             }
         } catch(e) {
             console.error("There was an issue in processing the folder creation. Error:");
@@ -912,12 +963,8 @@ class FileViewer {
             num++;
         }
         FileSystem.addFolderAtLocation(name, this.currentFolder);
-        if(folders[this.currentFolder].isTrash == true) {
-            // fill trash
-            mainContent.querySelector(".trash-can").src = "assets/trash.png";
-        }
         if(addFolder) { // false on folder make
-            this.createFolder("", this.currentFolder+name+"/", this.background, !this.win, true);
+            this.createFolder("", this.currentFolder+name+"/", !this.win, true);
         }
     }
 
@@ -947,12 +994,6 @@ class FileViewer {
             num++;
         }
 
-
-        if(folders[this.currentFolder].isTrash == true) {
-            // fill trash
-            mainContent.querySelector(".trash-can").src = "assets/trash.png";
-        }
-
         if(filekind == "Music") {
             // read tags in worker
             let reader = new Worker("js/getMusicTagsWorker.js");
@@ -960,17 +1001,17 @@ class FileViewer {
             reader.onmessage = (message)=>{
                 let options = message.data;
                 FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder, options);
-                this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
+                this.createFile(filename, this.currentFolder+filename+"/", filekind, true);
             }
         } else {
             let prom = FileSystem.addFileAtLocation(filename, filedata, filekind, this.currentFolder);
             if(prom[1]) { // if binary
                 prom[1].then(()=>{
-                    this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
+                    this.createFile(filename, this.currentFolder+filename+"/", filekind, true);
                 });
             } else { // if text based
                 prom[0].then(()=>{
-                    this.createFile(filename, this.currentFolder+filename+"/", filekind, this.background, true);
+                    this.createFile(filename, this.currentFolder+filename+"/", filekind, true);
                 });
             }
             

@@ -335,13 +335,13 @@ class Window {
       function resize(e) {
           e = e || window.event;
           e.preventDefault();
-          document.onmouseup = closeDragElement
+          document.onmouseup = closeDragElement;
           document.onmousemove = resizeFunction;
       }
       var oldWidth = defaultWidth * em;
       var currentWidth = defaultWidth * em;
       var currentHeight = defaultHeight * em;
-      var resizeFunction = function (e) {
+      var resizeFunction = (e)=>{
           e = e || window.event;
           e.preventDefault();
           let msOffset = 8; // mouse offset so it is centered
@@ -358,15 +358,15 @@ class Window {
           } else {
             elmnt.style.width = this.minWidth;
           }
-          if((e.clientY - elmnt.offsetTop)+msOffset > this.minHeight) {
+          if((e.clientY - elmnt.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
             if(!keepAspectRatio) {
-              elmnt.style.height = (e.clientY - elmnt.offsetTop)+msOffset + "px";
+              elmnt.style.height = (e.clientY - elmnt.offsetTop)+msOffset - 1.7*em + "px";
             }
           } else {
             elmnt.style.height = this.minHeight;
           }
           elmnt.dispatchEvent(resizeEvent);
-      }.bind(this);
+      }
     }
     /**
      * @returns {Number} The width in pixels.

@@ -50,6 +50,7 @@ class FileSystem {
                 tags: []
             }
         };
+        this.dispatchUpdate(parentPath, { type: "add", pathAffected: path });
         // update system
         return filesystem.setItem("folders", folders);
     }
@@ -133,7 +134,7 @@ class FileSystem {
                 tags: []
             }
         };
-        
+        this.dispatchUpdate(parentPath, { type: "add", pathAffected: path });
         // update system
         resultArray[0] = filesystem.setItem("folders", folders);
         return resultArray;
@@ -141,10 +142,12 @@ class FileSystem {
     static deleteFolderAtLocation(path) {
         let shouldDelete = FileSystem.recurseThroughSubfolders(path);
         shouldDelete.forEach((path)=>{
+            let par = folders[path].parent;
             FileSystem.deleteAnyAtLocation(path);
         });
     }
     static deleteAnyAtLocation(path) {
+        let fRefParent = folders[path].parent;
         if(folders[path].isFile) {// is file, delete from folders{} and files{}
             if(folders[path].isBinary) {
                 delete files[path];
@@ -159,6 +162,7 @@ class FileSystem {
             delete folders[path];
             filesystem.setItem("folders", folders);
         }
+        this.dispatchUpdate(fRefParent, { type: "remove", pathAffected: path });
     }
     static recurseThroughSubfolders(path) {
         let subs = [path];
@@ -179,6 +183,7 @@ class FileSystem {
         let name = folders[oldPath].name;
         let kind = folders[oldPath].kind;
         let path = newParentPath+name+"/";
+        let num = 2;
         let oldName = name;
         while(folders[path]) { // already exists
             name = oldName+" "+num;
@@ -213,7 +218,9 @@ class FileSystem {
                 FileSystem.addFileAtLocation(name, folders[oldPath].content, kind, newParentPath);
             }
             // delete old file in folders{}
+            let fRefParent = folders[oldPath].parent;
             delete folders[oldPath];
+            this.dispatchUpdate(fRefParent, { type: "remove", pathAffected: oldPath });
             // set filesystem to correct value
             filesystem.setItem("folders", folders);
         } else { // is not file
@@ -244,22 +251,27 @@ class FileSystem {
                         FileSystem.addFileAtLocation(fRef.name, fRef.content, fRef.kind, newParent);
                         delete folders[element];
                     }
+                    this.dispatchUpdate(fRef.parent, { type: "remove", pathAffected: element });
                 } else {
                     FileSystem.addFolderAtLocation(fRef.name, newParent);
                     FileSystem.moveWithSubfolders(element, newParent+fRef.name+"/");
                 }
             });
         }
+        let fRefParent = folders[recreationPath].parent;
         delete folders[recreationPath];
+        this.dispatchUpdate(fRefParent, { type: "remove", pathAffected: recreationPath });
     }
 
     static removeAsSubfolder(parentPath, removePath, replacement=undefined) {
         let oldParentSubs = folders[parentPath].subfolders;
         if(replacement) {
             folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1, replacement);
+            this.dispatchUpdate(parentPath, { type: "add", pathAffected: replacement });
         } else {
             folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1);
         }
+        // this.dispatchUpdate(parentPath, { type: "remove", pathAffected: removePath }); // this causes double removing
     }
 
     static renameAny(oldPath, newPath, newName) {
@@ -267,9 +279,9 @@ class FileSystem {
         if(fRef.isFile) { // changing a file does not require recursion so it is separated
             FileSystem.renameFile(oldPath, newPath, newName, fRef.parent);
         } else {
+            FileSystem.recursiveRenameFolder(oldPath, newPath, fRef.parent, newName);
             FileSystem.removeAsSubfolder(fRef.parent, oldPath, newPath);
-            FileSystem.recursiveRenameFolder(oldPath, newPath, fRef.parent);
-            folders[newPath].name = newName;
+            // this.dispatchUpdate(fRef.parent, { type: "rename", pathAffected: newPath, renameOldPath: oldPath }); // TODO add this? this causes a double event, but might be necessary
         }
         filesystem.setItem("folders", folders);
     }
@@ -278,8 +290,9 @@ class FileSystem {
      * @param {String} oldPath - The path to the folder before it is renamed
      * @param {String} newPath - The path the folder should be at after the folder is renamed
      */
-    static recursiveRenameFolder(oldPath, newPath, newParent) {
+    static recursiveRenameFolder(oldPath, newPath, newParent, newName=null) {
         folders[newPath] = folders[oldPath];
+        folders[newPath].name = newName ? newName : folders[oldPath].name;
         folders[newPath].parent = newParent;
         folders[newPath].subfolders.forEach((path, index)=>{
             let fRef = folders[path];
@@ -291,6 +304,7 @@ class FileSystem {
             folders[newPath].subfolders[index] = newPath+fRef.name+"/";
         });
         delete folders[oldPath];
+        this.dispatchUpdate(newParent, { type: "rename", pathAffected: newPath, renameOldPath: oldPath });
     }
 
     static renameFile(oldPath, newPath, newName, newParent) {
@@ -306,9 +320,10 @@ class FileSystem {
                 filesystem.removeItem(oldPath).catch((e)=>{ // remove old item
                     console.error("Error deleting file "+oldPath, e);
                 });
-            }); 
+            });
             delete files[oldPath]; // remove old item
         }
+        this.dispatchUpdate(newParent, { type: "rename", pathAffected: newPath, renameOldPath: oldPath });
     }
     /**
      * Change the name of a file or folder. Note that this does not change its path, it only changes the name that is displayed.
@@ -319,8 +334,25 @@ class FileSystem {
     static changeDisplayName(path, newName) {
         // since all that is happening is changing the name (and not the path) this is pretty simple
         folders[path].name = newName;
+        this.dispatchUpdate(folders[path].parent, { type: "rename", pathAffected: path, renameOldPath: path });
         return filesystem.setItem("folders", folders);
     }
+
+    /**
+     * Dispatch a fileSystemUpdate event. Used internally every time the filesystem changes, so this method should not ever have to be called by an app.
+     * @param {String} parentPath - The value to be passed for the property parentPath
+     * @param {Object} actions - The value to be passed for the property path
+     * @param {String} actions.type - The type of action. Possible values are: "remove", "add", and "rename".
+     * @param {String} actions.pathAffected - The path that has been changed. This is the new path in case of rename.
+     * @param {String} [actions.renameOldPath] - The path that was removed during rename. This is the old path.
+     */
+    static dispatchUpdate(parentPath, actions) {
+        fileSystemUpdate.parentPath = parentPath;
+        fileSystemUpdate.actions = actions;
+        // console.log("Dispatching event with actions", actions, "parentPath = ", parentPath)
+        document.dispatchEvent(fileSystemUpdate);
+    }
+
     /**
      * Request a file for the user to select. Starts at the user's home directory.
      * <br> 
@@ -494,4 +526,9 @@ setTimeout(()=>{ // allows browser to fully run the globalStyle.js script. Witho
 }, 10);
 
 // The path to the trash. May become an array later.
-var trashPath = "";
+var trashPath = "/Users/"+NAME+"/Desktop/Trash Can/";
+
+
+
+// The event that tells fileViewer windows to update their display
+var fileSystemUpdate = new Event("file-system-update"); // dispatched on the document whenever there is a change to the filesystem. The 

@@ -29,6 +29,7 @@ class Desktop extends FileViewer {
 
         this.createTopBar();
         this.addBoxSelection();
+        this.addSystemUpdateListeners();
 
         // set current folder for both use cases
         super.setCurrentFolder("/Users/"+NAME+"/Desktop/");
@@ -135,11 +136,12 @@ class Desktop extends FileViewer {
     }
 
     addFromFolders() {
+        this.shownSubfolders = [];
         folders["/Users/"+NAME+"/Desktop/"].subfolders.forEach((el) =>{
             if(!folders[el].isFile) {
-                this.createFolder(folders[el].name, el, this.desktopDiv, true);
+                this.createFolder(folders[el].name, el, true);
             } else {
-                this.createFile(folders[el].name, el, folders[el].kind, this.desktopDiv);
+                this.createFile(folders[el].name, el, folders[el].kind);
             }
         });
     }
@@ -277,8 +279,6 @@ function moveByDrop(target, draggedPath, dragged) {
                 target.dispatchEvent(fileSystemChange);
             }, 20);
 
-            updateTrash(draggedPath, eventTargetPath);
-
             // after moving file, remove from display
             dragged.remove();
         }
@@ -298,7 +298,6 @@ function moveByDrop(target, draggedPath, dragged) {
                     if(elPath != draggedPath /* <- don't duplicate */) {
                         let successful = FileSystem.moveFile(elPath, eventTargetPath);
                         if(successful) {
-                            updateTrash(elPath, eventTargetPath);
                             // after moving file, remove from display
                             element.remove();
                         }
@@ -319,7 +318,6 @@ function moveByDrop(target, draggedPath, dragged) {
         if(folders[elPath]/* <- If this is false then the file has probably already been deleted. This can happen if the parent of the file was deleted before this file was deleted. */) {
             let successful = FileSystem.moveFile(elPath, eventTargetPath);
             if(successful) {
-                updateTrash(elPath, eventTargetPath);
                 // after moving file, remove from display
                 element.remove();
             }
@@ -327,17 +325,6 @@ function moveByDrop(target, draggedPath, dragged) {
             element.remove();
         }
     });
-}
-
-function updateTrash(draggedPath, eventTargetPath) {
-    // fill trash
-    if(eventTargetPath == trashPath && document.getElementById("trash").src != "assets/trash.png") {
-        document.getElementById("trash").src = "assets/trash.png";
-    }
-    // empty trash
-    if(draggedPath.startsWith(trashPath) && document.getElementById("trash").src != "assets/emptyTrash.png") { // if coming from trashPath and the trash is filled
-        document.getElementById("trash").src = "assets/emptyTrash.png";
-    }
 }
 
 var fileSystemChange = new Event("file-system-change");

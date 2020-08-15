@@ -57,7 +57,7 @@ window.alert = (message, fontSize="1.2")=>{
  * Prompt the user to enter input.
  * @param {String} message 
  * @param {String} defaultValue - The default value for the input. Not a placeholder, a value.
- * @param {String} fontSize 
+ * @param {String} fontSize - The font size to be used for the text.
  * @returns {Promise<(String|null)>} Returns a promise with the result being null if cancel is pressed and the value of the input if OK is pressed. 
  */
 window.prompt = (message, defaultValue="", fontSize="1.2")=>{

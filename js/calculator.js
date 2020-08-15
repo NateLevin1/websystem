@@ -398,7 +398,11 @@ class Calculator {
             if(!isFirefox) {
                 newNum = parseFloat(await navigator.clipboard.readText());
             } else {
-                newNum = parseFloat(await prompt("Please press ctrl+v or cmd+v."));
+                newNum = await prompt("Please press "+(window.navigator.platform.includes("Mac") ? "command" : "control")+"+v.");
+                if(newNum == null) {
+                    return undefined; // prevent the rest of the function from executing if cancel is pressed
+                }
+                newNum = parseFloat(newNum);
             }
 
             if(isNaN(newNum)) {

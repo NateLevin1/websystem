@@ -80,6 +80,7 @@ body {
 .blurred, .heavy-blurred, .light-blurred { /* backdrop-filter is not supported in latest version of firefox, so a polyfill is used.*/
     background-color: rgba(255, 255, 255, 1);
 }
+
 /* END GENERAL */
 
 
@@ -327,6 +328,7 @@ button:active {
     top:3em;
     opacity:0;
     overflow: hidden;
+    color: black;
 }
 .window-fast {
     transition: opacity 0.15s;
@@ -338,7 +340,7 @@ button:active {
 .window-header {
     background-color:black;
     cursor:move;
-
+    color:white;
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -547,6 +549,13 @@ button:active {
     border:none;
 }
 /* END TOP BAR */
+
+
+/* Important stuff that shouldn't use !important */
+.no { /* Used to indicate the user cannot or should not do something with the element */
+    cursor: url("../assets/licensed/no.cur"), url("../assets/licensed/no.png"), not-allowed !important;
+    /* That !important is certainly wrong, but I am not sure of any other way for this to work. */
+}
 
 
 /* SUPPORTS */

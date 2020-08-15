@@ -51,7 +51,20 @@ window.alert = (message, fontSize="1.2")=>{
     wind.addEventListener("window-destroy", ()=>{
         cover.remove();
     });
+
+
+    const keydownHandler = (event)=>{
+        if(event.key == "Enter" || event.key == " ") {
+            box.forceClose(); // no need to send an event because nothing else has access to this
+            cover.remove();
+        }
+        if(!document.body.contains(cover)) {
+            document.removeEventListener("keydown", keydownHandler);
+        }
+    }
+    document.addEventListener("keydown", keydownHandler);
 }
+
 
 /**
  * Prompt the user to enter input.
@@ -214,6 +227,32 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
             cover.remove();
             resolve(!isCancel); // emulate normal confirm() behavior
         }
+
+        let cancelFocused = defaultCancel;
+
+        const keydownHandler = (event)=>{
+            if(event.key == "Enter" || event.key == " ") {
+                remove(cancelFocused);
+            }
+
+            if(event.key == "Tab") {
+                event.preventDefault(); // tabbing to another element
+                if(cancelFocused) {
+                    cancelFocused = false;
+                    cancel.classList.remove("default-button");
+                    ok.classList.add("default-button");
+                } else {
+                    cancelFocused = true;
+                    cancel.classList.add("default-button");
+                    ok.classList.remove("default-button");
+                }
+            }
+
+            if(!document.body.contains(cover)) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
+        }
+        document.addEventListener("keydown", keydownHandler);
     });
 }
 

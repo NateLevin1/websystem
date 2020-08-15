@@ -246,7 +246,7 @@ class Appstore {
 
     createTopBar() {
         TopBar.addToTop("File", "file");
-        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
 
         TopBar.addToTop("View", "view");
         TopBar.addToMenu("Popular", "view", ()=>{ this.newSelected("popular"); });

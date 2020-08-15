@@ -122,9 +122,9 @@ class ImageViewer {
         fileOpen.style.fontSize = "1em";
         fileOpen.style.cursor = "pointer";
         fileOpen.onclick = ()=>{
-            FileSystem.requestFileByGUI("Image").then((selection)=>{
+            FileSystemGUI.requestFile("Image").then((selection)=>{
                 new ImageViewer(folders[selection].name, selection);
-                this.win.forceClose();
+                this.win.close();
             }).catch((reason)=>{
                 console.log(reason);
             });
@@ -168,7 +168,7 @@ class ImageViewer {
         });
       }
       
-      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
 
       TopBar.addToTop("Help", "help");
       TopBar.addToMenu("About Image Viewer", "help", ()=>{ About.newWindow("Image Viewer", "The official Image Viewer for WebSystem.", "1.0", "assets/image.png"); });

@@ -122,11 +122,11 @@ class FileViewer {
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.makeNewFolder(); });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.uploadNewFile(); });
-        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{
+        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], async ()=>{
             alert("Note: Apps cannot be added via this.");
-            let filename = prompt("Filename (with extension):");
-            let filedata = prompt("Filedata (if any):");
-            let filekind = prompt("Filekind:");
+            let filename = await prompt("Filename (with extension):");
+            let filedata = await prompt("Filedata (if any):");
+            let filekind = await prompt("Filekind:");
             this._addFileToStorage(filename, filedata, filekind);
         });
         RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
@@ -151,7 +151,7 @@ class FileViewer {
             return !!selected;
         }, "Open Selection", "file", this.openSelected.bind(this));
 
-        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
         // END FILE
 
         // EDIT
@@ -593,6 +593,7 @@ class FileViewer {
                         case "Image":
                         case "App":
                         case "Music":
+                        case "Text":
                             this.createFile(name, subPath, folders[subPath].kind);
                             break;
                         default:
@@ -700,10 +701,12 @@ class FileViewer {
         newFolderContainer.addEventListener('contextmenu', ()=>{
             selectElement(event, newFolderContainer, false);
         });
-        if(folders[path] && folders[path].isTrash) {
-            RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-trash");
-        } else {
-            RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-folder");
+        if(!this.disableRightClick) {
+            if(folders[path] && folders[path].isTrash) {
+                RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-trash");
+            } else {
+                RightClickMenu.addContextMenuListener(newFolderContainer, this.generatedWindow+"-folder");
+            }
         }
         return newFolderContainer; // allows for adding to lists
     }
@@ -763,6 +766,53 @@ class FileViewer {
             } else {
                 newFile.src = "assets/music.png";
             }
+        } else if(filetype == "Text") {
+            let content = folders[path].content;
+            // convert content to image
+            let canvas = document.createElement("canvas");
+            var tCtx = canvas.getContext('2d'); // Hidden canvas
+            
+            // Text input element
+            tCtx.canvas.width = tCtx.measureText(content).width <= 150 ? tCtx.measureText(content).width : 150;
+            // tCtx.fillText(content, 10, 10);
+
+            let lineHeight = 10;
+            let fitWidth = 150;
+
+            // Wrap text. From https://stackoverflow.com/a/4478894/
+            fitWidth = fitWidth || 0;
+            
+            if(fitWidth <= 0) {
+                tCtx.fillText(content, 10, 10);
+                return;
+            }
+            var words = content.split(' ');
+            var currentLine = 0;
+            var idx = 1;
+            while(words.length > 0 && idx <= words.length) {
+                var str = words.slice(0,idx).join(' ');
+                var w = tCtx.measureText(str).width;
+                if (w > fitWidth) {
+                    if(idx==1) {
+                        idx=2;
+                    }
+                    tCtx.fillText(words.slice(0,idx-1).join(' '), 10, 10 + (lineHeight*currentLine) );
+                    currentLine++;
+                    words = words.splice(idx-1);
+                    idx = 1;
+                } else {
+                    idx++;
+                }
+            }
+            if(idx > 0) {
+                tCtx.fillText(words.join(' '), 10, 10 + (lineHeight*currentLine));
+            }
+            newFile.src = tCtx.canvas.toDataURL();
+        
+            tCtx.globalCompositeOperation = 'destination-over';
+            // bg color
+            tCtx.fillStyle = "rgba(0,0,0,0.1)";
+            tCtx.fillRect(0, 0, canvas.width, canvas.height);
         } else {
             newFile.src = "assets/unknown.png";
         }
@@ -815,11 +865,14 @@ class FileViewer {
         newFileContainer.addEventListener("contextmenu", (event)=>{
             selectElement(event, newFileContainer, false);
         });
-        if(filetype == "App") {
-            RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-app");
-        } else {
-            RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
+        if(!this.disableRightClick) {
+            if(filetype == "App") {
+                RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-app");
+            } else {
+                RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
+            }
         }
+        
 
         return newFileContainer; // allows for adding to lists
     }
@@ -857,6 +910,8 @@ class FileViewer {
                 new ImageViewer(folders[path].name, path);
             } else if(folders[path].kind == "Music") {
                 new Music(folders[path].name, path);
+            } else if(folders[path].kind == "Text") {
+                new Documenter(folders[path].name, path);
             } else {
                 alert("Opened File '"+folders[path].name+"'!");
             }

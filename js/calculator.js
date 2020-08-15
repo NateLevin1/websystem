@@ -22,6 +22,7 @@ class Calculator {
         this.header = win.getHeader();
         this.win = win;
         this.win.setBackgroundColor("rgb(40,40,40)");
+        this.window.style.color = "white"; // make white
 
         let screenContainer = document.createElement("div");
         screenContainer.classList.add("calc-screen-container");
@@ -386,7 +387,7 @@ class Calculator {
 
     createTopBar() {
         TopBar.addToTop("File", "file");
-        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+        TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
 
         TopBar.addToTop("Edit", "edit");
         TopBar.addToMenu("Copy Answer", "edit", ()=>{ navigator.clipboard.writeText(this.currentNumber); });
@@ -397,7 +398,7 @@ class Calculator {
             if(!isFirefox) {
                 newNum = parseFloat(await navigator.clipboard.readText());
             } else {
-                newNum = parseFloat(prompt("Please press ctrl+v or cmd+v."));
+                newNum = parseFloat(await prompt("Please press ctrl+v or cmd+v."));
             }
 
             if(isNaN(newNum)) {
@@ -428,9 +429,5 @@ class Calculator {
     }
 }
 
-function makeCalculator() {
-    new Calculator;
-}
-
 appImagePaths["Calculator"] = "assets/calc.png";
-makeFunctions["Calculator"] = ()=>{ makeCalculator(); };
+makeFunctions["Calculator"] = ()=>{ new Calculator; };

@@ -13,7 +13,7 @@ onmessage = function (event) {
         });
     });
     let currentDate = Date.now();
-    let folderMeta = {
+    let defaultMeta = {
         size:0,
 
         "creation-date": currentDate,
@@ -38,7 +38,7 @@ onmessage = function (event) {
                 subfolders: ["/usr/", "/etc/", "/Users/"],
                 parent: undefined,
     
-                meta: folderMeta
+                meta: defaultMeta
             },
     
             // Usr Directory
@@ -49,7 +49,7 @@ onmessage = function (event) {
                 subfolders: ["/usr/include/"],
                 parent: "/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
             "/usr/include/": {
                 name: "include",
@@ -58,7 +58,7 @@ onmessage = function (event) {
                 subfolders: [],
                 parent: "/usr/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
     
             // Etc Directory (config files)
@@ -69,7 +69,7 @@ onmessage = function (event) {
                 subfolders: [],
                 parent: "/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
     
             // Users Directory
@@ -80,7 +80,7 @@ onmessage = function (event) {
                 subfolders: ["/Users/"+NAME+"/"],
                 parent: "/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/"]: { // current user's home directory
@@ -90,17 +90,17 @@ onmessage = function (event) {
                 subfolders: ["/Users/"+NAME+"/Applications/", "/Users/"+NAME+"/Desktop/", "/Users/"+NAME+"/Documents/", "/Users/"+NAME+"/Downloads/"],
                 parent: "/Users/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Applications/"]: { // Applications
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app/", "/Users/"+NAME+"/Applications/App Store.app/", "/Users/"+NAME+"/Applications/Music.app/", "/Users/"+NAME+"/Applications/Image Viewer.app/"],
+                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app/", "/Users/"+NAME+"/Applications/App Store.app/", "/Users/"+NAME+"/Applications/Music.app/", "/Users/"+NAME+"/Applications/Image Viewer.app/", "/Users/"+NAME+"/Applications/Documenter.app/"],
                 parent: "/Users/"+NAME+"/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Applications/Calculator.app/"]: {
@@ -113,7 +113,20 @@ onmessage = function (event) {
                 isBinary: false,
                 content: "",
 
-                meta: folderMeta
+                meta: defaultMeta
+            },
+
+            ["/Users/"+NAME+"/Applications/Documenter.app/"]: {
+                isFile: true,
+                name:"Documenter",
+                kind:"App",
+                extension:"app",
+
+                parent: "/Users/"+NAME+"/Applications/",
+                isBinary: false,
+                content: "",
+
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Applications/Music.app/"]: {
@@ -126,7 +139,7 @@ onmessage = function (event) {
                 isBinary: false,
                 content: "",
 
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Applications/App Store.app/"]: {
@@ -139,7 +152,7 @@ onmessage = function (event) {
                 isBinary: false,
                 content: "",
 
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Applications/Image Viewer.app/"]: {
@@ -152,7 +165,7 @@ onmessage = function (event) {
                 isBinary: false,
                 content: "",
 
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Desktop/"]: { // Desktop
@@ -162,7 +175,7 @@ onmessage = function (event) {
                 subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/", "/Users/"+NAME+"/Desktop/Trash Can/"],
                 parent: "/Users/"+NAME+"/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Desktop/WebSystem/"]: { // WebSystem
@@ -172,7 +185,7 @@ onmessage = function (event) {
                 subfolders: ["/Users/"+NAME+"/Desktop/WebSystem/logo.png/"],
                 parent: "/Users/"+NAME+"/Desktop/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Desktop/Trash Can/"]: { // WebSystem
@@ -183,7 +196,7 @@ onmessage = function (event) {
                 subfolders: [],
                 parent: "/Users/"+NAME+"/Desktop/",
     
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Desktop/WebSystem/logo.png/"]: {
@@ -196,17 +209,30 @@ onmessage = function (event) {
                 isBinary: true,
                 content: {},
 
-                meta: folderMeta
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Documents/"]: { // Documents
                 name: "Documents",
                 kind: "Folder",
     
-                subfolders: [],
+                subfolders: ["/Users/"+NAME+"/Documents/doc.html"],
                 parent: "/Users/"+NAME+"/",
     
-                meta: folderMeta
+                meta: defaultMeta
+            },
+
+            ["/Users/"+NAME+"/Documents/doc.html"]: {
+                isFile: true,
+                name:"doc.html",
+                kind:"Text",
+                extension:".html",
+
+                parent: "/Users/"+NAME+"/Documents/",
+                isBinary: false,
+                content: "<p>This is text!</p>",
+
+                meta: defaultMeta
             },
 
             ["/Users/"+NAME+"/Downloads/"]: { // Downloads
@@ -216,7 +242,7 @@ onmessage = function (event) {
                 subfolders: [],
                 parent: "/Users/"+NAME+"/",
     
-                meta: folderMeta
+                meta: defaultMeta
             }
     
         }).then(()=>{

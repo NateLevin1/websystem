@@ -1,8 +1,8 @@
 class Window {
     /**
      * Constructor. Make a new window
-     * @param {Number} width - The minimum width in pixels.
-     * @param {Number} height - The minimum height in pixels.
+     * @param {Number} minWidth - The minimum width in pixels.
+     * @param {Number} minHeight - The minimum height in pixels.
      * @param {String} title - The title of the window
      * @param {Number} [defaultWidth=30] - The default width of the window in em.
      * @param {Number} [defaultHeight=30] - The default width of the window in em.
@@ -13,14 +13,15 @@ class Window {
      * @param {Function} options.topBarCreator - The function to be called when a top bar is requested
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
+     * @param {Boolean} options.zIndexDisabled - Whether or not to adjust z indexes on click etc. Useful for popups.
      */
-    constructor(width, height, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false }) {
+    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false }) {
       // Take options into account
-      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled } = options;
+      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled} = options;
       if(!topBarCreator) { // use default 'file -> quit'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
-          TopBar.addToMenu("Close Window", "file", ()=>{ this.forceClose(); });
+          TopBar.addToMenu("Close Window", "file", ()=>{ this.close(); });
         }
       }
       this.topBarCreator = topBarCreator;
@@ -56,8 +57,8 @@ class Window {
         window.style.opacity = "1";
       }, 10);
       
-      this.minWidth = width;
-      this.minHeight = height;
+      this.minWidth = minWidth;
+      this.minHeight = minHeight;
       this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
 
       this.window = window;
@@ -66,6 +67,11 @@ class Window {
 
       if(resizeDisabled) {
         this.disableResize();
+      }
+      if(zIndexDisabled) {
+        this.disableZIndex();
+      } else {
+        this.useZIndexes = true;
       }
 
       // Focus/Unfocus
@@ -86,7 +92,7 @@ class Window {
       });
 
       this.window.addEventListener('window-destroy', ()=>{
-        if(this.window.style.zIndex == "10") { // prevents closing background windows from taking focus
+        if(parseInt(this.window.style.zIndex) >= 10) { // prevents closing background windows from taking focus
           // reset topbar
           TopBar.clear();
           // give focus to next most focused
@@ -131,9 +137,12 @@ class Window {
     disableResize() {
       this.window.querySelector(".resize").remove();
       let noResize = document.createElement("div");
-      noResize.classList.add("resize");
-      noResize.style.cursor = "url(assets/licensed/no.cur), url(assets/licensed/no.png), not-allowed";
+      noResize.classList.add("resize", "no");
       this.window.appendChild(noResize);
+    }
+
+    disableZIndex() {
+      this.useZIndexes = false;
     }
 
     /**
@@ -210,7 +219,9 @@ class Window {
      */
     giveFocus() {
       this.hasFocus = true;
-      this.window.style.zIndex = 10;
+      if(this.useZIndexes) {
+        this.window.style.zIndex = 10;
+      }
       // correct topbar
       TopBar.clear();
       if(this.topBarCreator) {
@@ -222,8 +233,10 @@ class Window {
      */
     removeFocus() {
       this.hasFocus = false;
-      if(this.window.style.zIndex > 2) {
-        this.window.style.zIndex -= 1;
+      if(this.useZIndexes) {
+        if(this.window.style.zIndex > 2) {
+          this.window.style.zIndex -= 1;
+        }
       }
     }
     /**
@@ -271,15 +284,8 @@ class Window {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.style.width = defaultWidth+"em";
       elmnt.style.height = defaultHeight+"em";
-      if (header) {
-        // if present, the header is where you move the DIV from:
-        header.onmousedown = dragMouseDown;
-      } else {
-        // otherwise, move the DIV from anywhere inside the DIV: 
-        elmnt.onmousedown = dragMouseDown;
-      }
-      resizeElement.onmousedown = resize;
-      function dragMouseDown(e) {
+      
+      var dragMouseDown = (e)=>{
         e = e || window.event;
         e.preventDefault();
         if(!e.target.classList.contains("no-move")) {
@@ -292,17 +298,21 @@ class Window {
         } else {
           if(e.target == close) {
             // close window
-            elmnt.dispatchEvent(destroyEvent);
-            elmnt.classList.remove("window-slow");
-            elmnt.classList.add("window-fast");
-            elmnt.style.opacity = "0";
-            setTimeout(()=>{
-              elmnt.remove();
-            }, 150);
+            this.close();
           }
         }
-        
       }
+
+      // Set the stuff
+      if (header) {
+        // if present, the header is where you move the DIV from:
+        header.onmousedown = dragMouseDown;
+      } else {
+        // otherwise, move the DIV from anywhere inside the DIV: 
+        elmnt.onmousedown = dragMouseDown;
+      }
+      resizeElement.onmousedown = resize;
+
       let fakeOffsetTop = elmnt.offsetTop;
       function elementDrag(e) {
         e = e || window.event;
@@ -393,11 +403,56 @@ class Window {
       return this.window.clientHeight/em;
     }
     /**
-     * Forces the window to close.
+     * Tells the window to close. If the <code>preventClose</code> attribute of 
+     * the event is <code>true</code>, then it will not close and it will display
+     * the event's <code>message</code> property (if it exists).
+     * 
      * @param {Boolean} [fade=true] - Whether or not to fade out when closing.
      */
-    forceClose(fade=true) {
+    close(fade=true) {
+      this.window.addEventListener("window-destroy", (event)=>{
+        setTimeout(()=>{
+          if(event.preventClose) {
+            var close;
+            if(event.message) {
+              // show the custom popup
+              confirm(event.message).then((result)=>{
+                close = result;
+                if(close) { // if user says yes
+                  this.forceClose(fade);
+                }
+              });
+            } else {
+              // show a generic popup
+              close = confirm("Are you sure you want to close this application?").then((result)=>{
+                close = result;
+                if(close) { // if user says yes
+                  this.forceClose(fade);
+                }
+              });
+            }
+          } else {
+            this.forceClose(fade);
+          }
+
+          // reset vars
+          event.preventClose = false;
+          event.message = "";
+        }, 50);
+      }, { once: true });
+
       this.window.dispatchEvent(destroyEvent);
+    }
+
+
+    /**
+     * Force the window to close. Note that this <strong>will not</strong> send a <code>'window-destroy'</code> event,
+     * and the window will be destroyed without checking if it should be (e.g. checking if work has been saved)
+     * If sending a <code>'window-destroy'</code> event is wanted, use the <code>close()</code> method instead.
+     * 
+     * @param {Boolean} [fade=true] - Whether or not to fade out when closing the window
+     */
+    forceClose(fade=true) {
       if(fade) {
         this.window.classList.remove("window-slow");
         this.window.classList.add("window-fast");
@@ -410,9 +465,10 @@ class Window {
           this.window.remove();
         }, 50);
       }
-      
     }
 }
+
+var preventCloseWindowReason = "";
 
 
 

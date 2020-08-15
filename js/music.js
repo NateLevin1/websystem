@@ -372,14 +372,14 @@ class Music {
       TopBar.addToMenu("Find Songs", "file", ()=>{ 
         new Music;
       });
-      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
 
       TopBar.addToTop("Help", "help");
       TopBar.addToMenu("About Music Player", "help", ()=>{ About.newWindow("Music Player", "The official Music Player for WebSystem.", "1.0", "assets/music.png"); });
     }
     createStandaloneTopBar() {
       TopBar.addToTop("File", "file");
-      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.forceClose(); });
+      TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
 
       TopBar.addToTop("View", "view");
       TopBar.addToMenu("Scan For New Songs", "view", ()=>{ 

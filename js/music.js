@@ -2,7 +2,7 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
+            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Music Player - "+name});
         } else { // open standalone
             win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2, topBarCreator: this.createStandaloneTopBar, thisContext: this});
         }

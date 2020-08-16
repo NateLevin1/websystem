@@ -503,6 +503,10 @@ button:active {
     margin-top: -0.1em;
     padding: 0 0;
     color:rgb(0, 0, 0);
+    max-width:20%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .top-bar-top-specific-item {
     font-weight: normal;

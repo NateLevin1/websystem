@@ -43,7 +43,7 @@ class ImageViewer {
                 }
                 document.body.removeChild(sizeGetter);
                 this.zoomed = false;
-                win = new Window(Math.max(size[0], 80), Math.max(size[1], 80+em/**Plus em because of top */), name, Math.max(size[2], 80/em), Math.max(size[3], (80/em)+1), {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this});
+                win = new Window(Math.max(size[0], 80), Math.max(size[1], 80+em/**Plus em because of top */), name, Math.max(size[2], 80/em), Math.max(size[3], (80/em)+1), {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Image Viewer - "+name});
                 win.setBackgroundColor("rgb(200, 200, 200)");
 
 

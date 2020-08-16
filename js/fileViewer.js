@@ -18,7 +18,7 @@ class FileViewer {
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
     openFolderWindow(path) {
-        let win = new Window(273, 290, path, 41, 35, { topBarCreator: this.createTopBar, thisContext: this });
+        let win = new Window(273, 290, path, 41, 35, { topBarCreator: this.createTopBar, thisContext: this, appName: "File Viewer"});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -143,7 +143,11 @@ class FileViewer {
         let newSelect = TopBar.addToMenu("New  ▶", "file", undefined, {clickable: false});
         TopBar.addSecondaryListenerForItem({el: newSelect, name:"newSelect"});
         TopBar.addToMenu("Folder", "newSelect", ()=>{ this.makeNewFolder() });
-        TopBar.addToMenu("File", "newSelect", ()=>{ console.log("New File!"); });
+        
+        fileNewPossibilities.forEach((obj)=>{
+            TopBar.addToMenu(obj.name, "newSelect", ()=>{obj.callback(this.currentFolder)});
+        });
+        
         TopBar.addLineToMenu("file");
         TopBar.addToMenuIf(()=>{
             // returns true if anything is selected, false if not.
@@ -550,6 +554,8 @@ class FileViewer {
                 }
             } else if(event.actions.type == "remove" && event.actions.pathAffected == this.currentFolder) {
                 this.win.close();
+            } else if(event.actions.type == "rename" && event.actions.renameOldPath == this.currentFolder) {
+                this.win.close();
             }
         });
     }
@@ -773,51 +779,59 @@ class FileViewer {
             }
         } else if(filetype == "Text") {
             let content = folders[path].content;
-            // convert content to image
-            let canvas = document.createElement("canvas");
-            var tCtx = canvas.getContext('2d'); // Hidden canvas
-            
-            // Text input element
-            tCtx.canvas.width = tCtx.measureText(content).width <= 150 ? tCtx.measureText(content).width : 150;
-            // tCtx.fillText(content, 10, 10);
 
-            let lineHeight = 10;
-            let fitWidth = 150;
+            // if text file
+            if(content && (folders[path].extension == ".txt" || folders[path].extension == ".text")) {
+                // convert content to image
+                let canvas = document.createElement("canvas");
+                var tCtx = canvas.getContext('2d'); // Hidden canvas
 
-            // Wrap text. From https://stackoverflow.com/a/4478894/
-            fitWidth = fitWidth || 0;
-            
-            if(fitWidth <= 0) {
-                tCtx.fillText(content, 10, 10);
-                return;
-            }
-            var words = content.split(' ');
-            var currentLine = 0;
-            var idx = 1;
-            while(words.length > 0 && idx <= words.length) {
-                var str = words.slice(0,idx).join(' ');
-                var w = tCtx.measureText(str).width;
-                if (w > fitWidth) {
-                    if(idx==1) {
-                        idx=2;
-                    }
-                    tCtx.fillText(words.slice(0,idx-1).join(' '), 10, 10 + (lineHeight*currentLine) );
-                    currentLine++;
-                    words = words.splice(idx-1);
-                    idx = 1;
-                } else {
-                    idx++;
+                // Text input element
+                tCtx.canvas.width = tCtx.measureText(content).width <= 150 ? tCtx.measureText(content).width : 150;
+                // tCtx.fillText(content, 10, 10);
+
+                let lineHeight = 10;
+                let fitWidth = 150;
+
+                // Wrap text. From https://stackoverflow.com/a/4478894/
+                fitWidth = fitWidth || 0;
+
+                if(fitWidth <= 0) {
+                    tCtx.fillText(content, 10, 10);
+                    return;
                 }
+                var words = content.split(' ');
+                var currentLine = 0;
+                var idx = 1;
+                while(words.length > 0 && idx <= words.length) {
+                    var str = words.slice(0,idx).join(' ');
+                    var w = tCtx.measureText(str).width;
+                    if (w > fitWidth) {
+                        if(idx==1) {
+                            idx=2;
+                        }
+                        tCtx.fillText(words.slice(0,idx-1).join(' '), 10, 10 + (lineHeight*currentLine) );
+                        currentLine++;
+                        words = words.splice(idx-1);
+                        idx = 1;
+                    } else {
+                        idx++;
+                    }
+                }
+                if(idx > 0) {
+                    tCtx.fillText(words.join(' '), 10, 10 + (lineHeight*currentLine));
+                }
+                newFile.src = tCtx.canvas.toDataURL();
+
+                tCtx.globalCompositeOperation = 'destination-over';
+                // bg color
+                tCtx.fillStyle = "rgba(0,0,0,0.1)";
+                tCtx.fillRect(0, 0, canvas.width, canvas.height);
+            } else {
+                // if doesn't have content or has content but isn't a txt file
+                newFile.src = "assets/documenter.png";
             }
-            if(idx > 0) {
-                tCtx.fillText(words.join(' '), 10, 10 + (lineHeight*currentLine));
-            }
-            newFile.src = tCtx.canvas.toDataURL();
-        
-            tCtx.globalCompositeOperation = 'destination-over';
-            // bg color
-            tCtx.fillStyle = "rgba(0,0,0,0.1)";
-            tCtx.fillRect(0, 0, canvas.width, canvas.height);
+            
         } else {
             newFile.src = "assets/unknown.png";
         }
@@ -1213,3 +1227,13 @@ function selectElement(event, element, shiftCare=true) {
 
 
 var objectURLS = {}; // key is path, value is the object url
+var fileNewPossibilities = [ // an array that holds all things that come up when navigating to file > new
+    
+    // Values are in the form of
+    // {
+    //     name: "Name",
+    //     callback: (path)=>{ // where path = the current folder's path
+    //         doSomething();
+    //     }
+    // }
+]; 

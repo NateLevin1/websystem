@@ -120,6 +120,7 @@ class TopBar {
     }
 
     static addToMenuIf(booleanFunction, element, from, callback, options={clickable: true, thisContext: this}) {
+        options.clickable = options.clickable === undefined ? true : options.clickable;
         if(typeof element == "string") {
             let newEl = document.createElement("div");
             newEl.innerText = element;
@@ -307,6 +308,18 @@ class TopBar {
         
     }
 
+    static addName(title) {
+        // adds a bolded name. should only be used internally
+        let el = document.createElement("div");
+        el.classList.add("top-bar-top-item", "top-bar-top-name", "unselectable");
+        el.innerText = title;
+        this.bar.appendChild(el);
+    }
+
+    static updateName(newName) {
+        // updates the name. If this is desired, the Window class's method updateTopBarName() should be used instead of this method.
+        this.bar.querySelector(".top-bar-top-name").innerText = newName;
+    }
 }
 
 // EVENTS

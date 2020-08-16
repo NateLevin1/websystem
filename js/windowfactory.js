@@ -15,9 +15,9 @@ class Window {
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
      * @param {Boolean} options.zIndexDisabled - Whether or not to adjust z indexes on click etc. Useful for popups.
      */
-    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false }) {
+    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"" }) {
       // Take options into account
-      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled} = options;
+      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName } = options;
       if(!topBarCreator) { // use default 'file -> quit'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
@@ -26,6 +26,8 @@ class Window {
       }
       this.topBarCreator = topBarCreator;
       this.thisContext = thisContext;
+      this.title = title;
+      this.appName = appName;
       
       let window = document.createElement("div");
       window.classList.add("window", "absolute", "window-slow");
@@ -91,25 +93,30 @@ class Window {
           }
       });
 
-      this.window.addEventListener('window-destroy', ()=>{
-        if(parseInt(this.window.style.zIndex) >= 39) { // prevents closing background windows from taking focus
-          // reset topbar
-          TopBar.clear();
-          // give focus to next most focused
-          let windows = document.querySelectorAll(".window");
-          windows = Array.from(windows);
-          if(windows.length == 1 && windows[0] == this.window) { // desktop
-            focusEvent.window = "DESKTOP";
-            document.dispatchEvent(focusEvent);
-          } else {
-            let zIndices = windows.map((element)=>{
-              return parseInt(element.style.zIndex);
-            });
-            let element = windows[zIndices.indexOf(Math.max(...zIndices))] // find window with highest z index
-            focusEvent.window = element;
-            document.dispatchEvent(focusEvent);
+      this.window.addEventListener('window-destroy', (event)=>{
+        setTimeout(()=>{
+          if(!event.preventClose) {
+            if(parseInt(this.window.style.zIndex) >= 39) { // prevents closing background windows from taking focus
+              // reset topbar
+              TopBar.clear();
+              // give focus to next most focused
+              let windows = document.querySelectorAll(".window");
+              windows = Array.from(windows);
+              if(windows.length == 1 && windows[0] == this.window) { // desktop
+                focusEvent.window = "DESKTOP";
+                document.dispatchEvent(focusEvent);
+              } else {
+                let zIndices = windows.map((element)=>{
+                  return element == this.window ? 0 : parseInt(element.style.zIndex); // don't include in search if it is the element
+                });
+                let element = windows[zIndices.indexOf(Math.max(...zIndices))] // find window with highest z index
+                focusEvent.window = element;
+                document.dispatchEvent(focusEvent);
+              }
+            }
           }
-        }
+        }, 51);
+        
       });
     }
     /**
@@ -174,7 +181,11 @@ class Window {
      * @param {String} newTitle - The title of the window.
      */
     setTitle(newTitle) {
+      this.title = newTitle;
       this.window.titleText.innerText = newTitle;
+      if(!this.appName) { // if the app doesn't have a custom app name (this is arbitrary because if they want to change it and have an app name they can call the function themselves)
+        this.updateTopBarName();
+      }
     }
     
     /**
@@ -225,8 +236,20 @@ class Window {
       // correct topbar
       TopBar.clear();
       if(this.topBarCreator) {
+        if(this.appName) { // if has name, show it
+          // show name
+          TopBar.addName(this.appName);
+        } else {
+          TopBar.addName(this.title);
+        }
+        
+        // actually create it
         this.topBarCreator.bind(this.thisContext)();
       }
+    }
+
+    updateTopBarName(newName=this.title) {
+      TopBar.updateName(newName);
     }
     /**
      * Remove the focus from the window. Used internally, may be annoying to user if this is run.

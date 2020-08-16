@@ -43,19 +43,19 @@ window.alert = (message, fontSize="1.2")=>{
     closeContainer.appendChild(close);
 
     close.onclick = ()=>{
-        box.forceClose(); // no need to send an event because nothing else has access to this
+        box.close();
         cover.remove();
     }
 
     // remove window on red x pushed
     wind.addEventListener("window-destroy", ()=>{
         cover.remove();
-    });
+    }, { once:true });
 
 
     const keydownHandler = (event)=>{
         if(event.key == "Enter" || event.key == " ") {
-            box.forceClose(); // no need to send an event because nothing else has access to this
+            box.close();
             cover.remove();
         }
         if(!document.body.contains(cover)) {
@@ -145,11 +145,16 @@ window.prompt = (message, defaultValue="", fontSize="1.2")=>{
 
         // remove window on red x pushed
         wind.addEventListener("window-destroy", ()=>{
-            remove(null);
-        });
+            if(!isRemoving) {
+                cover.remove();
+                resolve(null); // emulate normal confirm() behavior
+            }
+        }, { once:true });
+        let isRemoving = false;
 
         function remove(isCancel) {
-            box.forceClose(); // no need to send an event because nothing else has access to this
+            isRemoving = true;
+            box.close();
             cover.remove();
             resolve(isCancel); // emulate normal confirm() behavior
         }
@@ -219,11 +224,16 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
 
         // remove window on red x pushed
         wind.addEventListener("window-destroy", ()=>{
-            remove(true);
-        });
+            if(!isRemoving) {
+                cover.remove();
+                resolve(false);
+            }
+        }, { once:true });
+        let isRemoving = false;
 
         function remove(isCancel) {
-            box.forceClose(); // no need to send an event because nothing else has access to this
+            isRemoving = true;
+            box.close();
             cover.remove();
             resolve(!isCancel); // emulate normal confirm() behavior
         }
@@ -255,6 +265,7 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
         document.addEventListener("keydown", keydownHandler);
     });
 }
+
 
 function coverScreen() {
     // cover screen

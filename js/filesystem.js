@@ -263,11 +263,11 @@ class FileSystem {
         this.dispatchUpdate(fRefParent, { type: "remove", pathAffected: recreationPath });
     }
 
-    static removeAsSubfolder(parentPath, removePath, replacement=undefined) {
+    static removeAsSubfolder(parentPath, removePath, replacementPath=undefined) {
         let oldParentSubs = folders[parentPath].subfolders;
-        if(replacement) {
-            folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1, replacement);
-            this.dispatchUpdate(parentPath, { type: "add", pathAffected: replacement });
+        if(replacementPath) {
+            folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1, replacementPath);
+            this.dispatchUpdate(parentPath, { type: "add", pathAffected: replacementPath });
         } else {
             folders[parentPath].subfolders.splice(oldParentSubs.indexOf(removePath), 1);
         }
@@ -349,7 +349,6 @@ class FileSystem {
     static dispatchUpdate(parentPath, actions) {
         fileSystemUpdate.parentPath = parentPath;
         fileSystemUpdate.actions = actions;
-        // console.log("Dispatching event with actions", actions, "parentPath = ", parentPath)
         document.dispatchEvent(fileSystemUpdate);
     }
 

@@ -498,8 +498,14 @@ button:active {
     padding-bottom: 0.1em;
     transition: background-color 0.1s, color 0.1s;
 }
-.top-bar-top-specific-item {
+.top-bar-top-name {
     font-weight: bolder;
+    margin-top: -0.1em;
+    padding: 0 0;
+    color:rgb(0, 0, 0);
+}
+.top-bar-top-specific-item {
+    font-weight: normal;
 }
 .top-bar-top-specific-item::first-letter {
     text-decoration: underline;

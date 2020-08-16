@@ -71,6 +71,8 @@ class Desktop extends FileViewer {
         this.hasFocus = true;
         TopBar.clear();
 
+        TopBar.addName("Desktop");
+
         // FILE
         TopBar.addToTop("File", "file");
 

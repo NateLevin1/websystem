@@ -92,7 +92,7 @@ class Window {
       });
 
       this.window.addEventListener('window-destroy', ()=>{
-        if(parseInt(this.window.style.zIndex) >= 10) { // prevents closing background windows from taking focus
+        if(parseInt(this.window.style.zIndex) >= 39) { // prevents closing background windows from taking focus
           // reset topbar
           TopBar.clear();
           // give focus to next most focused
@@ -220,7 +220,7 @@ class Window {
     giveFocus() {
       this.hasFocus = true;
       if(this.useZIndexes) {
-        this.window.style.zIndex = 10;
+        this.window.style.zIndex = 40;
       }
       // correct topbar
       TopBar.clear();

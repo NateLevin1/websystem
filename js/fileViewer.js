@@ -529,7 +529,7 @@ class FileViewer {
                     this.shownSubfolders.splice(this.shownSubfolders.indexOf(pathAffected), 1);
                 } else if(type == "rename" && this.shownSubfolders.includes(renameOldPath)) {
 
-                    // TODO: Change this so that it does not delete and re-add. Make it so that it *changes* the element e that is removed on line 536 instead of removing it and re adding its renamed version
+                    // TODO: Change this so that it does not delete and re-add. Make it so that it *changes* the element e that is removed after the if statement instead of removing it and re adding its renamed version
 
                     let subs = this.background.querySelectorAll(".icon-container");
                     subs.forEach((e)=>{ // remove if is affected
@@ -548,6 +548,8 @@ class FileViewer {
                     }
                     this.shownSubfolders.push(pathAffected);
                 }
+            } else if(event.actions.type == "remove" && event.actions.pathAffected == this.currentFolder) {
+                this.win.close();
             }
         });
     }
@@ -699,6 +701,9 @@ class FileViewer {
         }
 
         newFolderContainer.addEventListener('contextmenu', ()=>{
+            // unselect all folders that aren't in the current window
+            this.unselectNotInView();
+
             selectElement(event, newFolderContainer, false);
         });
         if(!this.disableRightClick) {
@@ -863,6 +868,9 @@ class FileViewer {
             }
         }
         newFileContainer.addEventListener("contextmenu", (event)=>{
+            // unselect all folders that aren't in the current window
+            this.unselectNotInView();
+
             selectElement(event, newFileContainer, false);
         });
         if(!this.disableRightClick) {
@@ -1023,6 +1031,7 @@ class FileViewer {
         if(addFolder) { // false on folder make
             this.createFolder("", this.currentFolder+name+"/", !this.win, true);
         }
+        this.shownSubfolders.push(path); 
     }
 
     _addFolderToDifferentLocation(name, parentPath) {
@@ -1051,6 +1060,8 @@ class FileViewer {
             num++;
         }
 
+        this.shownSubfolders.push(path); 
+
         if(filekind == "Music") {
             // read tags in worker
             let reader = new Worker("js/getMusicTagsWorker.js");
@@ -1077,9 +1088,6 @@ class FileViewer {
         
     }
 
-    _delete(path) {
-        console.log("Deleted "+path);
-    }
     /**
      * Allows the user to upload one or more files and will add it to the current folder.
      */
@@ -1157,6 +1165,26 @@ class FileViewer {
      */
     setCurrentFolder(str) {
         this.currentFolder = str;
+    }
+
+    /**
+     * Unselect all files that are in other FileViewer instances
+     */
+    unselectNotInView() {
+        let selected = this.background.querySelectorAll(".icon-selected");
+        selected = Array.from(selected);
+
+        let allSelected = document.querySelectorAll(".icon-selected");
+        allSelected = Array.from(allSelected);
+        
+        allSelected = allSelected.filter((element)=>{ // get all selected that aren't in the current window
+            return !selected.includes(element);
+        });
+
+
+        allSelected.forEach((element)=>{
+            element.classList.remove("icon-selected");
+        });
     }
 }
 

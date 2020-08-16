@@ -10,7 +10,7 @@ window.alert = (message, fontSize="1.2")=>{
     let box = makeAlertWindow("Alert");
 
     let wind = box.getWindow();
-    wind.style.zIndex = "13";
+    wind.style.zIndex = "42";
 
     let container = makeContainer(wind);
 
@@ -79,7 +79,7 @@ window.prompt = (message, defaultValue="", fontSize="1.2")=>{
         let box = makeAlertWindow("Prompt");
 
         let wind = box.getWindow();
-        wind.style.zIndex = "13";
+        wind.style.zIndex = "42";
 
         let container = makeContainer(wind);
 
@@ -169,7 +169,7 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
         let box = makeAlertWindow("Confirm");
 
         let wind = box.getWindow();
-        wind.style.zIndex = "13";
+        wind.style.zIndex = "42";
 
         let container = makeContainer(wind);
 
@@ -264,7 +264,7 @@ function coverScreen() {
     cover.style.position = "absolute";
     cover.style.top = "0";
     cover.style.left = "0";
-    cover.style.zIndex = "12";
+    cover.style.zIndex = "41";
     let coversLength = mainContent.querySelectorAll(".semi-screen-cover").length;
     if(coversLength < 3) {
         cover.style.backgroundColor = "rgba(0,0,0,0.25)";

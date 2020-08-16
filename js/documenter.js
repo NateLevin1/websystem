@@ -78,7 +78,7 @@ class Documenter {
 
 
         this.window.addEventListener("window-destroy", (event)=>{
-            if(this.needsToSave) {
+            if(this.needsToSave && (this.path ? true : !!this.editor.getData())) {
                 event.preventClose = true;
                 event.message = "Are you sure you want to exit? You have not saved your work."
             }
@@ -94,9 +94,9 @@ class Documenter {
         let exportOptions = TopBar.addToMenu("Export  ▶", "file", undefined, {clickable: false});
         TopBar.addSecondaryListenerForItem({el: exportOptions, name:"export"});
 
-        TopBar.addToMenu("HTML (Browser/Web)", "export", ()=>{ 
-            console.log(this.editor.getData());
-        });
+        // TopBar.addToMenu("HTML (Browser/Web)", "export", ()=>{ 
+        //     console.log(this.editor.getData());
+        // });
 
         TopBar.addToMenu("Print", "export", ()=>{
             this.print();

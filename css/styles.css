@@ -443,9 +443,10 @@ button:active {
     flex-grow: 1;
     max-width: 10.8em;
     min-width: 8em;
-    background-color: rgba(206, 206, 206, 0.98);
+    background-color: rgba(228, 228, 228, 0.96);
     color: rgb(2, 6, 14);
     overflow:auto;
+    border-right: 2px solid rgba(0, 0, 0, 0.1);
 }
 .file-sidebar file-heading { /* Subheading things */
     font-weight: bold;
@@ -473,7 +474,7 @@ button:active {
     background-color: rgba(255, 255, 255, 0.9);
     width: 100%;
     height: 1.7em;
-    z-index:12;
+    z-index:51;
     position: absolute;
     box-shadow: 0 0.5em 0.5em rgba(0,0,0,0.2); /* Box Shadow */
     color: black;
@@ -517,7 +518,7 @@ button:active {
     color:black;
     transition: opacity 0.2s;
     opacity: 1;
-    z-index:11;
+    z-index:50;
 }
 .top-bar-menu-invisible {
     opacity: 0;
@@ -574,6 +575,9 @@ button:active {
     }
     .file-sidebar {
         background-color: rgba(255, 255, 255, 0.8);
+        /* Lower the brightness */
+        backdrop-filter: blur(10px) brightness(60%);
+        -webkit-backdrop-filter: blur(10px) brightness(60%);
     }
     .top-bar {
         background-color: rgba(255, 255, 255, 0.8);

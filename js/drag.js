@@ -47,7 +47,7 @@ document.addEventListener("dragstart", function(event) {
         selDiv.style.position = "absolute";
         selDiv.style.top = "100px";
         selDiv.style.left = "100px";
-        selDiv.style.zIndex = "20";
+        selDiv.style.zIndex = "48";
         selDiv.style.width = window.getComputedStyle(event.target).getPropertyValue("width");
 
         document.body.appendChild(selDiv);

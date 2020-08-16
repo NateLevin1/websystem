@@ -7,11 +7,15 @@ class Documenter {
         if(!path) {
             filename = "Untitled";
             path = "";
+            this.extension = "html";
+        } else {
+            this.extension = folders[path].extension.substring(1);
         }
 
         this.path = path;
         let title = "Documenter - "+filename;
         this.title = title;
+        this.filename = filename;
         let win = new Window(260, 370, title, 37, 35,{x: 5, y: 4, topBarCreator: this.createTopBar, thisContext: this });
         this.window = win.getWindow();
         this.header = win.getHeader();
@@ -36,12 +40,17 @@ class Documenter {
             content = folders[path].content;
         }
         if(content) {
-            page.innerHTML = content;
+            page.innerHTML = content.replace(/\n/g, "<br>");
+        }
+
+        let tools = ['heading', '|', "fontFamily", "fontSize", "fontColor", "fontBackgroundColor", "|", "bold", "italic", "underline", "strikethrough", "|", "alignment", "|", "numberedList", "bulletedList", "|", "indent", "outdent", "|", "link", "blockQuote", "insertTable", "mediaEmbed", "|", "undo", "redo"];
+        if(this.extension == "txt") {
+            tools = ["numberedList", "bulletedList", "|", "undo", "redo"];
         }
 
         DecoupledEditor
         .create(page, {
-            toolbar: ['heading', '|', "fontFamily", "fontSize", "fontColor", "fontBackgroundColor", "|", "bold", "italic", "underline", "strikethrough", "|", "alignment", "|", "numberedList", "bulletedList", "|", "indent", "outdent", "|", "link", "blockQuote", "insertTable", "mediaEmbed", "|", "undo", "redo"],
+            toolbar: tools,
             placeholder: "Type here..."
         })
         .then((editor)=>{
@@ -54,6 +63,8 @@ class Documenter {
             toolbarContainer.appendChild( editor.ui.view.toolbar.element );
             contentContainer.appendChild(pageContainer);
 
+            this.currentSavedValue = editor.getData();
+            this.needsToSave = !path;
             this.checkIfNeedsToSave(); // once editor loaded
         })
         .catch((error)=>{
@@ -70,8 +81,8 @@ class Documenter {
                 }
             }
         });
-        this.currentSavedValue = content;
-        this.needsToSave = !path;
+        
+
         page.addEventListener("keyup", ()=>{
             this.checkIfNeedsToSave();
         });
@@ -94,10 +105,6 @@ class Documenter {
         let exportOptions = TopBar.addToMenu("Export  ▶", "file", undefined, {clickable: false});
         TopBar.addSecondaryListenerForItem({el: exportOptions, name:"export"});
 
-        // TopBar.addToMenu("HTML (Browser/Web)", "export", ()=>{ 
-        //     console.log(this.editor.getData());
-        // });
-
         TopBar.addToMenu("Print", "export", ()=>{
             this.print();
         });
@@ -105,7 +112,29 @@ class Documenter {
         TopBar.addToMenu("Save", "file", this.save.bind(this));
         TopBar.addToMenu("Save As", "file", this.saveAs.bind(this));
 
-
+        TopBar.addToMenuIf(()=>{ return this.extension == "html"; }, "Save as .txt", "file", ()=>{
+            prompt("Please enter a name for the file", this.filename.replace(".html", ".txt"))
+            .then((name)=>{
+                if(name) { // alert() returns null when cancel is pressed
+                    if(name.endsWith(".txt")) {
+                        name = name.substring(0, name.length - 4);
+                    }
+                    FileSystemGUI.requestDirectory()
+                    .then((dir)=>{
+                        let html = this.editor.getData();
+                        let txt = this.htmlToTXT(html);
+                        
+                        FileSystem.addFileAtLocation(name+".txt", txt, "Text", dir)
+                        [0].then(()=>{ // [0] to get the folders setItem as there isn't a files one (text)
+                            new Documenter(name+".txt", dir+name+".txt"+"/");
+                        });
+                    })
+                    .catch(()=>{
+                        // saving canceled
+                    });
+                }
+            });
+        }, {thisContext: this});
 
         TopBar.addToMenu("Close Window", "file", ()=>{ this.win.close(); });
     
@@ -139,22 +168,29 @@ class Documenter {
             this.saveAs();
         } else {
             let data = this.editor.getData();
-            FileSystem.updateContent(this.path, data);
             this.currentSavedValue = data;
+            if(this.extension == "txt") {
+                data = this.htmlToTXT(data.replace(/<br>/g, "\n"));
+            }
+            FileSystem.updateContent(this.path, data);
+            this.checkIfNeedsToSave();
         }
     }
 
-    saveAs() {
+    saveAs(fileExtension="html") {
         prompt("Please enter a name for the file")
         .then((name)=>{
             if(name) { // alert() returns null when cancel is pressed
+                if(name.endsWith("."+fileExtension)) {
+                    name = name.substring(0, name.length - (fileExtension.length+1));
+                }
                 FileSystemGUI.requestDirectory()
                 .then((dir)=>{
-                    FileSystem.addFileAtLocation(name+".html", this.editor.getData(), "Text", dir)
+                    FileSystem.addFileAtLocation(name+"."+fileExtension, this.editor.getData(), "Text", dir)
                     [0].then(()=>{ // [0] to get the folders setItem as there isn't a files one (text)
-                        this.path = dir+name+".html/";
+                        this.path = dir+name+"."+fileExtension+"/";
                         this.currentSavedValue = this.editor.getData();
-                        this.title = "Documenter - "+name+".html";
+                        this.title = "Documenter - "+name+"."+fileExtension;
                         this.checkIfNeedsToSave();
                     });
                 })
@@ -243,11 +279,63 @@ class Documenter {
         }
         
     }
+
+    htmlToTXT(html) {
+        let txt = html;
+
+        // make ordered lists work
+        txt = txt.replace(/<ol>((?:<li>[^<]+<\/li>)+)<\/ol>/gi, (match, g1)=>{
+            let result = "\n";
+            const replaceLiRegex = /<li>([^<]+)<\/li>/g;
+            let liReplacers = [...g1.matchAll(replaceLiRegex)];
+            liReplacers.forEach((arr, index)=>{
+                // arr[1] is the capture group's content
+                result += (index+1).toString() + ". " + arr[1]+"\n"; 
+            });
+            return result;
+        });
+
+        // make unordered lists work
+        txt = txt.replace(/<ul>((?:<li>[^<]+<\/li>)+)<\/ul>/gi, (match, g1)=>{
+            let result = "\n";
+            const replaceLiRegex = /<li>([^<]+)<\/li>/g;
+            let liReplacers = [...g1.matchAll(replaceLiRegex)];
+            liReplacers.forEach((arr)=>{
+                // arr[1] is the capture group's content
+                result += "• " + arr[1]+"\n"; 
+            });
+            return result;
+        });
+
+        // remove starting tags
+        txt = txt.replace(/<[^\/>]+>/gi, "");
+
+        // don't add a newline after a block level element if it is the last one
+        txt = txt.replace(/(?:<\/p>$|<\/li>$|<\/ol>$|<\/h\d>$|<\/pre>$|<\/div>$|<\/ul>$)/gi, "");
+
+        // add newlines after block level elements
+        txt = txt.replace(/(?:<\/p>|<\/li>|<\/ol>|<\/h\d>|<\/pre>|<\/div>|<\/ul>)/gi, "\n");
+        
+        // remove ending tags
+        txt = txt.replace(/<\/[^>]+>/gi, "");
+
+        // get rid of nbsp
+        txt = txt.replace(/&nbsp;/g, "");
+        
+        return txt;
+    }
 }
 
 appImagePaths["Documenter"] = "assets/documenter.png";
 makeFunctions["Documenter"] = ()=>{ new Documenter; };
-
+fileNewPossibilities.push(
+    {
+        name: "Document",
+        callback: (path)=>{
+            FileSystem.addFileAtLocation("New File.html", "", "Text", path);
+        }
+    }
+)
 
 // The CSS Code is taken from the following CKEditor tutorial:
 // https://ckeditor.com/docs/ckeditor5/latest/framework/guides/deep-dive/ui/document-editor.html

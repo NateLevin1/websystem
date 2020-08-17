@@ -38,9 +38,7 @@ class Desktop extends FileViewer {
         
 
         document.addEventListener("window-focus", (event)=>{
-            if(event.window != "DESKTOP") { // there is a window
-                this.hasFocus = false;
-            } else { // there are no windows, desktop should get focus
+            if(event.window == "DESKTOP") { // there are no windows, desktop should get focus
                 this.focusDesktop();
             }
         });
@@ -54,9 +52,7 @@ class Desktop extends FileViewer {
 
     focusDesktop() {
         // show top bar
-        if(!this.hasFocus) {
-            this.createTopBar();
-        }
+        this.createTopBar();
     }
 
     deselect(event) {
@@ -68,7 +64,6 @@ class Desktop extends FileViewer {
     }
 
     createTopBar() {
-        this.hasFocus = true;
         TopBar.clear();
 
         TopBar.addName("Desktop");

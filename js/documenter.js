@@ -73,14 +73,18 @@ class Documenter {
 
 
         // LISTENERS
-        document.addEventListener('keydown', (event)=>{
+        const keydownHandler = (event)=>{
+            if(this.win.isClosed()) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
             if(this.win.focused()) {
                 if ((window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)  && event.keyCode == 83) {
                     event.preventDefault();
                     this.save();
                 }
             }
-        });
+        }
+        document.addEventListener('keydown', keydownHandler);
         
 
         page.addEventListener("keyup", ()=>{

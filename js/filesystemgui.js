@@ -47,7 +47,7 @@ class FileSystemGUI {
 
 
             const oneSelected = ()=>{
-                if(!filesContainer) {
+                if(win.isClosed()) {
                     document.removeEventListener("mouseup", oneSelected);
                 }
                 // remove selection from any others
@@ -246,7 +246,7 @@ class FileSystemGUI {
 
 
             const oneSelected = ()=>{
-                if(!filesContainer) {
+                if(win.isClosed()) {
                     document.removeEventListener("mouseup", oneSelected);
                 }
                 // remove selection from any others

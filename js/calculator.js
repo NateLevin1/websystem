@@ -194,7 +194,11 @@ class Calculator {
 
 
         // KEYBOARD SHORTCUTS
-        document.addEventListener("keydown", event => {
+        const shortcutHandler = (event) => {
+            console.log("keydown in calc");
+            if(this.win.isClosed()) {
+                document.removeEventListener("keydown", shortcutHandler);
+            }
             if(this.win.focused()) { // only count if focused
                 let key = event.key;
                 this.pressButton(key);
@@ -216,7 +220,9 @@ class Calculator {
                     this.pressButton("x");
                 }
             }
-          });
+        }
+
+        document.addEventListener("keydown", shortcutHandler);
     }
     updateScreen(text="") {
         if(text) {

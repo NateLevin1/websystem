@@ -54,6 +54,9 @@ window.alert = (message, fontSize="1.2")=>{
 
 
     const keydownHandler = (event)=>{
+        if(box.isClosed()) {
+            document.removeEventListener("keydown", keydownHandler);
+        }
         if(event.key == "Enter" || event.key == " ") {
             box.close();
             cover.remove();
@@ -241,6 +244,9 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
         let cancelFocused = defaultCancel;
 
         const keydownHandler = (event)=>{
+            if(box.isClosed()) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
             if(event.key == "Enter" || event.key == " ") {
                 remove(cancelFocused);
             }

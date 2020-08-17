@@ -448,7 +448,10 @@ class FileViewer {
         var top = 0;
         var isShown = false;
 
-        document.addEventListener("mousemove", (event)=>{
+        const moveHandler = (event)=>{
+            if(this.win.isClosed()) {
+                document.removeEventListener("mousemove", moveHandler);
+            }
             if(isShown) {
                  // Below is from 1st comment on https://stackoverflow.com/a/48970682. It returns true if the left mouse button is down, regardless of the other buttons.
                 if(event.buttons & 1 === 1) {
@@ -488,9 +491,14 @@ class FileViewer {
                 }
             }
            
-        });
+        }
 
-        document.addEventListener("mouseup", ()=>{ // the document because the mouseup doesn't have to occur on the background
+        document.addEventListener("mousemove", moveHandler);
+
+        const mouseUpHandler = ()=>{ // the document because the mouseup doesn't have to occur on the background
+            if(this.win.isClosed()) {
+                document.removeEventListener("mouseup", mouseUpHandler);
+            }
             if(isShown) {
                 isShown = false;
                 box.style.display = "none";
@@ -507,10 +515,14 @@ class FileViewer {
                     }
                 });
             }
-        });
+        }
+        document.addEventListener("mouseup", mouseUpHandler);
     }
     addSystemUpdateListeners() {
-        document.addEventListener("file-system-update", (event)=>{
+        const updateHandler = (event)=>{
+            if(this.win.isClosed()) {
+                document.removeEventListener("file-system-update", updateHandler);
+            }
             if(event.parentPath == this.currentFolder) {
                 let { type, pathAffected, renameOldPath } = event.actions;
                 let fRef = folders[pathAffected];
@@ -518,7 +530,7 @@ class FileViewer {
                 if(type == "add" && !this.shownSubfolders.includes(pathAffected)) { // if adding and it doesn't exist
                     fRef = folders[pathAffected];
                     if(!fRef.isFile) {
-                        this.createFolder(fRef.name, pathAffected, !this.win, true);
+                        this.createFolder(fRef.name, pathAffected, !this.window, true);
                     } else {
                         this.createFile(fRef.name, pathAffected, fRef.kind, true);
                     }
@@ -546,7 +558,7 @@ class FileViewer {
 
                     fRef = folders[pathAffected];
                     if(!fRef.isFile) {
-                        this.createFolder(fRef.name, pathAffected, !this.win, true);
+                        this.createFolder(fRef.name, pathAffected, !this.window, true);
                     } else {
                         this.createFile(fRef.name, pathAffected, fRef.kind, true);
                     }
@@ -557,7 +569,8 @@ class FileViewer {
             } else if(event.actions.type == "rename" && event.actions.renameOldPath == this.currentFolder) {
                 this.win.close();
             }
-        });
+        }
+        document.addEventListener("file-system-update", updateHandler);
     }
     /**
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
@@ -668,7 +681,7 @@ class FileViewer {
         text.innerText = name;
         newFolderContainer.appendChild(text);
 
-        if(!this.win) { // desktop
+        if(!this.window) { // desktop
             text.classList.add("desktop-text");
         }
     
@@ -846,7 +859,7 @@ class FileViewer {
         text.draggable = false;
         newFileContainer.appendChild(text);
 
-        if(!this.win) { // desktop
+        if(!this.window) { // desktop
             text.classList.add("desktop-text");
         }
         name = null; // no longer needed, let garbage collect
@@ -938,7 +951,7 @@ class FileViewer {
                 alert("Opened File '"+folders[path].name+"'!");
             }
         } else { // folder
-            if(newFolderWindow || !this.win) { // desktop returns true for second
+            if(newFolderWindow || !this.window) { // desktop returns true for second
                 let n = new FileViewer;
                 n.openFolderWindow(path);
             } else {
@@ -962,7 +975,7 @@ class FileViewer {
     makeNewFolder() {
         try { // safety
             var blankFolder;
-            if(this.win) { // file viewer
+            if(this.window) { // file viewer
                 blankFolder = this.createFolder("untitled folder", "", false, true);
             } else { // desktop
                 blankFolder = this.createFolder("untitled folder", "", true, true);
@@ -1043,7 +1056,7 @@ class FileViewer {
         }
         FileSystem.addFolderAtLocation(name, this.currentFolder);
         if(addFolder) { // false on folder make
-            this.createFolder("", this.currentFolder+name+"/", !this.win, true);
+            this.createFolder("", this.currentFolder+name+"/", !this.window, true);
         }
         this.shownSubfolders.push(path); 
     }

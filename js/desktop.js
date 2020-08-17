@@ -35,7 +35,7 @@ class Desktop extends FileViewer {
         super.setCurrentFolder("/Users/"+NAME+"/Desktop/");
         this.setCurrentFolder("/Users/"+NAME+"/Desktop/");
 
-        
+        super.win = {isClosed: ()=>{return false}}
 
         document.addEventListener("window-focus", (event)=>{
             if(event.window == "DESKTOP") { // there are no windows, desktop should get focus

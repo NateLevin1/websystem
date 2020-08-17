@@ -75,7 +75,10 @@ class ImageViewer {
         });
 
         // keyboard shortcuts
-        document.addEventListener("keydown", (event)=>{
+        const shortcutHandler = (event)=>{
+            if(!this.win.isClosed()) {
+                document.removeEventListener("keydown", shortcutHandler);
+            }
             if(this.win.focused()) {
                 if(event.metaKey || event.ctrlKey) {
                     if(event.key == "=" || event.key == "+") {
@@ -102,7 +105,8 @@ class ImageViewer {
                     }
                 }
             }
-        });
+        }
+        document.addEventListener("keydown", shortcutHandler);
     }
 
     openInStandalone() {

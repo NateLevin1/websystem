@@ -85,13 +85,17 @@ class Window {
         }
       }
 
-      document.addEventListener('window-focus', (event)=>{
-          if(event.window == this.window) {
-            this.giveFocus();
-          } else {
-            this.removeFocus();
-          }
-      });
+      const windowFocusHandler = (event)=>{
+        if(this.isClosed()) {
+          document.removeEventListener("window-focus", windowFocusHandler);
+        }
+        if(event.window == this.window) {
+          this.giveFocus();
+        } else {
+          this.removeFocus();
+        }
+      }
+      document.addEventListener('window-focus', windowFocusHandler);
 
       this.window.addEventListener('window-destroy', (event)=>{
         setTimeout(()=>{
@@ -476,6 +480,7 @@ class Window {
      * @param {Boolean} [fade=true] - Whether or not to fade out when closing the window
      */
     forceClose(fade=true) {
+      this.closed = true;
       if(fade) {
         this.window.classList.remove("window-slow");
         this.window.classList.add("window-fast");
@@ -488,6 +493,10 @@ class Window {
           this.window.remove();
         }, 50);
       }
+    }
+
+    isClosed() {
+      return this.closed;
     }
 }
 

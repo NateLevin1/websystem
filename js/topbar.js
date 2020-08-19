@@ -68,7 +68,7 @@ class TopBar {
         TopBar.addListenerForItem({el: info, name:"info"});
 
         TopBar.addToMenu("About WebSystem", "info", ()=>{ 
-            console.log("Create new window with about");
+            About.newWindow("WebSystem", "The online operating system.", "0.1.0", "assets/logo.png")
         });
         TopBar.addLineToMenu("info");
         TopBar.addToMenu("Go To Github", "info", ()=>{ 

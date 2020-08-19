@@ -167,8 +167,8 @@ window.prompt = (message, defaultValue="", fontSize="1.2")=>{
 /**
  * Confirm something. Similar to window.confirm(), though is asynchronous and returns a promise.
  * @param {String} message 
- * @param {Boolean} defaultCancel 
- * @param {fontSize} fontSize 
+ * @param {Boolean} [defaultCancel=true] 
+ * @param {String} [fontSize="1.2"] 
  * @returns {Promise} Unlike normal window.confirm(), since other things can run in the background, this returns an asynchronous promise that resolves <code>true</code> if OK was pressed and <code>false</code> if Cancel was pressed.
  */
 window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{

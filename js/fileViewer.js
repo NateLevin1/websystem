@@ -103,11 +103,17 @@ class FileViewer {
         RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.moveSelectedToTrash.bind(this));
 
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
-            let subs = folders[trashPath].subfolders;
-            subs.forEach((path)=>{
-                FileSystem.deleteFolderAtLocation(path);
+            // confirm if the user pressed the right thing
+            confirm("Are you sure you want to permanently erase all items in the trash? This cannot be undone.")
+            .then((decision)=>{
+                if(decision) {
+                    let subs = folders[trashPath].subfolders;
+                    subs.forEach((path)=>{
+                        FileSystem.deleteFolderAtLocation(path);
+                    });
+                    folders[trashPath].subfolders = []; // remove old subfolders
+                }
             });
-            folders[trashPath].subfolders = []; // remove old subfolders
         });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line

@@ -453,19 +453,45 @@ button:active {
     font-size:1em;
     margin: 0.2em 0.2em;
 }
-.file-sidebar file-member { /* Subheading things */
+.file-member {
+    position: relative;
+}
+.file-sidebar .file-member { /* Subheading things */
     font-weight: normal;
     font-size:0.9em;
     margin: 0.4em 1.2em;
     display: block;
 }
-.file-sidebar file-member.file-member-selected { /* Selected subheading things */
+.file-sidebar .file-member.file-member-selected { /* Selected subheading things */
     background-color: rgba(0, 0, 0, 0.08);
 }
 .ellipsis-overflow {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+.file-member-deleter {
+    position: absolute;
+    right:0.3em;
+    top:0.6em;
+    display:inline-block;
+    transition: opacity 0.35s;
+    opacity:0;
+    color: white;
+    background-image: url("../assets/fileviewerx.png");
+    background-size:0.6em;
+    width: 0.6em;
+    height:0.6em;
+}
+.file-member:hover .file-member-deleter {
+    opacity:1;
+}
+.file-member:hover .file-member-text {
+    width:65%;
+}
+.file-member-text {
+    display:inline-block;
+    width:70%;
 }
 /* END FILE SYSTEM */
 

@@ -7,11 +7,7 @@ importScripts("instances.js");
 onmessage = function (event) {
     localforage.clear().then(()=>{ // wait until cleared
     const NAME = event.data;
-    filesystem.setItem("account", {accounts:[NAME], admin:NAME}).then(()=>{
-        filesystem.getItem("account").then((result)=>{
-            // console.log(result);
-        });
-    });
+    filesystem.setItem("account", {accounts:[NAME], admin:NAME});
     let currentDate = Date.now();
     let defaultMeta = {
         size:0,

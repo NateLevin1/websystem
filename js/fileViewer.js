@@ -5,6 +5,8 @@ GlobalStyle.newClass("file-documents::before", "content:'📝 ';"); // TODO Repl
 GlobalStyle.newClass("file-applications::before", "content:'💾 ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-downloads::before", "content:'⬇ ';"); // TODO Replace with nice graphics
 GlobalStyle.newClass("file-desktop::before", "content:'🖥 ';"); // TODO Replace with nice graphics
+GlobalStyle.newClass("file-viewer-add", "color:rgba(0,0,0,0.5);", "text-align: center;", "font-size: 1.1em;", "transition: color 0.2s;");
+GlobalStyle.newClass("file-viewer-add:active", "color:rgba(0,0,0,0.8);");
 
 /**
  * The class which holds the interface for the file viewer.
@@ -198,52 +200,36 @@ class FileViewer {
         let favoritesDiv = document.createElement("div");
         this.sidebar.appendChild(favoritesDiv);
 
-        // heading 1 content
-        let documents = document.createElement("file-member");
-        documents.classList.add("ellipsis-overflow", "file-documents", "clickable", "unselectable");
-        documents.innerHTML = "Documents";
-        documents.setAttribute("path", "/Users/"+NAME+"/Documents/");
-        favoritesDiv.appendChild(documents);
-        
-        let applications = document.createElement("file-member");
-        applications.classList.add("ellipsis-overflow", "file-applications", "clickable", "unselectable");
-        applications.innerHTML = "Applications";
-        applications.setAttribute("path", "/Users/"+NAME+"/Applications/");
-        favoritesDiv.appendChild(applications);
 
-        let downloads = document.createElement("file-member");
-        downloads.classList.add("ellipsis-overflow", "file-downloads", "clickable", "unselectable");
-        downloads.innerHTML = "Downloads";
-        downloads.setAttribute("path", "/Users/"+NAME+"/Downloads/");
-        favoritesDiv.appendChild(downloads);
+        let sides = account["file-viewer-sidebar"];
+        sides.forEach((obj)=>{
+            let folder = this.createSidebarItem(obj.name, obj.path, obj.class);
+            favoritesDiv.appendChild(folder);
+        });
 
-        let desktop = document.createElement("file-member");
-        desktop.classList.add("ellipsis-overflow", "file-desktop", "clickable", "unselectable");
-        desktop.innerHTML = "Desktop";
-        desktop.setAttribute("path", "/Users/"+NAME+"/Desktop/");
-        favoritesDiv.appendChild(desktop);
+        let addButton = document.createElement("div");
+        addButton.classList.add("clickable", "unselectable", "file-viewer-add");
+        addButton.textContent = "+";
+        addButton.onclick = ()=>{
+            FileSystemGUI.requestDirectory()
+            .then((path)=>{
+                if(!account["file-viewer-sidebar"].map((obj)=>{return obj.path}).includes(path)) {
+                    // add to system
+                    account["file-viewer-sidebar"].push({name: folders[path].name, path:path});
+                    FileSystem.setAccountDetail("file-viewer-sidebar", account["file-viewer-sidebar"]);
 
-        let folder1 = document.createElement("file-member");
-        folder1.classList.add("ellipsis-overflow", "file-folder", "clickable", "unselectable");
-        folder1.innerHTML = "WebSystem";
-        folder1.setAttribute("path", "/Users/"+NAME+"/Desktop/WebSystem/");
-        favoritesDiv.appendChild(folder1);
-
-        let favoritedElements = favoritesDiv.querySelectorAll("file-member");
-        if(favoritedElements) {
-            favoritedElements.forEach((element)=>{
-                // selection
-                if(element.innerHTML == folders[this.currentFolder].name) {
-                    element.classList.add("file-member-selected");
+                    // update display
+                    fileViewerUserSidebarChange.actions = {type: "add", path: path};
+                    document.dispatchEvent(fileViewerUserSidebarChange);
+                } else {
+                    // path is already a favorite, go to the folder
+                    this.openFolder(path);
                 }
-
-                // Click handling
-                element.onclick = (event)=>{
-                    this.openFolder(element.getAttribute("path"));
-                }
-
-            });
+            })
+            .catch(()=>{});
         }
+        favoritesDiv.appendChild(addButton);
+        this.favoritesDiv = favoritesDiv;
 
         this.contentContainer.insertBefore(this.sidebar, this.background);
     }
@@ -269,8 +255,10 @@ class FileViewer {
     moveSelectedToTrash() {
         let selected = mainContent.querySelectorAll(".icon-selected");
         selected.forEach((element)=>{
-            this.background.removeChild(element);
-            FileSystem.moveFile(element.getAttribute("path"), trashPath);
+            if(FileSystem.moveFile(element.getAttribute("path"), trashPath)) { 
+                // the if statement returns false if moving is impossible
+                this.background.removeChild(element);
+            }
         });
     }
     rename() {
@@ -568,9 +556,63 @@ class FileViewer {
                 this.win.close();
             } else if(event.actions.type == "rename" && event.actions.renameOldPath == this.currentFolder) {
                 this.win.close();
+            } else if(!!this.sidebar && event.actions.type == "remove" && this.sidebar.querySelector(`file-member[path='${event.actions.pathAffected}']`)) {
+                this.sidebar.querySelector(`file-member[path='${event.actions.pathAffected}']`).remove();
             }
         }
         document.addEventListener("file-system-update", updateHandler);
+        
+        // Sidebar update listeners
+        const sidebarChangeHandler = (event)=>{
+            if(this.win.isClosed()) {
+                document.removeEventListener("fv-user-sidebar-change", sidebarChangeHandler);
+            } else {
+                if(this.sidebar) {
+                    let {type, path} = event.actions;
+                    if(type == "add") {
+                        let folder = this.createSidebarItem(folders[path].name, path);
+                        this.favoritesDiv.insertBefore(folder, this.favoritesDiv.lastChild);
+                    } else if(type == "remove") {
+                        let toBeRemoved = Array.from(this.favoritesDiv.childNodes).filter((el)=>{return el.getAttribute("path") == path})[0];
+                        toBeRemoved.remove();
+                    }
+                }
+            }
+        }
+        document.addEventListener("fv-user-sidebar-change", sidebarChangeHandler);
+    }
+    createSidebarItem(name, path, newClass=undefined) {
+        let folder = document.createElement("div");
+        folder.classList.add("file-member", "clickable", "unselectable", newClass ? newClass : "file-folder");
+        folder.setAttribute("path", path);
+
+        let text = document.createElement("span");
+        text.classList.add("ellipsis-overflow", "file-member-text");
+        text.textContent = name;
+        folder.appendChild(text);
+
+
+        let deleter = document.createElement("div");
+        deleter.classList.add("file-member-deleter");
+        folder.appendChild(deleter);
+        deleter.onclick = ()=>{
+            let sidebarRefIndex = account["file-viewer-sidebar"].findIndex((val)=>{return val.path == path});
+            account["file-viewer-sidebar"].splice(sidebarRefIndex, 1); // splice operates in place so this is the fastest way to do it afaik
+            FileSystem.setAccountDetail("file-viewer-sidebar", account["file-viewer-sidebar"]);
+            fileViewerUserSidebarChange.actions = {type: "remove", path:path};
+            document.dispatchEvent(fileViewerUserSidebarChange);
+        }
+
+        // selection
+        if(path == this.currentFolder) {
+            folder.classList.add("file-member-selected");
+        }
+
+        // Click handling
+        folder.onclick = ()=>{
+            this.openFolder(path);
+        }
+        return folder;
     }
     /**
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
@@ -1249,4 +1291,29 @@ var fileNewPossibilities = [ // an array that holds all things that come up when
     //         doSomething();
     //     }
     // }
-]; 
+];
+
+var fileViewerUserSidebarChange = new Event("fv-user-sidebar-change");
+
+document.addEventListener("file-system-update", (event)=>{
+    if(sidebarInitialized) {
+        let ind = account["file-viewer-sidebar"].findIndex((val)=>{return val.path == event.actions.pathAffected});
+        if(event.actions.type == "remove" && ind != -1) {
+            account["file-viewer-sidebar"].splice(ind, 1); // splice operates in place so this is the fastest way to do it afaik
+            FileSystem.setAccountDetail("file-viewer-sidebar", account["file-viewer-sidebar"]);
+        }
+    }
+});
+document.addEventListener("file-system-ready", ()=>{
+    if(!account["file-viewer-sidebar"]) {
+        FileSystem.setAccountDetail("file-viewer-sidebar", [
+            {name: "Documents", path: "/Users/"+NAME+"/Documents/", class:"file-documents"},
+            {name: "Applications", path: "/Users/"+NAME+"/Applications/", class:"file-applications"},
+            {name: "Downloads", path: "/Users/"+NAME+"/Downloads/", class:"file-downloads"},
+            {name: "WebSystem", path: "/Users/"+NAME+"/Desktop/WebSystem/"}
+        ]).then(()=>{sidebarInitialized = true;});
+    } else {
+        sidebarInitialized = true;
+    }
+});
+let sidebarInitialized = false;

@@ -177,9 +177,13 @@ class FileSystem {
      * Move a file
      * @param {String} oldPath - The path of the file to be moved
      * @param {String} newParentPath - The new parent of the file
-     * @returns {Boolean} Whether or not the moving is possible. Note that this has nothing to do with whether it actually succeeded. False is returned if the old folder is a parent of the new one (which would otherwise cause an infinite loop).
+     * @returns {Boolean} Whether or not the moving is possible. Note that this has nothing to do with whether it actually succeeded. False is returned if the old folder is a parent of the new one (which would otherwise cause an infinite loop) or if the folder already has the desired parent.
      */
     static moveFile(oldPath, newParentPath) {
+        if(folders[oldPath].parent == newParentPath) {
+            return false;
+        }
+
         let name = folders[oldPath].name;
         let kind = folders[oldPath].kind;
         let path = newParentPath+name+"/";
@@ -367,6 +371,16 @@ class FileSystem {
     static clearAll() {
         localStorage.clear();
         filesystem.clear();
+    }
+
+    /**
+     * Set a value at specified key and save it to the account.
+     * @param {String} key 
+     * @param {Any} newValue 
+     */
+    static setAccountDetail(key, newValue) {
+        account[key] = newValue;
+        return filesystem.setItem("account", account);
     }
 }
 

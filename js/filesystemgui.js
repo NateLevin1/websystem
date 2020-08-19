@@ -1,4 +1,7 @@
 class FileSystemGUI {
+    /**
+     * @returns {Promise} A promise which is resolved with the path if a file is selected and rejected if no file is selected
+     */
     static requestDirectory() {
         return new Promise((resolve, reject)=>{
             let win = new Window(300, 300, "Folder Selection", 27,20, {x: 5, y: 5});
@@ -40,7 +43,7 @@ class FileSystemGUI {
             filesContainer.style.color = "black";
             container.appendChild(filesContainer);
 
-            // viewer instance
+            // for viewer instance
             let background = document.createElement("div");
             background.style.overflowY = "auto"; // scrolling
             background.style.overflowX = "hidden"; // scrolling
@@ -67,14 +70,17 @@ class FileSystemGUI {
                 });
             });
             
-
+            // viewer instance
             let fileViewer = new FileViewer();
             fileViewer.background = background;
             fileViewer.contentContainer = filesContainer;
             fileViewer.disableRightClick = true;
+            fileViewer.window = true; // show up as black among other things
+
             // mock window
             fileViewer.win = {
                 clear: ()=>{background.innerHTML = ""},
+                isClosed: win.isClosed
             };
             fileViewer.openFolder = (path)=>{
                 openFolder(path);
@@ -271,9 +277,11 @@ class FileSystemGUI {
             fileViewer.background = background;
             fileViewer.contentContainer = filesContainer;
             fileViewer.disableRightClick = true;
+            fileViewer.window = true; // show up as black among other things
             // mock window
             fileViewer.win = {
                 clear: ()=>{background.innerHTML = ""},
+                isClosed: win.isClosed
             };
             fileViewer.openFolder = (path)=>{
                 openFolder(path);

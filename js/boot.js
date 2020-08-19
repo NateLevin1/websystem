@@ -50,6 +50,7 @@ function boot() {
             // Set Downloads
             localStorage.setItem('downloads', '');
 
+
             // Setup localforage file system
             if(window.Worker) {
                 let setup = new Worker('js/setup.js');
@@ -118,6 +119,7 @@ function setFileSystem() {
                     FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
                 });
             }
+            document.dispatchEvent(fileSystemReady);
             // add desktop once folders and files is done
             new Desktop;
         });
@@ -187,6 +189,11 @@ var firstLogin = false;
  * @property admin - The admin account on this browser.
  */
 var account = {};
+
+/**
+ * Called on the document when the file system has been fully loaded.
+ */
+var fileSystemReady = new Event("file-system-ready");
 
 // * Debug
 //localStorage.clear();

@@ -660,15 +660,28 @@ button:active {
     display:inline-block;
     margin-right: 1em;
 }
-/* .dock-not-pinned:hover {
-    background-color: rgba(108, 160, 255, 0.25);
+.dock-menu {
+    min-width:4em;
+    background-color:rgba(255,255,255, 0.97);
+    position: absolute;
+    z-index:100;
+    bottom:4.8em;
+    border-radius: 0.3em;
+    color: black;
+    cursor: default;
 }
-.dock-not-pinned .dock-app-thumbnail {
-    max-width: 5em;
-    height: 2.6em;
-    filter: opacity(75%);
-    transform: translateY(-0.1em);
-} */
+.dock-menu::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 0.8em solid transparent;
+    border-right: 0.8em solid transparent;
+    border-top: 0.8em solid rgba(255,255,255, 0.97);
+    position: absolute;
+    bottom:-0.78em;
+    left:0.6em;
+    z-index: -1;
+}
 @keyframes bounce {
     0% {
         transform: translateY(0em);
@@ -686,6 +699,14 @@ button:active {
     }
     100% {
         opacity: 0;
+    }
+}
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }
 @keyframes move-app-left {
@@ -728,6 +749,15 @@ button:active {
     }
     .top-bar {
         background-color: rgba(255, 255, 255, 0.8);
+    }
+    .dock-menu {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+    .dock-menu::before {
+        border-top: 0.8em solid rgba(255,255,255, 0.5);
+        /* The below is a pseudo-element so can;t have the heavy-blurred class. */
+        /* -webkit-backdrop-filter: blur(50px);
+        backdrop-filter: blur(50px); */
     }
 }
 

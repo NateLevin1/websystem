@@ -122,8 +122,10 @@ class Window {
             }
           }
         }, 51);
-        
       });
+
+      // if the app doesn't have a dock right click menu, use the default. Note that this is only run once
+      dock.addDefaults(appName);
 
       windowOpenChangeEvent.actions = {type: "open", affectedAppsPath: pathToApp, originWindow: this}
       document.dispatchEvent(windowOpenChangeEvent);

@@ -8,7 +8,12 @@ class Dock {
         this.pinnedIcons = {};
         this.openIconReference = {};
 
+        this.createMenu();
+
         dockApps.forEach((path)=>{
+            if(folders[path]) { // ignores "|"s
+                this.addDefaults(folders[path].name);
+            }
             this.appendApp(path, "", true);
         });
 
@@ -117,6 +122,7 @@ class Dock {
 
             container.oncontextmenu = (event)=>{
                 event.preventDefault();
+                this.showMenu(event, name, container, originWindow);
             }
 
             let thumbnail = document.createElement("img");
@@ -146,7 +152,132 @@ class Dock {
     insertAppBefore(pathToApp, beforeNode, originWindow={}, isPinned=false) {
         this.bar.insertBefore(this.createApp(pathToApp, originWindow, isPinned), beforeNode);
     }
+
+
+    // RIGHT CLICK
+    createMenu() {
+        let menu = document.createElement("div");
+        menu.classList.add("dock-menu", "heavy-blurred");
+        menu.style.display = "none";
+        this.menu = menu;
+        document.body.appendChild(menu);
+    }
+    showMenu(event, appName, icon, originWindow) {
+        let isOpen = false;
+        if(originWindow) {
+            isOpen = true;
+        }
+        this.menu.style.left = (icon.getBoundingClientRect().left+em/2)+"px";
+        this.menu.style.display = "inline-block";
+        this.menu.innerHTML = "";
+        this.menu.style.animation = "fade-in 0.1s";
+        this.addToMenuByName((appName+"-")+(isOpen ? "open" : "closed"));
+
+        let downTime = event.timeStamp;
+        document.addEventListener("mouseup", (ev)=>{
+            let totalTime = Math.round(ev.timeStamp - downTime);
+            if(totalTime > 200) {
+                this.getMenuSelected(originWindow);
+            } else {
+                // stay until click
+                document.addEventListener("mouseup", (ev)=>{
+                    this.getMenuSelected(originWindow);
+                }, {once: true});
+            }
+        }, {once: true});
+    }
+
+    getMenuSelected(originWindow) {
+        this.menu.childNodes.forEach((node)=>{
+            if(isHover(node)) {
+                rightClickSelect.originWindow = originWindow;
+                node.dispatchEvent(rightClickSelect);
+            }
+        });
+        this.closeMenu();
+    }
+
+    closeMenu() {
+        this.menu.style.animation = "fade-out 0.3s";
+        setTimeout(()=>{
+            this.menu.style.display = "none";
+            this.menu.style.animation = "";
+        }, 280);
+    }
+
+    /**
+     * Add text to the dock's right click menu and run the callback when it is selected.
+     * @param {String} appName - The app's name followed by "-open" or "-closed"
+     * @param {String} text 
+     * @param {Function} callback - The origin Window instance (the class, not the element) is passed in as the first argument.
+     */
+    static addTextToMenuForApp(appName, text, callback) {
+        let el = document.createElement("div");
+        el.classList.add("right-click-menu-member");
+        el.textContent = text;
+        if(menuContent[appName] === undefined) {
+            menuContent[appName] = [];
+        }
+        el.addEventListener("right-click-select", (event)=>{callback(event.originWindow)});
+        menuContent[appName].push(el);
+    }
+
+    static addLineToMenuForApp(appName) {
+        let el = document.createElement("div");
+        el.classList.add("right-click-menu-member-no-hover");
+        if(menuContent[appName] === undefined) {
+            menuContent[appName] = [];
+        }
+        menuContent[appName].push(el);
+    }
+
+    addToMenuByName(name) {
+        menuContent[name].forEach((el)=>{
+            this.menu.appendChild(el);
+        });
+    }
+
+    /**
+     * Add the default options if it doesn't have any
+     * @param {String} appName 
+     */
+    addDefaults(appName) {
+        if(!menuContent[appName+"-open"]) {
+            Dock.addTextToMenuForApp(appName+"-open", "New Window", ()=>{makeFunctions[appName]();})
+            Dock.addLineToMenuForApp(appName+"-open");
+            Dock.addTextToMenuForApp(appName+"-open", "Force Close", (windowReference)=>{windowReference.forceClose();})
+            Dock.addTextToMenuForApp(appName+"-open", "Close", (windowReference)=>{windowReference.close();})
+        }
+        if(!menuContent[appName+"-closed"]) {
+            Dock.addTextToMenuForApp(appName+"-closed", "Open", ()=>{makeFunctions[appName]();})
+        }
+    }
+
+    /**
+     * Remove the default dock right click menu items.
+     * @param {String} appName 
+     * @param {Object} options 
+     * @param {Boolean} options.removeBoth - If true, removes both the "-open" and "-closed" menu items.
+     * @param {Boolean} options.removeOpen - If true, removes the "-open" menu items.
+     * @param {Boolean} options.removeClosed - If true, removes the "-closed" menu items.
+     */
+    static removeDefaults(appName, options) {
+        // the below could probably become an else if, but this is more forgiving for beginners IMO
+        if(options.removeBoth) {
+            menuContent[appName+"-open"] = []
+            menuContent[appName+"-closed"] = [];
+        } 
+        if(options.removeOpen) {
+            menuContent[appName+"-open"] = [];
+        }
+        if(options.removeClosed) {
+            menuContent[appName+"-closed"] = [];
+        }
+    }
 }
+
+let menuContent = {};
+
 let dock = new Dock;
 document.addEventListener("file-system-ready", ()=>{
     dock.create();

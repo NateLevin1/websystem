@@ -99,6 +99,20 @@ onmessage = function (event) {
                 meta: defaultMeta
             },
 
+            ["/Users/"+NAME+"/Applications/File Viewer.app/"]: {
+                // this app is hidden so it should not be a sub of Applications
+                isFile: true,
+                name:"File Viewer",
+                kind:"App",
+                extension:"app",
+
+                parent: "/Users/"+NAME+"/Applications/",
+                isBinary: false,
+                content: "",
+
+                meta: defaultMeta
+            },
+
             ["/Users/"+NAME+"/Applications/Calculator.app/"]: {
                 isFile: true,
                 name:"Calculator",

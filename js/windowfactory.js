@@ -6,7 +6,7 @@ class Window {
      * @param {String} title - The title of the window
      * @param {Number} [defaultWidth=30] - The default width of the window in em.
      * @param {Number} [defaultHeight=30] - The default width of the window in em.
-     * @param {Object} [options={ x: 3, y: 3, keepAspectRatio: false }] - The options object
+     * @param {Object} [options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }] - The options object
      * @param {Number} options.x - The default x position on the screen.
      * @param {Number} options.y The default y position on the screen.
      * @param {Boolean} options.keepAspectRatio - If true, keeps the aspect ratio when resizing.
@@ -14,10 +14,11 @@ class Window {
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
      * @param {Boolean} options.zIndexDisabled - Whether or not to adjust z indexes on click etc. Useful for popups.
+     * @param {String} options.pathToApp - The path to the app that is being opened. Used in the dock.
      */
-    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"" }) {
+    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }) {
       // Take options into account
-      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName } = options;
+      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName, pathToApp} = options;
       if(!topBarCreator) { // use default 'file -> quit'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
@@ -28,6 +29,7 @@ class Window {
       this.thisContext = thisContext;
       this.title = title;
       this.appName = appName;
+      this.pathToApp = pathToApp;
       
       let window = document.createElement("div");
       window.classList.add("window", "absolute", "window-slow");
@@ -122,6 +124,9 @@ class Window {
         }, 51);
         
       });
+
+      windowOpenChangeEvent.actions = {type: "open", affectedAppsPath: pathToApp, originWindow: this}
+      document.dispatchEvent(windowOpenChangeEvent);
     }
     /**
      * Get the window. Note that the window includes the header, so setting overflow: auto on this may look wrong.
@@ -465,7 +470,7 @@ class Window {
           // reset vars
           event.preventClose = false;
           event.message = "";
-        }, 50);
+        }, 5);
       }, { once: true });
 
       this.window.dispatchEvent(destroyEvent);
@@ -481,22 +486,38 @@ class Window {
      */
     forceClose(fade=true) {
       this.closed = true;
+      
+      // dispatch dock close event
+      windowOpenChangeEvent.actions = {type: "close", affectedAppsPath: this.pathToApp, originWindow: this}
+      document.dispatchEvent(windowOpenChangeEvent);
       if(fade) {
         this.window.classList.remove("window-slow");
         this.window.classList.add("window-fast");
         this.window.style.opacity = "0";
         setTimeout(()=>{
           this.window.remove();
+          this._deleteAllReferences();
         }, 150);
       } else {
-        setTimeout(()=>{ // allow for handling of event
-          this.window.remove();
-        }, 50);
+        this.window.remove();
+        this._deleteAllReferences();
       }
     }
 
     isClosed() {
       return this.closed;
+    }
+
+    _deleteAllReferences() {
+      setTimeout(()=>{
+        // wait for dom updates before continuing
+        // delete all properties of this for gc (https://stackoverflow.com/a/19316873/)
+        if(this.thisContext) {
+          // if we have a reference to the app's this context, delete it too
+          Object.keys(this.thisContext).forEach((key)=>{ delete this.thisContext[key]; });
+        }
+        Object.keys(this).forEach((key)=>{ delete this[key]; });
+      }, 10);
     }
 }
 
@@ -513,3 +534,5 @@ var focusEvent = new Event('window-focus');
 var resizeEvent = new Event('window-resize');
 // Called on the window when it is closed
 var destroyEvent = new Event('window-destroy');
+// Called on document whenever a window is created and destroyed
+var windowOpenChangeEvent = new Event("window-open-change");

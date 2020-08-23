@@ -47,7 +47,7 @@ class Desktop extends FileViewer {
         background.classList.add("desktop-background", "unselectable");
         background.src = "assets/licensed/bg1.jpg";
         background.draggable = false;
-        mainContent.appendChild(background);
+        document.body.appendChild(background);
     }
 
     focusDesktop() {
@@ -79,8 +79,10 @@ class Desktop extends FileViewer {
         let newSelect = TopBar.addToMenu("New  ▶", "file", undefined, {clickable: false});
         TopBar.addSecondaryListenerForItem({el: newSelect, name:"newSelect"});
         TopBar.addToMenu("Folder", "newSelect", ()=>{ this.makeNewFolder() });
-        TopBar.addToMenu("File", "newSelect", ()=>{ console.log("New File!"); });
         TopBar.addLineToMenu("file");
+        fileNewPossibilities.forEach((obj)=>{
+            TopBar.addToMenu(obj.name, "newSelect", ()=>{obj.callback(this.currentFolder)});
+        });
         TopBar.addToMenuIf(()=>{
             // returns true if anything is selected, false if not.
             let selected = this.background.querySelector(".icon-selected");
@@ -92,9 +94,9 @@ class Desktop extends FileViewer {
 
         // EDIT
         TopBar.addToTop("Edit", "edit");
-        TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
-        TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
-        TopBar.addLineToMenu("edit");
+        // TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
+        // TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
+        // TopBar.addLineToMenu("edit");
         TopBar.addToMenu("Cut", "edit", this.cutFiles.bind(this));
         TopBar.addToMenu("Copy", "edit", this.copyFiles.bind(this));
         TopBar.addToMenuIf(()=>{

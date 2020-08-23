@@ -17,7 +17,7 @@ class Calculator {
         this.currentNumber = "";
         this.oldFontSize = "";
 
-        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2, topBarCreator: this.createTopBar, thisContext: this });
+        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Calculator.app/" });
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -195,7 +195,6 @@ class Calculator {
 
         // KEYBOARD SHORTCUTS
         const shortcutHandler = (event) => {
-            console.log("keydown in calc");
             if(this.win.isClosed()) {
                 document.removeEventListener("keydown", shortcutHandler);
             }

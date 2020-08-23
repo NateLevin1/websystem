@@ -43,7 +43,7 @@ class ImageViewer {
                 }
                 document.body.removeChild(sizeGetter);
                 this.zoomed = false;
-                win = new Window(Math.max(size[0], 80), Math.max(size[1], 80+em/**Plus em because of top */), name, Math.max(size[2], 80/em), Math.max(size[3], (80/em)+1), {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Image Viewer - "+name});
+                win = new Window(Math.max(size[0], 80), Math.max(size[1], 80+em/**Plus em because of top */), name, Math.max(size[2], 80/em), Math.max(size[3], (80/em)+1), {x: 3, y: 3, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Image Viewer - "+name, pathToApp: "/Users/"+NAME+"/Applications/Image Viewer.app/"});
                 win.setBackgroundColor("rgb(200, 200, 200)");
 
 
@@ -110,7 +110,7 @@ class ImageViewer {
     }
 
     openInStandalone() {
-        this.win = new Window(280, 280, "Image Viewer", 25,25, {x: 10, y: 5, topBarCreator: this.createTopBar, thisContext: this});
+        this.win = new Window(280, 280, "Image Viewer", 25,25, {x: 10, y: 5, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Image Viewer.app/"});
         this.win.setBackgroundColor("rgb(230, 230, 230)");
         this.window = this.win.getWindow();
         this.header = this.win.getHeader();

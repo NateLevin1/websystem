@@ -211,7 +211,8 @@ button:active {
 .main-content {
     position:absolute;
     top:1.7em;
-    height:calc(100% - 1.7em);
+    height:calc(100% - 5.7em);
+    overflow:hidden;
     width:100%;
 }
 .icon {
@@ -586,6 +587,116 @@ button:active {
     border:none;
 }
 /* END TOP BAR */
+
+/* DOCK */
+.dock-bar {
+    height:4em;
+    width:100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    z-index: 999;
+    bottom:0;
+    overflow-x:auto;
+    overflow-y: hidden;
+    white-space:nowrap;
+}
+.dock-bar::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+.dock-bar::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.dock-bar::-webkit-scrollbar-thumb {
+  background: #e1e1e1;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.dock-bar::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+.dock-bar::-webkit-scrollbar-thumb:active {
+  background: #000000;
+}
+.dock-bar::-webkit-scrollbar-track {
+  background: #666666;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.dock-bar::-webkit-scrollbar-track:hover {
+  background: #666666;
+}
+.dock-bar::-webkit-scrollbar-track:active {
+  background: #333333;
+}
+.dock-bar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.dock-app-container {
+    width: 5em;
+    height: 4em;
+    margin-right: 1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: background-color 0.2s;
+}
+.dock-app-container:hover {
+    background-color:rgba(255, 255, 255, 0.2);
+}
+.dock-app-thumbnail {
+    max-width: 5em;
+    height: 3em;
+}
+.dock-app-container:active .dock-app-thumbnail, .dock-app-thumbnail:active {
+    filter: brightness(0.5);
+}
+.dock-separator {
+    width:0.3em;
+    background-color: rgba(255,255,255, 0.1);
+    height:80%;
+    display:inline-block;
+    margin-right: 1em;
+}
+/* .dock-not-pinned:hover {
+    background-color: rgba(108, 160, 255, 0.25);
+}
+.dock-not-pinned .dock-app-thumbnail {
+    max-width: 5em;
+    height: 2.6em;
+    filter: opacity(75%);
+    transform: translateY(-0.1em);
+} */
+@keyframes bounce {
+    0% {
+        transform: translateY(0em);
+    }
+    50% {
+        transform: translateY(-0.5em);
+    }
+    100% {
+        transform: translateY(0em);
+    }
+}
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes move-app-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-2.5em);
+    }
+}
+/* END DOCK */
 
 
 /* Important stuff that shouldn't use !important */

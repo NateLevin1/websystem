@@ -18,7 +18,7 @@ GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0,
  */
 class Appstore {
     constructor() {
-        let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2, topBarCreator: this.createTopBar, thisContext: this });
+        let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/App Store.app/"});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;

@@ -16,7 +16,7 @@ class Documenter {
         let title = "Documenter - "+filename;
         this.title = title;
         this.filename = filename;
-        let win = new Window(260, 370, title, 37, 35,{x: 5, y: 4, topBarCreator: this.createTopBar, thisContext: this });
+        let win = new Window(260, 370, title, 37, 35,{x: 5, y: 4, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Documenter.app/" });
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;

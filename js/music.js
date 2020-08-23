@@ -2,9 +2,9 @@ class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
-            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Music Player - "+name});
+            win = new Window(390, 142, "Music", 390/em, 142/em, {x: 20, y: 2.2, keepAspectRatio: false, topBarCreator: this.createTopBar, thisContext: this, appName: "Music Player - "+name, pathToApp: "/Users/"+NAME+"/Applications/Music.app/"});
         } else { // open standalone
-            win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2, topBarCreator: this.createStandaloneTopBar, thisContext: this});
+            win = new Window(280, 380, "Music", 25,25, {x: 10, y: 2.2, topBarCreator: this.createStandaloneTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Music.app/"});
         }
         
         this.window = win.getWindow();
@@ -231,7 +231,6 @@ class Music {
                       .catch(err => {
                         lyrics = "There was an error fetching the lyrics.";
                         lyricsText.innerText = lyrics;
-                        console.log(err);
                       });
   
   

@@ -20,7 +20,7 @@ class FileViewer {
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
     openFolderWindow(path) {
-        let win = new Window(273, 290, path, 41, 35, { topBarCreator: this.createTopBar, thisContext: this, appName: "File Viewer"});
+        let win = new Window(273, 290, path, 41.25, 35, { topBarCreator: this.createTopBar, thisContext: this, appName: "File Viewer", pathToApp: "/Users/"+NAME+"/Applications/File Viewer.app/"});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
@@ -168,9 +168,9 @@ class FileViewer {
 
         // EDIT
         TopBar.addToTop("Edit", "edit");
-        TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
-        TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
-        TopBar.addLineToMenu("edit");
+        // TopBar.addToMenu("Undo", "edit", ()=>{ console.log("Undo not implemented"); });
+        // TopBar.addToMenu("Redo", "edit", ()=>{ console.log("Redo not implemented"); });
+        // TopBar.addLineToMenu("edit");
         TopBar.addToMenuIf(()=>{this.background.querySelector(".icon-selected")}, "Cut", "edit", this.cutFiles.bind(this), {thisContext: this});
         TopBar.addToMenu("Copy", "edit", this.copyFiles.bind(this));
         TopBar.addToMenuIf(()=>{
@@ -443,9 +443,10 @@ class FileViewer {
         var isShown = false;
 
         const moveHandler = (event)=>{
-            if(this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) { // this reference is removed at close time
                 document.removeEventListener("mousemove", moveHandler);
             }
+            
             if(isShown) {
                  // Below is from 1st comment on https://stackoverflow.com/a/48970682. It returns true if the left mouse button is down, regardless of the other buttons.
                 if(event.buttons & 1 === 1) {
@@ -490,7 +491,7 @@ class FileViewer {
         document.addEventListener("mousemove", moveHandler);
 
         const mouseUpHandler = ()=>{ // the document because the mouseup doesn't have to occur on the background
-            if(this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) {
                 document.removeEventListener("mouseup", mouseUpHandler);
             }
             if(isShown) {
@@ -1323,3 +1324,8 @@ document.addEventListener("file-system-ready", ()=>{
     }
 });
 let sidebarInitialized = false;
+
+
+// Generic app things
+appImagePaths["File Viewer"] = "assets/folder.png";
+makeFunctions["File Viewer"] = ()=>{ let tmp = new FileViewer; tmp.openFolderWindow("/Users/"+NAME+"/"); };

@@ -213,7 +213,7 @@ onmessage = function (event) {
                 isFile: true,
                 name:"logo.png",
                 kind:"Image",
-                extension:".png",
+                extension:"png",
 
                 parent: "/Users/"+NAME+"/Desktop/WebSystem/",
                 isBinary: true,
@@ -236,7 +236,7 @@ onmessage = function (event) {
                 isFile: true,
                 name:"doc.html",
                 kind:"Text",
-                extension:".html",
+                extension:"html",
 
                 parent: "/Users/"+NAME+"/Documents/",
                 isBinary: false,

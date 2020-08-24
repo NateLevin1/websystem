@@ -28,6 +28,7 @@ class Window {
       this.topBarCreator = topBarCreator;
       this.thisContext = thisContext;
       this.title = title;
+      appName = !appName && pathToApp ? folders[pathToApp].name : appName;
       this.appName = appName;
       this.pathToApp = pathToApp;
       
@@ -125,7 +126,7 @@ class Window {
       });
 
       // if the app doesn't have a dock right click menu, use the default. Note that this is only run once
-      dock.addDefaults(appName);
+      dock.addDefaults(appName, pathToApp);
 
       windowOpenChangeEvent.actions = {type: "open", affectedAppsPath: pathToApp, originWindow: this}
       document.dispatchEvent(windowOpenChangeEvent);

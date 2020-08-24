@@ -41,17 +41,19 @@ class TopBar {
             let constantUpdates = new Worker('js/constantUpdates.js');
             constantUpdates.onmessage = (event) => {
                 if(event.data[0] === "T") {
-                    time.innerText = event.data.substring(1);
+                    if(time.textContent != event.data.substring(1)) {
+                        time.textContent = event.data.substring(1);
+                    }
                 } else if(event.data[0] == "O") {
                     switch(event.data[1]) {
                         case true:
-                            if(wifi.src != "assets/filledWifi.svg") {
+                            if(OFFLINE) {
                                 wifi.src = "assets/filledWifi.svg";
                                 OFFLINE = false;
                             }
                             break;
                         case false:
-                            if(wifi.src != "assets/emptyWifi.svg") {
+                            if(!OFFLINE) {
                                 wifi.src = "assets/emptyWifi.svg";
                                 OFFLINE = true;
                             }

@@ -103,41 +103,78 @@ class Appstore {
         this.window.querySelector(".appstore-menuitem-selected").classList.remove("appstore-menuitem-selected");
         this.apps = [];
         this.main.innerHTML = "";
+        if(OFFLINE) {
+            this.showServerError("You are not connected to the internet.");
+            this[str == "popular" || str == "recent" ? str : "search"].classList.add("appstore-menuitem-selected");
+            return undefined;
+        }
         if(str == "popular") {
             this.popular.classList.add("appstore-menuitem-selected");
-            fetch("http://localhost:3000/applist/popular").then(function(response) {
+            fetch("http://localhost:3000/applist/popular")
+            .then(function(response) {
                 return response.json();
-            }).then(function(data) {
+            })
+            .then((data)=>{
                 this.pushApps(data);
                 // get the data from server
                 // set the data to the app array
                 this.showCurrentMenu();
-            }.bind(this));
+            })
+            .catch(()=>{
+                this.showServerError();
+            });
         } else if(str == "recent") {
             this.recent.classList.add("appstore-menuitem-selected");
-            fetch("http://localhost:3000/applist/recent").then(function(response) {
+            fetch("http://localhost:3000/applist/recent")
+            .then(function(response) {
                 return response.json();
-            }).then(function(data) {
+            })
+            .then((data)=>{
                 this.pushApps(data);
                 // get the data from server
                 // set the data to the app array
                 this.showCurrentMenu();
-            }.bind(this));
+            })
+            .catch(()=>{
+                this.showServerError();
+            });
         } else {
             this.search.classList.add("appstore-menuitem-selected");
             // custom search
-            fetch("http://localhost:3000/applist/search").then(function(response) {
-                return response.json();
-            }).then(function(data) {
-                this.pushApps(data);
+            if(this.searchList === undefined) {
+                fetch("http://localhost:3000/applist/search")
+                .then(function(response) {
+                    return response.json();
+                })
+                .then((data)=>{
+                    this.searchList = data;
+                    this.pushApps(data);
+                    // get the data from server
+                    // set the data to the app array
+                    this.searchData(str);
+                    this.showCurrentMenu();
+                })
+                .catch(()=>{
+                    this.showServerError();
+                });
+            } else {
+                this.pushApps(this.searchList);
                 // get the data from server
                 // set the data to the app array
                 this.searchData(str);
                 this.showCurrentMenu();
-            }.bind(this));
+            }
+            
         }
-        
-        
+    }
+
+    showServerError(content="There was an error connecting to the server.") {
+        this.showCurrentMenu();
+        let txt = document.createElement("p");
+        txt.textContent = content;
+        txt.style.textAlign = "center";
+        txt.style.padding = "1em";
+        this.main.appendChild(txt);
     }
     /**
      * @private

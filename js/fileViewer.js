@@ -130,13 +130,6 @@ class FileViewer {
 
         RightClickMenu.addToMenu("Add Folder", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.makeNewFolder(); });
         RightClickMenu.addToMenu("Upload Files", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], ()=>{ this.uploadNewFile(); });
-        RightClickMenu.addToMenu("DEBUG: Create File", [this.generatedWindow, this.generatedWindow+"-icon", this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"], async ()=>{
-            alert("Note: Apps cannot be added via this.");
-            let filename = await prompt("Filename (with extension):");
-            let filedata = await prompt("Filedata (if any):");
-            let filekind = await prompt("Filekind:");
-            this._addFileToStorage(filename, filedata, filekind);
-        });
         RightClickMenu.addRightClickForWindow(this.background, this.generatedWindow, true);
     }
 
@@ -843,7 +836,7 @@ class FileViewer {
             let content = folders[path].content;
 
             // if text file
-            if(content && (folders[path].extension == ".txt" || folders[path].extension == ".text")) {
+            if(content && (folders[path].extension == "txt" || folders[path].extension == "text")) {
                 // convert content to image
                 let canvas = document.createElement("canvas");
                 var tCtx = canvas.getContext('2d'); // Hidden canvas

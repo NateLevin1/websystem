@@ -9,7 +9,7 @@ class Documenter {
             path = "";
             this.extension = "html";
         } else {
-            this.extension = folders[path].extension.substring(1);
+            this.extension = folders[path].extension;
         }
 
         this.path = path;

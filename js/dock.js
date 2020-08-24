@@ -4,15 +4,16 @@ class Dock {
         this.bar.classList.add("dock-bar", "heavy-blurred", "unselectable");
         document.body.appendChild(this.bar);
 
-        this.pinnedApps = dockApps;
+        this.pinnedApps = account["pinned-apps"];
         this.pinnedIcons = {};
+        this.unPinnedIcons = {}; // ironically, this is used for pinning icons
         this.openIconReference = {};
 
         this.createMenu();
 
-        dockApps.forEach((path)=>{
+        this.pinnedApps.forEach((path)=>{
             if(folders[path]) { // ignores "|"s
-                this.addDefaults(folders[path].name);
+                this.addDefaults(folders[path].name, path);
             }
             this.appendApp(path, "", true);
         });
@@ -55,7 +56,7 @@ class Dock {
         } else {
             let name = folders[pathToApp].name;
             let src = appImagePaths[name];
-            let isOpen = !isPinned;
+            let isOpen = !!originWindow;
 
             if(this.openIconReference[pathToApp] === undefined) {
                 this.openIconReference[pathToApp] = [];
@@ -98,11 +99,25 @@ class Dock {
                 isOpen = true;
                 this.triggerAppAnimation(thumbnail);
             }
+            const getOrigin = ()=>{
+                return originWindow;
+            }
+
+            const setPinned = (val)=>{
+                isPinned = val;
+            }
+            const setPinnedIcons = ()=>{
+                this.pinnedIcons[pathToApp] = {element: container, setOriginWindow: setOrigin, getOriginWindow: getOrigin, setPinned: setPinned, setUnPinnedIcons: setUnPinnedIcons}
+            }
+            const setUnPinnedIcons = ()=>{
+                this.unPinnedIcons[pathToApp] = {element: container, setPinned: setPinned, setPinnedIcons: setPinnedIcons}
+            }
 
             if(!isPinned) {
                 this.openIconReference[pathToApp].push({element: container});
+                this.unPinnedIcons[pathToApp] = {element: container, setPinned: setPinned, setPinnedIcons: setPinnedIcons}
             } else {
-                this.pinnedIcons[pathToApp] = {element: container, setOriginWindow: setOrigin}
+                this.pinnedIcons[pathToApp] = {element: container, setOriginWindow: setOrigin, getOriginWindow: getOrigin, setPinned: setPinned, setUnPinnedIcons: setUnPinnedIcons}
             }
             
             container.onmousedown = (event)=>{
@@ -181,7 +196,9 @@ class Dock {
             } else {
                 // stay until click
                 document.addEventListener("mouseup", (ev)=>{
-                    this.getMenuSelected(originWindow);
+                    if(ev.which == 1) {
+                        this.getMenuSelected(originWindow);
+                    }
                 }, {once: true});
             }
         }, {once: true});
@@ -222,6 +239,17 @@ class Dock {
         menuContent[appName].push(el);
     }
 
+    returnTextToMenuForApp(appName, text, callback) {
+        let el = document.createElement("div");
+        el.classList.add("right-click-menu-member");
+        el.textContent = text;
+        if(menuContent[appName] === undefined) {
+            menuContent[appName] = [];
+        }
+        el.addEventListener("right-click-select", (event)=>{callback(event.originWindow)});
+        return el
+    }
+
     static addLineToMenuForApp(appName) {
         let el = document.createElement("div");
         el.classList.add("right-click-menu-member-no-hover");
@@ -240,16 +268,22 @@ class Dock {
     /**
      * Add the default options if it doesn't have any
      * @param {String} appName 
+     * @param {String} appPath
      */
-    addDefaults(appName) {
+    addDefaults(appName, appPath) {
+        let isPinned = account["pinned-apps"].includes(appPath);
         if(!menuContent[appName+"-open"]) {
+            Dock.addTextToMenuForApp(appName+"-open", isPinned ? "Unpin "+appName : "Pin "+appName, !isPinned ? ()=>{this.pinApp(appPath)} : ()=>{this.unpinApp(appPath)});
+            Dock.addLineToMenuForApp(appName+"-open");
             Dock.addTextToMenuForApp(appName+"-open", "New Window", ()=>{makeFunctions[appName]();})
             Dock.addLineToMenuForApp(appName+"-open");
             Dock.addTextToMenuForApp(appName+"-open", "Force Close", (windowReference)=>{windowReference.forceClose();})
             Dock.addTextToMenuForApp(appName+"-open", "Close", (windowReference)=>{windowReference.close();})
         }
         if(!menuContent[appName+"-closed"]) {
-            Dock.addTextToMenuForApp(appName+"-closed", "Open", ()=>{makeFunctions[appName]();})
+            Dock.addTextToMenuForApp(appName+"-closed", isPinned ? "Unpin "+appName : "Pin "+appName, !isPinned ? ()=>{this.pinApp(appPath)} : ()=>{this.unpinApp(appPath)});
+            Dock.addLineToMenuForApp(appName+"-closed");
+            Dock.addTextToMenuForApp(appName+"-closed", "Open New Window", ()=>{makeFunctions[appName]();})
         }
     }
 
@@ -274,21 +308,70 @@ class Dock {
             menuContent[appName+"-closed"] = [];
         }
     }
+
+    pinApp(path) {
+        this.pinnedApps.push(path);
+        FileSystem.setAccountDetail("pinned-apps", this.pinnedApps);
+        this.unPinnedIcons[path].setPinned(true);
+        this.unPinnedIcons[path].setPinnedIcons();
+        delete this.unPinnedIcons[path];
+
+        // change open and closed
+        let name = folders[path].name;
+        let openPinnedEl = menuContent[name+"-open"].filter(e=>{return e.textContent==="Pin "+name})[0];
+        let openPinnedElIndex = menuContent[name+"-open"].indexOf(openPinnedEl);
+        menuContent[name+"-open"].splice(openPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+
+        let closedPinnedEl = menuContent[name+"-closed"].filter(e=>{return e.textContent==="Pin "+name})[0];
+        let closedPinnedElIndex = menuContent[name+"-closed"].indexOf(closedPinnedEl);
+        menuContent[name+"-closed"].splice(closedPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+    }
+
+    unpinApp(path) {
+        this.pinnedApps.splice(this.pinnedApps.indexOf(path), 1);
+        FileSystem.setAccountDetail("pinned-apps", this.pinnedApps);
+        
+        let container = this.pinnedIcons[path].element;
+
+        this.pinnedIcons[path].setPinned(false);
+        this.pinnedIcons[path].setUnPinnedIcons();
+        if(!this.pinnedIcons[path].getOriginWindow()) {
+            container.style.animation = "fade-out 0.3s, move-app-left 0.3s";
+            container.style.position = "absolute"; // remove from flow
+            container.style.zIndex = "-1";
+            setTimeout(()=>{
+                container.remove();
+            }, 280);
+        } else {
+            // TODO: make an animation
+        }
+        
+
+        delete this.pinnedIcons[path];
+
+
+        // just change open, it is the only reachable one
+        let name = folders[path].name;
+        let openPinnedEl = menuContent[name+"-open"].filter(e=>{return e.textContent==="Unpin "+name})[0];
+        let openPinnedElIndex = menuContent[name+"-open"].indexOf(openPinnedEl);
+        menuContent[name+"-open"].splice(openPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Pin "+name, ()=>{this.pinApp(path)}));
+    }
 }
 
 let menuContent = {};
 
 let dock = new Dock;
 document.addEventListener("file-system-ready", ()=>{
+    if(!account["pinned-apps"]) { // if it doesn't exist, make it
+        FileSystem.setAccountDetail("pinned-apps", [
+            "/Users/"+NAME+"/Applications/File Viewer.app/",
+            "|",
+            "/Users/"+NAME+"/Applications/Documenter.app/",
+            // "/Users/"+NAME+"/Applications/Calculator.app/",
+            "/Users/"+NAME+"/Applications/App Store.app/",
+            "/Users/"+NAME+"/Applications/Music.app/",
+            "/Users/"+NAME+"/Applications/Image Viewer.app/"
+        ]);
+    }
     dock.create();
 });
-
-let dockApps = [
-    "/Users/"+NAME+"/Applications/File Viewer.app/",
-    "|",
-    "/Users/"+NAME+"/Applications/Documenter.app/",
-    // "/Users/"+NAME+"/Applications/Calculator.app/",
-    "/Users/"+NAME+"/Applications/App Store.app/",
-    "/Users/"+NAME+"/Applications/Music.app/",
-    "/Users/"+NAME+"/Applications/Image Viewer.app/"
-]

@@ -195,10 +195,10 @@ class Calculator {
 
         // KEYBOARD SHORTCUTS
         const shortcutHandler = (event) => {
-            if(this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) {
                 document.removeEventListener("keydown", shortcutHandler);
             }
-            if(this.win.focused()) { // only count if focused
+            if(this.win !== undefined && this.win.focused()) { // only count if focused
                 let key = event.key;
                 this.pressButton(key);
                 if(key == "c"||key == "C") {

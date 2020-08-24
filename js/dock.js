@@ -2,6 +2,7 @@ class Dock {
     create() {
         this.bar = document.createElement("div");
         this.bar.classList.add("dock-bar", "heavy-blurred", "unselectable");
+        this.addBarRightClick();
         document.body.appendChild(this.bar);
 
         this.pinnedApps = account["pinned-apps"];
@@ -47,11 +48,47 @@ class Dock {
         });
     }
 
+    addBarRightClick() {
+        Dock.addTextToMenuForApp("-", "Add Break", ()=>{
+            let children = this.bar.childNodes;
+            var after;
+            children.forEach((child, index)=>{
+                let rect = child.getBoundingClientRect();
+                if(rect.left > lastX && children[index-1].getBoundingClientRect().right < lastX) {
+                    after = children[index-1];
+                }
+            });
+            if(!after) {
+                after = this.bar.lastChild;
+            }
+
+            // add to pinned-apps
+            let index = Array.from(children).indexOf(after);
+            account["pinned-apps"].splice(index+1, 0, "|");
+            FileSystem.setAccountDetail("pinned-apps", account["pinned-apps"]);
+
+            // display it
+            this.insertAppBefore("|", after.nextSibling);
+        });
+        let lastX = 0;
+        this.bar.oncontextmenu = (event)=>{
+            if(event.target == this.bar) {
+                event.preventDefault();
+                lastX = event.x;
+                this.showMenu(event, "-", null, null, event.x - 1.1*em);
+            }
+        }
+    }
+
     createApp(pathToApp, originWindow=null, isPinned=false) {
         if(pathToApp == "|") {
             // make separator
             let separator = document.createElement("div");
             separator.classList.add("dock-separator");
+            separator.oncontextmenu = (event)=>{
+                event.preventDefault();
+                this.showMenu(event, "|", separator, separator/**<- Clever use of originWindow allows us to get the element in the callback */);
+            }
             return separator;
         } else {
             let name = folders[pathToApp].name;
@@ -177,16 +214,24 @@ class Dock {
         this.menu = menu;
         document.body.appendChild(menu);
     }
-    showMenu(event, appName, icon, originWindow) {
+    showMenu(event, appName, icon, originWindow, customX=null) {
         let isOpen = false;
         if(originWindow) {
             isOpen = true;
         }
-        this.menu.style.left = (icon.getBoundingClientRect().left+em/2)+"px";
+        if(icon) {
+            this.menu.style.left = appName == "|" ? (icon.getBoundingClientRect().left - 1.2*em)+"px" : (icon.getBoundingClientRect().left+em/2)+"px";
+        } else {
+            this.menu.style.left = customX + "px";
+        }
         this.menu.style.display = "inline-block";
         this.menu.innerHTML = "";
         this.menu.style.animation = "fade-in 0.1s";
-        this.addToMenuByName((appName+"-")+(isOpen ? "open" : "closed"));
+        if(appName != "|" && appName != "-") {
+            this.addToMenuByName((appName+"-")+(isOpen ? "open" : "closed"));
+        } else {
+            this.addToMenuByName(appName);
+        }
 
         let downTime = event.timeStamp;
         document.addEventListener("mouseup", (ev)=>{
@@ -247,7 +292,7 @@ class Dock {
             menuContent[appName] = [];
         }
         el.addEventListener("right-click-select", (event)=>{callback(event.originWindow)});
-        return el
+        return el;
     }
 
     static addLineToMenuForApp(appName) {
@@ -375,3 +420,12 @@ document.addEventListener("file-system-ready", ()=>{
     }
     dock.create();
 });
+
+Dock.addTextToMenuForApp("|", "Remove Break", (line)=>{
+    let indexOfLine = Array.from(dock.bar.childNodes).indexOf(line);
+    account["pinned-apps"].splice(indexOfLine, 1);
+    FileSystem.setAccountDetail("pinned-apps", account["pinned-apps"]);
+    line.remove();
+});
+
+// TODO: Add the ability to add breaks to between the two elements the user's cursor is at

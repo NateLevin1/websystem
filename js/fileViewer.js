@@ -100,7 +100,61 @@ class FileViewer {
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
 
-        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.moveSelectedToTrash.bind(this));
+        RightClickMenu.addToMenu("Move To Trash", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.moveSelectedToTrash.bind(this));
+        RightClickMenu.addToMenu("Uninstall", [this.generatedWindow+"-app"], ()=>{
+            let selected = Array.from(mainContent.querySelectorAll(".icon-selected"));
+            selected = selected.filter((node)=>{
+                // disallow uninstalling the app store
+                return (node.classList.contains("app") && node.getAttribute("name") != "App Store");
+            });
+            
+            let names = selected.map((el)=>{return el.getAttribute("name");})
+            let paths = selected.map((el)=>{return el.getAttribute("path");})
+            let uninstallText = "";
+            
+            if(names.length != 1) {
+                names.forEach((name, index)=>{
+                    if(index == names.length - 1) {
+                        // last one
+                        uninstallText += "and "+name;
+                    } else {
+                        uninstallText += name+", ";
+                    }
+                });
+            } else {
+                uninstallText = names[0];
+            }
+
+            
+            confirm("Are you sure you want to uninstall "+uninstallText+"?")
+            .then((decision)=>{
+                if(decision) {
+                    paths.forEach((path, index)=>{
+                        // delete from make
+                        delete makeFunctions[folders[path].name];
+
+                        // remove from dock if pinned
+                        let pinnedObj = dock.pinnedIcons[path];
+                        if(pinnedObj) {
+                            let index = Array.from(dock.bar.childNodes).indexOf(pinnedObj.element);
+                            account["pinned-apps"].splice(index, 1);
+                            FileSystem.setAccountDetail("pinned-apps", account["pinned-apps"]);
+
+                            // play animation and remove
+                            pinnedObj.element.style.animation = "fade-out 0.3s, move-app-left 0.3s";
+                            pinnedObj.element.style.position = "absolute"; // remove from flow
+                            pinnedObj.element.style.zIndex = "-1";
+                            setTimeout(()=>{
+                                pinnedObj.element.remove();
+                            }, 280);
+                        }
+
+                        // remove from filesystem
+                        FileSystem.deleteAnyAtLocation(path);
+                    });
+                }
+            });
+        });
 
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
             // confirm if the user pressed the right thing
@@ -945,6 +999,9 @@ class FileViewer {
         if(!this.disableRightClick) {
             if(filetype == "App") {
                 RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-app");
+                // make immovable
+                newFileContainer.classList.add("file-app");
+                newFileContainer.draggable = false;
             } else {
                 RightClickMenu.addContextMenuListener(newFileContainer, this.generatedWindow+"-file");
             }

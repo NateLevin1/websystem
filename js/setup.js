@@ -57,14 +57,31 @@ onmessage = function (event) {
                 meta: defaultMeta
             },
     
-            // Etc Directory (config files)
+            // Etc Directory (system settings files)
             "/etc/": {
                 name: "etc",
                 kind: "Folder",
     
-                subfolders: [],
+                subfolders: ["/etc/general.json/"],
                 parent: "/",
     
+                meta: defaultMeta
+            },
+
+            "/etc/general.json/": {
+                isFile: true,
+                name:"general.json",
+                kind:"Text",
+                extension:"json",
+
+                parent: "/etc/",
+                isBinary: false,
+                content: `
+                {
+                    "highlightColor": "rgb(0, 89, 221)",
+                    "performanceModeEnabled": false
+                }`,
+
                 meta: defaultMeta
             },
     
@@ -93,7 +110,7 @@ onmessage = function (event) {
                 name: "Applications",
                 kind: "Folder",
     
-                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app/", "/Users/"+NAME+"/Applications/App Store.app/", "/Users/"+NAME+"/Applications/Music.app/", "/Users/"+NAME+"/Applications/Image Viewer.app/", "/Users/"+NAME+"/Applications/Documenter.app/"],
+                subfolders: ["/Users/"+NAME+"/Applications/Calculator.app/", "/Users/"+NAME+"/Applications/App Store.app/", "/Users/"+NAME+"/Applications/Music.app/", "/Users/"+NAME+"/Applications/Image Viewer.app/", "/Users/"+NAME+"/Applications/Documenter.app/", "/Users/"+NAME+"/Applications/System Settings.app/"],
                 parent: "/Users/"+NAME+"/",
     
                 meta: defaultMeta
@@ -129,6 +146,19 @@ onmessage = function (event) {
             ["/Users/"+NAME+"/Applications/Documenter.app/"]: {
                 isFile: true,
                 name:"Documenter",
+                kind:"App",
+                extension:"app",
+
+                parent: "/Users/"+NAME+"/Applications/",
+                isBinary: false,
+                content: "",
+
+                meta: defaultMeta
+            },
+
+            ["/Users/"+NAME+"/Applications/System Settings.app/"]: {
+                isFile: true,
+                name:"System Settings",
                 kind:"App",
                 extension:"app",
 

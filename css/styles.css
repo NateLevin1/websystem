@@ -7,6 +7,10 @@ body {
     animation: bg-anim 30s infinite;
     overflow:hidden;
     font-size: 1em;
+    --select: rgba(0, 89, 221, 1);
+    --select-r: 0;
+    --select-g: 89;
+    --select-b: 221;
 }
 
 @keyframes bg-anim {
@@ -138,16 +142,59 @@ button {
 }
 button.default-button {
     color: white;
-    background-image: linear-gradient(0, rgb(81, 143, 241), rgb(120, 172, 255));
+    background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 1.1)), rgb(min(230, calc(var(--select-r) * 1.4)), min(230, calc(var(--select-g) * 1.4)), min(230, calc(var(--select-b) * 1.4))));
     border-color: rgb(7,84,207);
 }
 button:active {
     color: white;
-    background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254));
+    background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 0.9)), rgb(min(240, calc(var(--select-r) * 1.4)), min(240, calc(var(--select-g) * 1.4)), min(240, calc(var(--select-b) * 1.4))));
     border-color: rgb(7,84,207);
 }
 /* END BUTTONS */
 
+/* GENERIC WEBSYSTEM SWITCH */
+input[type="checkbox"].switch {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+
+    width: 4em;
+    height: 2em;
+    background-color: rgb(253,253,253);
+    border: 1.5px solid rgb(36, 36, 36);
+    transition: background-color 0.2s;
+    border-radius: 1em;
+
+    display: inline-block;
+
+    position: relative;
+
+    box-shadow: 0 0 2px rgba(0,0,0,0.2);
+}
+input[type="checkbox"].switch:focus {
+    outline: 0;
+}
+input[type="checkbox"].switch:checked {
+    background-color: rgb(255, 255, 255);
+}
+input[type="checkbox"].switch::after {
+    content: "";
+    width:40%;
+    height:84%;
+    position: absolute;
+    left:4%;
+    top:8%;
+    background-color: rgb(0, 0, 0);
+    border-radius: 50%;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+input[type="checkbox"].switch:checked::after {
+    transform: translateX(128%);
+    background-color: var(--select);
+}
 
 /* END FORMS */
 
@@ -263,8 +310,8 @@ button:active {
     z-index:1;
 }
 .icon-selected div {
-    background-color:rgba(0, 89, 221, 1);
-    border: 2px solid rgba(0, 89, 221, 1);
+    background-color:var(--select);
+    border: 2px solid var(--select);
 
     color:white;
     border-radius:4px;
@@ -303,8 +350,8 @@ button:active {
 .multiple-text {
     text-align: center;
     color:white;
-    background-color:rgba(0, 89, 221, 1);
-    border: 2px solid rgba(0, 89, 221, 1);
+    background-color:var(--select);
+    border: 2px solid var(--select);
     border-radius:10px;
     display: inline-block;
     padding: 0.2em 0.4em;
@@ -410,7 +457,7 @@ button:active {
     margin:0.2em 0;
 }
 .right-click-menu-member:hover {
-    background-color:rgba(0, 89, 221, 1);
+    background-color:var(--select);
     color:white;
 }
 .right-click-menu-member-no-hover {
@@ -542,7 +589,7 @@ button:active {
     text-decoration: underline;
 }
 .top-bar-top-item-selected {
-    background-color:rgba(0, 89, 221, 1);
+    background-color:var(--select);
     color:white;
 }
 .top-bar-menu {
@@ -561,7 +608,7 @@ button:active {
     opacity: 0;
 }
 .top-bar-menu-item:hover {
-    background-color:rgba(0, 89, 221, 1);
+    background-color:var(--select);
     color:white;
 }
 .top-bar-menu-item {

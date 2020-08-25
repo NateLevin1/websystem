@@ -198,13 +198,13 @@ class Dock {
     }
 
     appendApp(pathToApp, originWindow={}, isPinned=false) {
-        if(folders[pathToApp]) { // disallow apps that don't have a "pathToApp" set
+        if(folders[pathToApp] || pathToApp == "|") { // disallow apps that don't have a "pathToApp" set
             this.bar.appendChild(this.createApp(pathToApp, originWindow, isPinned));
         }
     }
 
     insertAppBefore(pathToApp, beforeNode, originWindow={}, isPinned=false) {
-        if(folders[pathToApp]) { // disallow apps that don't have a "pathToApp" set
+        if(folders[pathToApp] || pathToApp == "|") { // disallow apps that don't have a "pathToApp" set
             this.bar.insertBefore(this.createApp(pathToApp, originWindow, isPinned), beforeNode);
         }
     }

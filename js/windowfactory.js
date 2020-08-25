@@ -67,8 +67,8 @@ class Window {
       this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
 
       this.window = window;
-      this.window.header = header;
-      this.window.titleText = titleText;
+      this.header = header;
+      this.titleText = titleText;
 
       if(resizeDisabled) {
         this.disableResize();
@@ -89,7 +89,7 @@ class Window {
       }
 
       const windowFocusHandler = (event)=>{
-        if(this.isClosed()) {
+        if(this === undefined || this.isClosed()) {
           document.removeEventListener("window-focus", windowFocusHandler);
         }
         if(event.window == this.window) {
@@ -123,7 +123,7 @@ class Window {
             }
           }
         }, 51);
-      });
+      }, {once: true});
 
       // if the app doesn't have a dock right click menu, use the default. Note that this is only run once
       dock.addDefaults(appName, pathToApp);
@@ -143,14 +143,14 @@ class Window {
      * @returns {HTMLElement} The header element
      */
     getHeader() {
-      return this.window.header;
+      return this.header;
     }
     /**
      * Get the title of the window
      * @returns {HTMLElement} The header text element
      */
     getHeaderText() {
-      return this.window.titleText;
+      return this.titleText;
     }
 
     disableResize() {
@@ -194,7 +194,7 @@ class Window {
      */
     setTitle(newTitle) {
       this.title = newTitle;
-      this.window.titleText.innerText = newTitle;
+      this.titleText.textContent = newTitle;
       if(!this.appName) { // if the app doesn't have a custom app name (this is arbitrary because if they want to change it and have an app name they can call the function themselves)
         this.updateTopBarName();
       }
@@ -213,14 +213,14 @@ class Window {
      * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
      */
     setHeaderColor(color) {
-      this.window.header.style.backgroundColor = color;
+      this.header.style.backgroundColor = color;
     }
     /**
      * Set the text color of the header.
      * @param {String} color - the color to be used. e.g. 'rgb(10,10,10)' or 'red'
      */
     setHeaderTextColor(color) {
-      this.window.header.style.color = color;
+      this.header.style.color = color;
     }
 
     /**
@@ -518,8 +518,10 @@ class Window {
         if(this.thisContext) {
           // if we have a reference to the app's this context, delete it too
           Object.keys(this.thisContext).forEach((key)=>{ delete this.thisContext[key]; });
+          delete this.thisContext;
         }
         Object.keys(this).forEach((key)=>{ delete this[key]; });
+        delete this;
       }, 10);
     }
 }

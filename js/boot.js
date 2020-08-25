@@ -1,3 +1,5 @@
+(function () {
+    document.body.onload = boot;
 /**
  * Begin boot sequence.
  * Runs on page onload.
@@ -179,9 +181,14 @@ function startDesktop() {
     }, 500)
     
 }
+var firstLogin = false;
+/**
+ * Called on the document when the file system has been fully loaded.
+ */
+var fileSystemReady = new Event("file-system-ready");
+}());
 
 var mainContent = document.createElement("div");
-var firstLogin = false;
 
 /**
  * The account object. Holds data about the account.
@@ -190,11 +197,3 @@ var firstLogin = false;
  */
 var account = {};
 
-/**
- * Called on the document when the file system has been fully loaded.
- */
-var fileSystemReady = new Event("file-system-ready");
-
-// * Debug
-//localStorage.clear();
-// FileSystem.clearAll();

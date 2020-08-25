@@ -54,7 +54,7 @@ window.alert = (message, fontSize="1.2")=>{
 
 
     const keydownHandler = (event)=>{
-        if(box.isClosed()) {
+        if(box === undefined || box.isClosed()) {
             document.removeEventListener("keydown", keydownHandler);
         }
         if(event.key == "Enter" || event.key == " ") {
@@ -244,7 +244,7 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
         let cancelFocused = defaultCancel;
 
         const keydownHandler = (event)=>{
-            if(box.isClosed()) {
+            if(box === undefined || box.isClosed()) {
                 document.removeEventListener("keydown", keydownHandler);
             }
             if(event.key == "Enter" || event.key == " ") {

@@ -61,6 +61,15 @@ class FileViewer {
         this.generatedWindow = this.win.makeString();
         this.addRightClickMenu();
 
+        // background (for right click menu)
+        this.contentContainer.appendChild(this.background);
+        // Deselection
+        this.background.onmousedown = (event)=>{ // not window to save on events
+            if(event.target == this.background && !event.shiftKey) {
+                clearSelected();
+            }
+        }
+
         // Folder Display
         this.displayFolders(path);
         
@@ -562,7 +571,7 @@ class FileViewer {
     }
     addSystemUpdateListeners() {
         const updateHandler = (event)=>{
-            if(this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) {
                 document.removeEventListener("file-system-update", updateHandler);
             }
             if(event.parentPath == this.currentFolder) {
@@ -618,7 +627,7 @@ class FileViewer {
         
         // Sidebar update listeners
         const sidebarChangeHandler = (event)=>{
-            if(this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) {
                 document.removeEventListener("fv-user-sidebar-change", sidebarChangeHandler);
             } else {
                 if(this.sidebar) {
@@ -668,38 +677,34 @@ class FileViewer {
         }
         return folder;
     }
+    updateSidebar() {
+        this.favoritesDiv.childNodes.forEach((node)=>{
+            if(node.getAttribute("path") == this.currentFolder) {
+                node.classList.add("file-member-selected");
+            } else if(node.classList.contains("file-member-selected")) {
+                node.classList.remove("file-member-selected");
+            }
+        });
+    }
     /**
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
     openFolder(path) {
         this.currentFolder = path;
-        this.win.clear();
+        // this.win.clear();
         this.win.setTitle(path);
         // clear past screen
-        this.contentContainer.innerHTML = "";
+        // this.contentContainer.innerHTML = "";
         this.background.innerHTML = "";
         this.background.setAttribute("path", this.currentFolder);
 
-        this.contentContainer = document.createElement("div");
-        this.contentContainer.style.height = "calc(100% - 1em)";
-        this.contentContainer.style.display = "flex";
-        this.window.appendChild(this.contentContainer);
-
         this.displayFolders(path);
-        this.createSidebar();
+        // this.createSidebar();
+        this.updateSidebar();
         this.addBoxSelection();
     }
     displayFolders(path) {
-        // background (for right click menu)
-        this.contentContainer.appendChild(this.background);
-        // Deselection
-        this.background.onmousedown = (event)=>{ // not window to save on events
-            if(event.target == this.background && !event.shiftKey) {
-                clearSelected();
-            }
-        }
-
         this.shownSubfolders = [];
         
         if(folders[path]) { // has something

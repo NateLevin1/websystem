@@ -76,10 +76,10 @@ class ImageViewer {
 
         // keyboard shortcuts
         const shortcutHandler = (event)=>{
-            if(!this.win.isClosed()) {
+            if(this.win === undefined || this.win.isClosed()) {
                 document.removeEventListener("keydown", shortcutHandler);
             }
-            if(this.win.focused()) {
+            if(this.win !== undefined || this.win.focused()) {
                 if(event.metaKey || event.ctrlKey) {
                     if(event.key == "=" || event.key == "+") {
                         event.preventDefault();

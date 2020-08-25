@@ -499,7 +499,7 @@ class FileViewer {
         var isShown = false;
 
         const moveHandler = (event)=>{
-            if(this.win === undefined || this.win.isClosed()) { // this reference is removed at close time
+            if(this.win === undefined) { // this reference is removed at close time
                 document.removeEventListener("mousemove", moveHandler);
             }
             
@@ -547,7 +547,7 @@ class FileViewer {
         document.addEventListener("mousemove", moveHandler);
 
         const mouseUpHandler = ()=>{ // the document because the mouseup doesn't have to occur on the background
-            if(this.win === undefined || this.win.isClosed()) {
+            if(this.win === undefined) {
                 document.removeEventListener("mouseup", mouseUpHandler);
             }
             if(isShown) {
@@ -571,7 +571,7 @@ class FileViewer {
     }
     addSystemUpdateListeners() {
         const updateHandler = (event)=>{
-            if(this.win === undefined || this.win.isClosed()) {
+            if(this.win === undefined) {
                 document.removeEventListener("file-system-update", updateHandler);
             }
             if(event.parentPath == this.currentFolder) {
@@ -627,7 +627,7 @@ class FileViewer {
         
         // Sidebar update listeners
         const sidebarChangeHandler = (event)=>{
-            if(this.win === undefined || this.win.isClosed()) {
+            if(this.win === undefined) {
                 document.removeEventListener("fv-user-sidebar-change", sidebarChangeHandler);
             } else {
                 if(this.sidebar) {

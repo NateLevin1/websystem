@@ -89,7 +89,7 @@ class Window {
       }
 
       const windowFocusHandler = (event)=>{
-        if(this === undefined || this.isClosed()) {
+        if(this.window === undefined) {
           document.removeEventListener("window-focus", windowFocusHandler);
         }
         if(event.window == this.window) {
@@ -488,8 +488,6 @@ class Window {
      * @param {Boolean} [fade=true] - Whether or not to fade out when closing the window
      */
     forceClose(fade=true) {
-      this.closed = true;
-      
       // dispatch dock close event
       windowOpenChangeEvent.actions = {type: "close", affectedAppsPath: this.pathToApp, originWindow: this}
       document.dispatchEvent(windowOpenChangeEvent);
@@ -505,10 +503,6 @@ class Window {
         this.window.remove();
         this._deleteAllReferences();
       }
-    }
-
-    isClosed() {
-      return this.closed;
     }
 
     _deleteAllReferences() {

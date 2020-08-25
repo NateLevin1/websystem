@@ -50,7 +50,7 @@ class FileSystemGUI {
 
 
             const oneSelected = ()=>{
-                if(win === undefined || win.isClosed()) {
+                if(win === undefined) {
                     document.removeEventListener("mouseup", oneSelected);
                 }
                 // remove selection from any others
@@ -252,7 +252,7 @@ class FileSystemGUI {
 
 
             const oneSelected = ()=>{
-                if(win === undefined || win.isClosed()) {
+                if(win === undefined) {
                     document.removeEventListener("mouseup", oneSelected);
                 }
                 // remove selection from any others

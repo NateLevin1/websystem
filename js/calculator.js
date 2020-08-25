@@ -195,7 +195,7 @@ class Calculator {
 
         // KEYBOARD SHORTCUTS
         const shortcutHandler = (event) => {
-            if(this.win === undefined || this.win.isClosed()) {
+            if(this.win === undefined) {
                 document.removeEventListener("keydown", shortcutHandler);
             }
             if(this.win !== undefined && this.win.focused()) { // only count if focused

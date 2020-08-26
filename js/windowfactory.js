@@ -369,48 +369,78 @@ class Window {
         }
       }
 
-      function closeDragElement() {
+      function closeDragElement(e) {
         fakeOffsetTop = elmnt.offsetTop;
         // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
+      }
+      const closeResizeElement = (e)=>{
+        fakeOffsetTop = elmnt.offsetTop;
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+
+        if(performanceModeEnabled) {
+          // make the changes now
+          doResize(e, elmnt);
+          mainContent.removeChild(fakeEl);
+        }
       }
 
       // not w3schools
       function resize(e) {
           e = e || window.event;
           e.preventDefault();
-          document.onmouseup = closeDragElement;
+          document.onmouseup = closeResizeElement;
           document.onmousemove = resizeFunction;
       }
       var oldWidth = defaultWidth * em;
       var currentWidth = defaultWidth * em;
       var currentHeight = defaultHeight * em;
-      var resizeFunction = (e)=>{
+      const msOffset = 0; // mouse offset so it is centered
+      let fakeEl = elmnt.cloneNode();
+      fakeEl.innerHTML = "";
+      fakeEl.style.backgroundColor = "rgba(0,0,0,0.1)";
+      fakeEl.style.opacity = "1";
+      const resizeFunction = (e)=>{
           e = e || window.event;
           e.preventDefault();
-          let msOffset = 8; // mouse offset so it is centered
-          if((e.clientX - elmnt.offsetLeft)+msOffset > this.minWidth) {
-            if(keepAspectRatio) {
-              currentWidth = (e.clientX - elmnt.offsetLeft)+msOffset;
-              elmnt.style.width = currentWidth + "px";
-              currentHeight += currentWidth - oldWidth;
-              elmnt.style.height = currentHeight + "px";
-              oldWidth = currentWidth;
-            } else {
-              elmnt.style.width = (e.clientX - elmnt.offsetLeft)+msOffset + "px";
-            }
+          if(!performanceModeEnabled) {
+            doResize(e, elmnt);
           } else {
-            elmnt.style.width = this.minWidth;
+            fakeEl.style.zIndex = elmnt.style.zIndex;
+            fakeEl.style.left = elmnt.style.left;
+            fakeEl.style.top = elmnt.style.top;
+
+            mainContent.appendChild(fakeEl);
+            doResize(e, fakeEl);
           }
-          if((e.clientY - elmnt.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
-            if(!keepAspectRatio) {
-              elmnt.style.height = (e.clientY - elmnt.offsetTop)+msOffset - 1.7*em + "px";
-            }
+      }
+      const doResize = (e, elmnt)=>{
+        let x = e.clientX;
+        let y = e.clientY;
+        if((x - elmnt.offsetLeft)+msOffset > this.minWidth) {
+          if(keepAspectRatio) {
+            currentWidth = (x - elmnt.offsetLeft)+msOffset;
+            elmnt.style.width = currentWidth + "px";
+            currentHeight += currentWidth - oldWidth;
+            elmnt.style.height = currentHeight + "px";
+            oldWidth = currentWidth;
           } else {
-            elmnt.style.height = this.minHeight;
+            elmnt.style.width = (x - elmnt.offsetLeft)+msOffset + "px";
           }
-          elmnt.dispatchEvent(resizeEvent);
+        } else {
+          elmnt.style.width = this.minWidth+"px";
+        }
+        if((y - elmnt.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
+          if(!keepAspectRatio) {
+            elmnt.style.height = (y - elmnt.offsetTop)+msOffset - 1.7*em + "px";
+          }
+        } else {
+          elmnt.style.height = this.minHeight+"px";
+        }
+        elmnt.dispatchEvent(resizeEvent);
       }
     }
     /**

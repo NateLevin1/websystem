@@ -42,7 +42,7 @@ class SystemSettings {
                 performanceModeEnabled = onoff;
                 save("general", "performanceModeEnabled", performanceModeEnabled);
             });
-            this.addDescription("Shows a placeholder when moving and resizing windows. Good for low power computers.");
+            this.addDescription("Shows a placeholder when resizing windows. Good for computers with poor performance or battery.");
         
             this.addSection("Desktop Background");
             let thumbArr = ["assets/licensed/thumbbg1.jpg","assets/licensed/thumbbg2.jpg", "assets/licensed/thumbbg3.jpg", "assets/licensed/thumbbg4.jpg", "assets/licensed/thumbbg5.jpg", "assets/licensed/thumbbg6.jpg", "upload"];

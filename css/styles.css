@@ -394,6 +394,7 @@ input[type="checkbox"].switch:checked::after {
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    height: 1.2em;
 }
 
 .resize {

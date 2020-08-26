@@ -268,7 +268,14 @@
       this.scroll = scroll;
       this.addSongsToDisplay(songPaths, scroll);
 
-      
+      if(songPaths.length == 0) {
+        let text = document.createElement("div");
+        text.style.textAlign = "center";
+        text.style.fontSize = "1.2em";
+        text.style.marginTop = "2em";
+        text.textContent = "No songs on disk.";
+        scroll.appendChild(text);
+      }
     }
 
     getAllMusic() {

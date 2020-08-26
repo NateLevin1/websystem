@@ -142,12 +142,12 @@ class FileSystem {
     static deleteFolderAtLocation(path) {
         let shouldDelete = FileSystem.recurseThroughSubfolders(path);
         shouldDelete.forEach((path)=>{
-            let par = folders[path].parent;
             FileSystem.deleteAnyAtLocation(path);
         });
     }
     static deleteAnyAtLocation(path) {
         let fRefParent = folders[path].parent;
+        FileSystem.removeAsSubfolder(fRefParent, path);
         if(folders[path].isFile) {// is file, delete from folders{} and files{}
             if(folders[path].isBinary) {
                 delete files[path];

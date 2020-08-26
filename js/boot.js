@@ -95,7 +95,9 @@ function setFileSystem() {
         for(const val in folders) {
             let file = folders[val];
             if(file.kind == "App" && !makeFunctions[file.name]) { // if is an app and not installed by default
-                Appstore.installApp(file.name, file.content);
+                if(typeof file.content == "string") { // scripts must be strings, this prevents not apps from erroring
+                    Appstore.installApp(file.name, file.content);
+                }
             }
         }
 
@@ -110,7 +112,6 @@ function setFileSystem() {
         }).then(()=>{
             if(isSafari && firstLogin) { // add the websystem logo.png file
                 FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
-                FileSystem.removeAsSubfolder("/Users/"+NAME+"/Desktop/WebSystem/", "/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
                 fetch("../assets/trash.png")
                 .then(function(response) {
                     return response.blob();

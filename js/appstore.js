@@ -260,7 +260,7 @@ class Appstore {
      */
     static installApp(title, script, button=undefined) {
         // first, add script to document
-        var scr = document.createElement("script");
+        let scr = document.createElement("script");
         scr.innerHTML = script;
         document.body.appendChild(scr);
         if(!folders["/Users/"+NAME+"/Applications/"+title+".app/"]) {

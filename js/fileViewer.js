@@ -106,6 +106,20 @@ class FileViewer {
                 tmp.openFolderWindow(element.getAttribute("path"));
             });
         });
+        RightClickMenu.addLineToMenu([this.generatedWindow+"-app"]); // breaking line
+
+        RightClickMenu.addToMenu("Pin To Dock", [this.generatedWindow+"-app"], ()=>{
+            var selected = Array.from(document.querySelectorAll(".icon-selected"));
+            selected = selected.filter((node)=>{return node.classList.contains("app")})
+            selected.forEach((element)=>{
+                let path = element.getAttribute("path");
+                if(!dock.pinnedIcons[path]) {
+                    dock.unPinnedIcons[path] = {setPinned:()=>{}, setPinnedIcons:()=>{}};
+                    dock.pinApp(path);
+                    dock.bar.appendChild(dock.createApp(path, null, true));
+                }
+            });
+        });
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-trash", this.generatedWindow+"-app"]); // breaking line
 
@@ -114,7 +128,7 @@ class FileViewer {
             let selected = Array.from(mainContent.querySelectorAll(".icon-selected"));
             selected = selected.filter((node)=>{
                 // disallow uninstalling the app store
-                return (node.classList.contains("app") && node.getAttribute("name") != "App Store");
+                return (node.classList.contains("app") && node.getAttribute("name") != "App Store" && node.getAttribute("name") != "System Settings");
             });
             
             let names = selected.map((el)=>{return el.getAttribute("name");})
@@ -185,8 +199,8 @@ class FileViewer {
         
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file"]);
 
-        RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.copyFiles.bind(this));
-        RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"], this.cutFiles.bind(this));
+        RightClickMenu.addToMenu("Copy", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.copyFiles.bind(this));
+        RightClickMenu.addToMenu("Cut", [this.generatedWindow+"-folder", this.generatedWindow+"-file"], this.cutFiles.bind(this));
         RightClickMenu.addToMenu("Paste", [this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow, this.generatedWindow+"-app"], this.pasteFiles.bind(this));
 
         RightClickMenu.addLineToMenu([this.generatedWindow+"-folder", this.generatedWindow+"-file", this.generatedWindow+"-app"]); // breaking line
@@ -319,7 +333,13 @@ class FileViewer {
         selected.forEach((element)=>{
             if(FileSystem.moveFile(element.getAttribute("path"), trashPath)) { 
                 // the if statement returns false if moving is impossible
-                this.background.removeChild(element);
+                try {
+                    this.background.removeChild(element);
+                } catch(e) {
+                    // if this throws that means that it could not remove the child
+                    // this is caused by the file-system update event removing it before this runs
+                    // so this can be expected and not handled.
+                }
             }
         });
     }
@@ -708,7 +728,7 @@ class FileViewer {
         this.shownSubfolders = [];
         
         if(folders[path]) { // has something
-            folders[path].subfolders.forEach(subPath =>{
+            folders[path].subfolders.forEach((subPath)=>{
                 let name = folders[subPath].name;
                 if(folders[subPath].isFile) { // is file
                     switch(folders[subPath].kind) {

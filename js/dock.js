@@ -368,13 +368,18 @@
     
             // change open and closed
             let name = folders[path].name;
+            this.addDefaults(name, path);
             let openPinnedEl = menuContent[name+"-open"].filter(e=>{return e.textContent==="Pin "+name})[0];
             let openPinnedElIndex = menuContent[name+"-open"].indexOf(openPinnedEl);
-            menuContent[name+"-open"].splice(openPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+            if(openPinnedElIndex !== -1) { // if already pinned then this is true
+                menuContent[name+"-open"].splice(openPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+            }
     
             let closedPinnedEl = menuContent[name+"-closed"].filter(e=>{return e.textContent==="Pin "+name})[0];
             let closedPinnedElIndex = menuContent[name+"-closed"].indexOf(closedPinnedEl);
-            menuContent[name+"-closed"].splice(closedPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+            if(closedPinnedElIndex !== -1) {
+                menuContent[name+"-closed"].splice(closedPinnedElIndex, 1, this.returnTextToMenuForApp(name, "Unpin "+name, ()=>{this.unpinApp(path)}));
+            }
         }
     
         unpinApp(path) {

@@ -122,7 +122,7 @@ class Window {
               }
             }
           }
-        }, 51);
+        }, 4);
       }, {once: true});
 
       // if the app doesn't have a dock right click menu, use the default. Note that this is only run once

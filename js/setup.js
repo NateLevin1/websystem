@@ -79,7 +79,9 @@ onmessage = function (event) {
                 content: `
                 {
                     "highlightColor": "rgb(0, 89, 221)",
-                    "performanceModeEnabled": false
+                    "performanceModeEnabled": false, 
+                    "isBgCustom": false,
+                    "bg":"assets/licensed/bg1.jpg"
                 }`,
 
                 meta: defaultMeta

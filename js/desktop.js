@@ -43,11 +43,23 @@ class Desktop extends FileViewer {
             }
         });
 
+        const getCustomBG = (path)=>{
+            if(objectURLS[path]) {
+                return objectURLS[path];
+            } else {
+                let url = URL.createObjectURL(files[path]);
+                objectURLS[path] = url;
+                return url;
+            }
+        }
+
         let background = document.createElement("img");
         background.classList.add("desktop-background", "unselectable");
-        background.src = "assets/licensed/bg1.jpg";
+        let general = JSON.parse(folders["/etc/general.json/"].content);
+        background.src = general["isBgCustom"] ? getCustomBG(general["bg"]) : general["bg"];
         background.draggable = false;
         document.body.appendChild(background);
+        window.desktopBackground = background;
     }
 
     focusDesktop() {

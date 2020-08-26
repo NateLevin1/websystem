@@ -50,7 +50,7 @@ class GlobalStyle {
         });
     }
     /**
-     * Add raw CSS to the global style.
+     * Add raw CSS to the global style. To allow for multiple lines, instead of single or double quotes use backticks (``). See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals">MDN</a>.
      * @param {String} css - The css to be added.
      */
     static addRaw(css) {

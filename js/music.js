@@ -1,4 +1,5 @@
-class Music {
+// (function () {
+  class Music {
     constructor(name="", path="") {
         var win;
         if(name && path) { // open player
@@ -63,6 +64,7 @@ class Music {
 
         let audio = document.createElement("audio");
         audio.src = URL.createObjectURL(files[path]);
+        audio.volume = volume/100;
         info.appendChild(audio);
         audio.play();
         
@@ -395,7 +397,6 @@ makeFunctions["Music"] = ()=>{ new Music };
 
 var musicThumbnailsMemoizer = new WeakMap; // WeakMap as the keys are tag objects
 
-
 // STYLES
 GlobalStyle.newClass("music-song-title", "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;", "text-align: center;", "margin-top:5px;");
 GlobalStyle.newClass("music-song-artist", "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;", "text-align: center;", "font-size:0.8em;");
@@ -501,3 +502,4 @@ GlobalStyle.addRaw(`input[type=range].music-song-range {
     }
   }
 `);
+// }());

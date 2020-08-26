@@ -47,7 +47,7 @@ class FileSystemGUI {
             let background = document.createElement("div");
             background.style.overflowY = "auto"; // scrolling
             background.style.overflowX = "hidden"; // scrolling
-
+            filesContainer.appendChild(background);
 
             const oneSelected = ()=>{
                 if(win === undefined) {
@@ -249,7 +249,7 @@ class FileSystemGUI {
             let background = document.createElement("div");
             background.style.overflowY = "auto"; // scrolling
             background.style.overflowX = "hidden"; // scrolling
-
+            filesContainer.appendChild(background);
 
             const oneSelected = ()=>{
                 if(win === undefined) {
@@ -280,8 +280,7 @@ class FileSystemGUI {
             fileViewer.window = true; // show up as black among other things
             // mock window
             fileViewer.win = {
-                clear: ()=>{background.innerHTML = ""},
-                isClosed: win.isClosed
+                clear: ()=>{background.innerHTML = ""}
             };
             fileViewer.openFolder = (path)=>{
                 openFolder(path);
@@ -355,8 +354,7 @@ class FileSystemGUI {
 
             // FUNCTIONS ? Do not include here?
             function openFolder(path) {
-                fileViewer.win.clear();
-                fileViewer.addBoxSelection();
+                background.innerHTML = "";
                 // set the current folder and path
                 currentFolder = folders[path].name;
                 location = path;
@@ -365,6 +363,7 @@ class FileSystemGUI {
                 updatePathText();
 
                 fileViewer.displayFolders(location);
+                fileViewer.addBoxSelection();
 
                 background.childNodes.forEach((node)=>{ // disable dragging & remove as drop zone on all
                     let img = node.querySelector("img");

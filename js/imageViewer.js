@@ -130,7 +130,7 @@ class ImageViewer {
                 new ImageViewer(folders[selection].name, selection);
                 this.win.close();
             }).catch((reason)=>{
-                console.log(reason);
+                // expected
             });
         }
         contentContainer.appendChild(fileOpen);

@@ -182,12 +182,19 @@ class FileViewer {
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{
             // confirm if the user pressed the right thing
             confirm("Are you sure you want to permanently erase all items in the trash? This cannot be undone.")
-            .then((decision)=>{
+            .then(async (decision)=>{
                 if(decision) {
                     let subs = folders[trashPath].subfolders;
-                    subs.forEach((path)=>{
-                        FileSystem.deleteFolderAtLocation(path);
-                    });
+                    let prevent = 0;
+                    while(subs.length != 0) {
+                        prevent++;
+                        if(prevent > 1000) {
+                            console.error("There was an error trying to delete files. Error: Infinite loop while trying to remove subfolders");
+                            break;
+                        }
+                        let path = subs[0];
+                        FileSystem.deleteAnyAtLocation(path);
+                    }
                     folders[trashPath].subfolders = []; // remove old subfolders
                 }
             });

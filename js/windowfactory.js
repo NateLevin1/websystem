@@ -6,19 +6,18 @@ class Window {
      * @param {String} title - The title of the window
      * @param {Number} [defaultWidth=30] - The default width of the window in em.
      * @param {Number} [defaultHeight=30] - The default width of the window in em.
-     * @param {Object} [options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }] - The options object
+     * @param {Object} [options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }] - The options object
      * @param {Number} options.x - The default x position on the screen.
      * @param {Number} options.y The default y position on the screen.
-     * @param {Boolean} options.keepAspectRatio - If true, keeps the aspect ratio when resizing.
      * @param {Function} options.topBarCreator - The function to be called when a top bar is requested
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
      * @param {Boolean} options.zIndexDisabled - Whether or not to adjust z indexes on click etc. Useful for popups.
      * @param {String} options.pathToApp - The path to the app that is being opened. Used in the dock.
      */
-    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, keepAspectRatio: false, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }) {
+    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }) {
       // Take options into account
-      let {x, y, keepAspectRatio, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName, pathToApp} = options;
+      let {x, y, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName, pathToApp} = options;
       if(!topBarCreator) { // use default 'file -> quit'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
@@ -45,15 +44,18 @@ class Window {
       
       let close = document.createElement("div");
       close.classList.add("close", "unselectable", "no-move", "no-focus");
-      
-      let resize = document.createElement("div");
-      resize.classList.add("resize");
 
       header.appendChild(titleText);
       header.appendChild(close);
 
       window.appendChild(header);
-      window.appendChild(resize);
+      let resizerArr = ["resize-bottom-right", "resize-bottom-left", "resize-top-right", "resize-top-left", "resize-left", "resize-right", "resize-top", "resize-bottom"];
+      resizerArr.forEach((newClass)=>{
+        let resize = document.createElement("div");
+        resize.classList.add("resize", newClass);
+        window.appendChild(resize);
+      });
+
       mainContent.appendChild(window);
 
       this.lastChildNoChildren = window.lastChild;
@@ -64,7 +66,7 @@ class Window {
       
       this.minWidth = minWidth;
       this.minHeight = minHeight;
-      this.configureElement(window, header, resize, close, defaultWidth, defaultHeight, keepAspectRatio);
+      this.configureElement(window, header, close, defaultWidth, defaultHeight);
 
       this.window = window;
       this.header = header;
@@ -154,10 +156,12 @@ class Window {
     }
 
     disableResize() {
-      this.window.querySelector(".resize").remove();
-      let noResize = document.createElement("div");
-      noResize.classList.add("resize", "no");
-      this.window.appendChild(noResize);
+      this.window.querySelectorAll(".resize").forEach((node)=>{
+        let noResize = node.cloneNode();
+        noResize.classList.add("no");
+        this.window.appendChild(noResize);
+        node.remove();
+      });
     }
 
     disableZIndex() {
@@ -309,16 +313,16 @@ class Window {
      * Make window able to be dragged and resized.
      * @param {HTMLElement} elmnt - The window
      * @param {HTMLElement} header - The header
-     * @param {HTMLElement} resizeElement - The element for resizing
      * @param {HTMLElement} close- The close button
      * @param {String} defaultHeight - The default height of the window
      * @param {String} defaultWidth - The default width of the window
-     * @param {Boolean} keepAspectRatio - Whether or not to keep the original aspect ratio of the window when resizing 
      */
-    configureElement(elmnt, header, resizeElement, close, defaultWidth, defaultHeight, keepAspectRatio=false) {
+    configureElement(elmnt, header, close, defaultWidth, defaultHeight) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.style.width = defaultWidth+"em";
       elmnt.style.height = defaultHeight+"em";
+
+      let resizers = Array.from(elmnt.querySelectorAll(".resize"));
       
       var dragMouseDown = (e)=>{
         e = e || window.event;
@@ -346,7 +350,25 @@ class Window {
         // otherwise, move the DIV from anywhere inside the DIV: 
         elmnt.onmousedown = dragMouseDown;
       }
-      resizeElement.onmousedown = resize;
+      resizers.forEach((resizeElement)=>{
+        if(resizeElement.classList.contains("resize-bottom-left")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeBL)};
+        } else if(resizeElement.classList.contains("resize-bottom-right")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResize)};
+        } else if(resizeElement.classList.contains("resize-top-left")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeTL)};
+        } else if(resizeElement.classList.contains("resize-top-right")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeTR)};
+        } else if(resizeElement.classList.contains("resize-left")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeL)};
+        } else if(resizeElement.classList.contains("resize-right")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeR)};
+        } else if(resizeElement.classList.contains("resize-top")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeT)};
+        } else if(resizeElement.classList.contains("resize-bottom")) {
+          resizeElement.onmousedown = (e)=>{resize(e, doResizeB)};
+        }
+      });
 
       let fakeOffsetTop = elmnt.offsetTop;
       function elementDrag(e) {
@@ -383,64 +405,118 @@ class Window {
 
         if(performanceModeEnabled) {
           // make the changes now
-          doResize(e, elmnt);
+          elmnt.style.left = fakeEl.style.left;
+          elmnt.style.top = fakeEl.style.top;
+          elmnt.style.width = fakeEl.style.width;
+          elmnt.style.height = fakeEl.style.height;
+          elmnt.dispatchEvent(resizeEvent);
           mainContent.removeChild(fakeEl);
         }
       }
 
       // not w3schools
-      function resize(e) {
+      function resize(e, doFunc) {
           e = e || window.event;
           e.preventDefault();
           document.onmouseup = closeResizeElement;
-          document.onmousemove = resizeFunction;
-      }
-      var oldWidth = defaultWidth * em;
-      var currentWidth = defaultWidth * em;
-      var currentHeight = defaultHeight * em;
+          document.onmousemove = (e)=>{resizeFunction(e, doFunc)};
+          oldLeft = e.x;
+          oldWidth = elmnt.clientWidth;
+          oldTop = e.y;
+          oldHeight = elmnt.clientHeight;
+          if(performanceModeEnabled) {
+            fakeEl.style.zIndex = elmnt.style.zIndex;
+            fakeEl.style.left = elmnt.offsetLeft + "px";
+            fakeEl.style.top = elmnt.style.top;
+            mainContent.appendChild(fakeEl);
+          }
+        }
       const msOffset = 0; // mouse offset so it is centered
       let fakeEl = elmnt.cloneNode();
       fakeEl.innerHTML = "";
       fakeEl.style.backgroundColor = "rgba(0,0,0,0.1)";
       fakeEl.style.opacity = "1";
-      const resizeFunction = (e)=>{
+      let oldLeft = 0;
+      let oldWidth = 0;
+      let oldHeight = 0;
+      let oldTop = 0;
+      let x = 0;
+      let y = 0;
+      const resizeFunction = (e, func)=>{
           e = e || window.event;
           e.preventDefault();
+          x = e.clientX;
+          y = e.clientY;
           if(!performanceModeEnabled) {
-            doResize(e, elmnt);
+            func(elmnt);
+            elmnt.dispatchEvent(resizeEvent);
           } else {
-            fakeEl.style.zIndex = elmnt.style.zIndex;
-            fakeEl.style.left = elmnt.style.left;
-            fakeEl.style.top = elmnt.style.top;
-
-            mainContent.appendChild(fakeEl);
-            doResize(e, fakeEl);
+            func(fakeEl);
           }
       }
-      const doResize = (e, elmnt)=>{
-        let x = e.clientX;
-        let y = e.clientY;
-        if((x - elmnt.offsetLeft)+msOffset > this.minWidth) {
-          if(keepAspectRatio) {
-            currentWidth = (x - elmnt.offsetLeft)+msOffset;
-            elmnt.style.width = currentWidth + "px";
-            currentHeight += currentWidth - oldWidth;
-            elmnt.style.height = currentHeight + "px";
-            oldWidth = currentWidth;
+      const doResize = (el)=>{
+        rightXResize(x, el)
+        bottomYResize(y, el);
+      }
+      const doResizeBL = (el)=>{
+        leftXResize(x, el);
+        bottomYResize(y, el);
+      }
+      const doResizeTL = (el)=>{
+        let newY = y - 1.7*em;
+        leftXResize(x, el);
+        topYResize(newY, el);
+      }
+      const doResizeTR = (el)=>{
+        let newY = y - 1.7*em;
+        rightXResize(x, el);
+        topYResize(newY, el);
+      }
+      const doResizeL = (el)=>{
+        leftXResize(x, el);
+      }
+      const doResizeR = (el)=>{
+        rightXResize(x, el);
+      }
+      const doResizeT = (el)=>{
+        let newY = y - 1.7*em;
+        topYResize(newY, el);
+      }
+      const doResizeB = (el)=>{
+        bottomYResize(y, el);
+      }
+
+      const leftXResize = (x, el)=>{
+        if(oldWidth - (x - oldLeft) > this.minWidth) {
+          el.style.width = oldWidth - (x - oldLeft) + "px";
+          el.style.left = x + "px";
+        } else {
+          el.style.width = this.minWidth+"px";
+        }
+      }
+      const rightXResize = (x, el)=>{
+        if((x - el.offsetLeft)+msOffset > this.minWidth) {
+          el.style.width = (x - el.offsetLeft)+msOffset + "px";
+        } else {
+          el.style.width = this.minWidth+"px";
+        }
+      }
+      const topYResize = (y, el)=>{
+        if(y > 0) {
+          if(oldHeight - (y - (oldTop - 1.7*em)) > this.minHeight) { // the 1.7em is to offset the topbar
+            el.style.height = oldHeight - (y - (oldTop - 1.7*em))+ "px";
+            el.style.top = y + "px";
           } else {
-            elmnt.style.width = (x - elmnt.offsetLeft)+msOffset + "px";
+            el.style.height = this.minHeight+"px";
           }
-        } else {
-          elmnt.style.width = this.minWidth+"px";
         }
-        if((y - elmnt.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
-          if(!keepAspectRatio) {
-            elmnt.style.height = (y - elmnt.offsetTop)+msOffset - 1.7*em + "px";
-          }
+      }
+      const bottomYResize = (y, el)=>{
+        if((y - el.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
+          el.style.height = (y - el.offsetTop)+msOffset - 1.7*em + "px";
         } else {
-          elmnt.style.height = this.minHeight+"px";
+          el.style.height = this.minHeight+"px";
         }
-        elmnt.dispatchEvent(resizeEvent);
       }
     }
     /**

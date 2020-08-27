@@ -1,6 +1,6 @@
 class About {
     static newWindow(name, description, version, thumbnailSrc) {
-        let win = new Window(345, 216, "About "+name, 345/em, 216/em, {resizeDisabled: true });
+        let win = new Window(345, 216, "About "+name, 345/em, 216/em);
         let window = win.getWindow();
         let containerDiv = document.createElement("div");
         containerDiv.classList.add("about-container", "unselectable");

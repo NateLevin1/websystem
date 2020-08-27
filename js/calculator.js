@@ -426,7 +426,7 @@ class Calculator {
             About.newWindow("Calculator", "Do calculations, beautifully.", "1.0", "assets/calc.png")
          });
         TopBar.addToMenu("Keyboard Shortcuts", "help", ()=>{ 
-            let w = new Window(400, 270, "Calculator Keyboard Shortcuts", 400/em, 270/em, {resizeDisabled: true});
+            let w = new Window(400, 270, "Calculator Keyboard Shortcuts", 400/em, 270/em, {resizeDisabled: false});
             let newWindow = w.getWindow();
             newWindow.classList.add("unselectable")
             let text = document.createElement("p");

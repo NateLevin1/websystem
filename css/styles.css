@@ -399,16 +399,68 @@ input[type="checkbox"].switch:checked::after {
 
 .resize {
     position:absolute;
+    opacity: 0;
+    z-index: 1; /* Corners have a value of 2 so they overlap sides */
+}
+.resize-bottom-right {
     width:0.7em;
     height:0.7em;
-    background-color:grey;
     right:0em;
     bottom:0em;
-    opacity: 0;
-    cursor: se-resize;
-}
-.resize:active {
+    z-index: 2;
     cursor: nwse-resize;
+}
+.resize-bottom-left {
+    width:0.7em;
+    height:0.7em;
+    left:0em;
+    bottom:0em;
+    z-index: 2;
+    cursor: nesw-resize;
+}
+.resize-top-left {
+    width:0.7em;
+    height:0.7em;
+    left:0em;
+    top:0em;
+    z-index: 2;
+    cursor: nwse-resize;
+}
+.resize-top-right {
+    width:0.7em;
+    height:0.7em;
+    right:-0.5em;
+    top:-0.5em;
+    z-index: 2;
+    cursor: nesw-resize;
+}
+.resize-top {
+    width:100%;
+    height:1em;
+    left:0;
+    top:-0.7em;
+    cursor: ns-resize;
+}
+.resize-bottom {
+    width:100%;
+    height:1em;
+    left:0;
+    bottom:-0.7em;
+    cursor: ns-resize;
+}
+.resize-right {
+    width:1em;
+    height:100%;
+    right:-0.7em;
+    top:0;
+    cursor: ew-resize;
+}
+.resize-left {
+    width:1em;
+    height:100%;
+    left:-0.7em;
+    top:0;
+    cursor: ew-resize;
 }
 
 .close {
@@ -418,8 +470,14 @@ input[type="checkbox"].switch:checked::after {
     margin-top:0.2em;
     width:1em;
     height:0.9em;
-    background-color:red;
+    background-color:rgb(246, 1, 1);
     text-align:center;
+    z-index: 3;
+    cursor: default;
+    transition: background-color 0.1s;
+}
+.close:hover {
+    background-color:rgb(255, 22, 22);
 }
 .right-click {
     width:0; /* Hack because display changes opacity for some reason */

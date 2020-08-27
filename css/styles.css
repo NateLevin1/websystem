@@ -369,22 +369,17 @@ input[type="checkbox"].switch:checked::after {
 }
 .window {
     background-color:white;
-    z-index:1;
     /*resize:both; Doesn't work */
-    width:20em;
-    height:20em;
     border:2px solid black;
-    left:3em;
-    top:3em;
     opacity:0;
     overflow: hidden;
     color: black;
 }
 .window-fast {
-    transition: opacity 0.15s;
+    transition: opacity 0.15s, transform 0.3s;
 }
 .window-slow {
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, transform 0.3s;
 }
 
 .window-header {
@@ -463,21 +458,32 @@ input[type="checkbox"].switch:checked::after {
     cursor: ew-resize;
 }
 
-.close {
+.window-action {
     position:absolute;
-    right:0;
-    top:0;
-    margin-top:0.2em;
+    margin-top:0.14em;
     width:1em;
     height:0.9em;
-    background-color:rgb(246, 1, 1);
-    text-align:center;
     z-index: 3;
     cursor: default;
     transition: background-color 0.1s;
 }
+.close {
+    right:0;
+    top:0;
+    background-color:rgb(246, 1, 1);
+    text-align:center;
+}
 .close:hover {
     background-color:rgb(255, 22, 22);
+}
+.minimize {
+    right:1.2em;
+    top:0;
+    background-color:rgb(255, 174, 0);
+    text-align:center;
+}
+.minimize:hover {
+    background-color:rgb(253, 181, 27);
 }
 .right-click {
     width:0; /* Hack because display changes opacity for some reason */

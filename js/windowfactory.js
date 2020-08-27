@@ -18,6 +18,8 @@ class Window {
     constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }) {
       // Take options into account
       let {x, y, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName, pathToApp} = options;
+      x = x ? x : 3;
+      y = y ? y : 3;
       if(!topBarCreator) { // use default 'file -> quit'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
@@ -43,9 +45,23 @@ class Window {
       titleText.innerText = title;
       
       let close = document.createElement("div");
-      close.classList.add("close", "unselectable", "no-move", "no-focus");
+      close.classList.add("close", "unselectable", "no-move", "no-focus", "window-action");
+      close.onclick = ()=>{
+        this.close();
+      }
+
+      let minimize = document.createElement("div");
+      minimize.classList.add("minimize", "unselectable", "no-move", "no-focus", "window-action");
+      minimize.onclick = ()=>{
+        this.window.style.opacity = "0";
+        this.window.style.transform = "scaleX(0.1) translateY(100vh)";
+        this.window.classList.remove("window"); // prevents from being focused
+        this.minimized = true;
+        focusNewWindow();
+      }
 
       header.appendChild(titleText);
+      header.appendChild(minimize);
       header.appendChild(close);
 
       window.appendChild(header);
@@ -66,7 +82,7 @@ class Window {
       
       this.minWidth = minWidth;
       this.minHeight = minHeight;
-      this.configureElement(window, header, close, defaultWidth, defaultHeight);
+      this.configureElement(window, header, defaultWidth, defaultHeight);
 
       this.window = window;
       this.header = header;
@@ -101,27 +117,30 @@ class Window {
         }
       }
       document.addEventListener('window-focus', windowFocusHandler);
+      const focusNewWindow = ()=>{
+        // reset topbar
+        TopBar.clear();
+        // give focus to next most focused
+        let windows = document.querySelectorAll(".window");
+        windows = Array.from(windows);
+        if(windows.length == 0 || (windows.length == 1 && windows[0] == this.window)) { // desktop
+          focusEvent.window = "DESKTOP";
+          document.dispatchEvent(focusEvent);
+        } else {
+          let zIndices = windows.map((element)=>{
+            return element == this.window ? 0 : parseInt(element.style.zIndex); // don't include in search if it is the element
+          });
+          let element = windows[zIndices.indexOf(Math.max(...zIndices))] // find window with highest z index
+          focusEvent.window = element;
+          document.dispatchEvent(focusEvent);
+        }
+      }
 
       this.window.addEventListener('window-destroy', (event)=>{
         setTimeout(()=>{
           if(!event.preventClose) {
             if(parseInt(this.window.style.zIndex) >= 39) { // prevents closing background windows from taking focus
-              // reset topbar
-              TopBar.clear();
-              // give focus to next most focused
-              let windows = document.querySelectorAll(".window");
-              windows = Array.from(windows);
-              if(windows.length == 1 && windows[0] == this.window) { // desktop
-                focusEvent.window = "DESKTOP";
-                document.dispatchEvent(focusEvent);
-              } else {
-                let zIndices = windows.map((element)=>{
-                  return element == this.window ? 0 : parseInt(element.style.zIndex); // don't include in search if it is the element
-                });
-                let element = windows[zIndices.indexOf(Math.max(...zIndices))] // find window with highest z index
-                focusEvent.window = element;
-                document.dispatchEvent(focusEvent);
-              }
+              focusNewWindow();
             }
           }
         }, 4);
@@ -249,6 +268,7 @@ class Window {
       if(this.useZIndexes) {
         this.window.style.zIndex = 40;
       }
+      
       // correct topbar
       TopBar.clear();
       if(this.topBarCreator) {
@@ -287,6 +307,12 @@ class Window {
         focusEvent.window = this.window;
         document.dispatchEvent(focusEvent);
       }
+      if(this.minimized) { // minimize
+        this.minimized = false;
+        this.window.classList.add("window");
+        this.window.style.transform = "";
+        this.window.style.opacity = "1";
+      }
     }
 
     setTopBarCreator(func) {
@@ -313,11 +339,10 @@ class Window {
      * Make window able to be dragged and resized.
      * @param {HTMLElement} elmnt - The window
      * @param {HTMLElement} header - The header
-     * @param {HTMLElement} close- The close button
      * @param {String} defaultHeight - The default height of the window
      * @param {String} defaultWidth - The default width of the window
      */
-    configureElement(elmnt, header, close, defaultWidth, defaultHeight) {
+    configureElement(elmnt, header, defaultWidth, defaultHeight) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
       elmnt.style.width = defaultWidth+"em";
       elmnt.style.height = defaultHeight+"em";
@@ -334,11 +359,6 @@ class Window {
           document.onmouseup = closeDragElement;
           // call a function whenever the cursor moves:
           document.onmousemove = elementDrag;
-        } else {
-          if(e.target == close) {
-            // close window
-            this.close();
-          }
         }
       }
 

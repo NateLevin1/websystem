@@ -355,6 +355,7 @@ class Calculator {
 
 
     /**
+     * @ignore
     * Fit text to div (from <a href="https://github.com/ricardobrg/fitText/">fitText</a>)
     * @ignore
     * @param {HTMLElement} outputSelector - Element to select (changed from link above to not be id based)

@@ -13,9 +13,6 @@ GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150);
 GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
 GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254)); border-color: rgb(7,84,207); color: white;");
 
-/**
- * WebSystem's App store. Includes the interface and installApp method, which is used internally to save space.
- */
 class Appstore {
     constructor() {
         let win = new Window(400, 300, "App Store", 25, 25, {x: 5, y: 2.2, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/App Store.app/"});
@@ -177,7 +174,7 @@ class Appstore {
         this.main.appendChild(txt);
     }
     /**
-     * @private
+     * @ignore
      * Adds an app to the app store's screen with specified title, description, and thumbnail.
      * @param {String} title - The title of the app
      * @param {String} desc - The description of the app

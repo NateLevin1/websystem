@@ -1,5 +1,5 @@
 /**
- * Remove the 'icon-selected' class from all icons. Note that this will not deselect any icons in a file chooser GUI.
+ * Remove the 'icon-selected' class from all icons.
  */
 function clearSelected() {
     let selected = document.querySelectorAll(".icon-selected");

@@ -1,5 +1,5 @@
 # Contributing to WebSystem
-WebsSystem is improved by the community's input! Contributing to this project should be as easy and transparent as possible, whether it's:
+WebSystem is improved by the community's input! Contributing to this project should be as easy and transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code

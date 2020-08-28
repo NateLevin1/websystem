@@ -1,4 +1,14 @@
+/**
+ * The utility for creating about windows. Should be accessed from top bar in help -> about
+ */
 class About {
+    /**
+     * Create a new window which is formatted as an about window
+     * @param {String} name 
+     * @param {String} description 
+     * @param {String} version 
+     * @param {String} thumbnailSrc - The src attribute to be given to the img
+     */
     static newWindow(name, description, version, thumbnailSrc) {
         let win = new Window(345, 216, "About "+name, 345/em, 216/em);
         let window = win.getWindow();

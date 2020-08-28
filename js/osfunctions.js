@@ -2,10 +2,14 @@
 // * functions good for general use in websystem.
 // * More functions will be added here as needed.
 
-// The NAME variable is used to get the current user's name.
+/**
+ * The NAME variable is used to get the current user's name.
+ */
 var NAME = localStorage.getItem("name");
 
-// Used to determine whether the user can access the internet. Re-evaluated every 15 seconds in 'constantUpdates.js'
+/**
+ * Used to determine whether the user can access the internet. Re-evaluated every 15 seconds in 'constantUpdates.js'
+ */
 var OFFLINE = !navigator.onLine;
 
 /**
@@ -55,7 +59,9 @@ String.prototype.isNumber = function () {
     return !isNaN(parseFloat(this));
 }
 
-// appImagePaths: Add the name of the app to its prototype, equaling the path to the icon
+/**
+ * Add the name of the app to its prototype, equaling the path to the icon
+ */
 var appImagePaths = {};
 
 // 1em. Calculates the value in pixels of 1 em. Useful for many things. Notably, offsets where pixels are required but ems are given, and vice versa
@@ -63,6 +69,9 @@ var appImagePaths = {};
 var emDiv = document.createElement("div");
 emDiv.style.width = "1em";
 document.body.appendChild(emDiv);
+/**
+ * The value of 1 em, calculated on page load
+ */
 var em = emDiv.clientWidth; // this is the useful property
 document.body.removeChild(emDiv);
 
@@ -74,23 +83,15 @@ document.body.removeChild(emDiv);
  */
 const isHover = e => e.parentElement.querySelector(':hover') === e;
 
-// makeFunctions
-// The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
+/**
+ * The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
+ */
 makeFunctions = {};
 
-// openPossibilities
-// All apps that can open a file type should be added to this. The keys are a filekind (e.g. "Image" or "Text") and the value is a function that has its first argument as the name of the opened file and its second as the path to the opened file
+/**
+ * All apps that can open a file type should be added to this. The keys are a filekind (e.g. "Image" or "Text") and the value is a function that has its first argument as the name of the opened file and its second as the path to the opened file
+ */
 openPossibilities = {};
-
-// ! DEBUG ONLY
-// ! THIS SHOULD BE REMOVED FOR RELEASE
-function jsonEscapeNewlines(source) {
-    source = source.toString();
-    source = source.replace(/(?:\r\n|\r|\n)/g, '\\n');
-    source = source.replace(/"/g, "\\\"");
-    console.log(source);
-}
-
 
 // Via StackOverflow: https://stackoverflow.com/a/54095466/ Fabian von Ellerts
 /**
@@ -118,7 +119,28 @@ function outerWidth(element) {
 }
 
 // Initialized in boot.
+
+/**
+ * The way to read data from the file system. Key is path to a file or folder, value is an object with properties:
+ * <ul>
+ * <li><code>name</code></li>
+ * <li><code>kind</code> - The kind of the item. E.g. "Image" or "Text"</li>
+ * <li><code>parent</code></li>
+ * <li><code>meta</code> - various metadata about the item.</li>
+ * </ul>
+ * If it is a file, the following properties are added:
+ * <ul>
+ * <li><code>isFile</code></li>
+ * <li><code>isBinary</code></li>
+ * <li><code>extension</code> - The extension of the file. Does not include the "."</li>
+ * <li><code>content</code> - The content of the file. Only used if the file is not binary.</li>
+ * </ul>
+ * If it is a folder, the <code>subfolders</code> property is added. This property contains all files and folders that are inside the folder.
+ */
 var folders = {};
+/**
+ * The way to see the content of binary files. Key is file path, value is a Blob
+ */
 var files = {};
 
 // Third party media tag getter

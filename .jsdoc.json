@@ -13,7 +13,8 @@
         "disableSort": false,
         "collapse": true,
         "resources": {
-            "repository": "https://github.com/UltimatePro-Grammer/websystem"
+            "repository": "https://github.com/UltimatePro-Grammer/websystem", 
+            "contributing": "https://github.com/UltimatePro-Grammer/websystem/blob/master/contributing.md"
         }
     },
     "opts": {

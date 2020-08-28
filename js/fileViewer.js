@@ -9,6 +9,7 @@ GlobalStyle.newClass("file-viewer-add", "color:rgba(0,0,0,0.5);", "text-align: c
 GlobalStyle.newClass("file-viewer-add:active", "color:rgba(0,0,0,0.8);");
 
 /**
+ * @ignore
  * The class which holds the interface for the file viewer.
  */
 class FileViewer {
@@ -16,6 +17,7 @@ class FileViewer {
 
     }
     /**
+     * @ignore
      * Open a new file viewer <strong>window</strong> at the given path.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
@@ -764,6 +766,7 @@ class FileViewer {
         });
     }
     /**
+     * @ignore
      * <strong>Change</strong> the current fileViewer's window to be the path provided.
      * @param {String} path - The path for the window to be opened under. Errors will occur if this is invalid, so make sure to validate it first.
      */
@@ -808,6 +811,7 @@ class FileViewer {
         }
     }
     /**
+     * @ignore
      * Add a folder to the screen in the current window
      * @param {String} name - The name of the folder to be made. If an empty string will be auto determined from path
      * @param {String} path - The path to the parent of the folder to be created at.
@@ -895,6 +899,7 @@ class FileViewer {
         return newFolderContainer; // allows for adding to lists
     }
     /**
+     * @ignore
      * Add a file to the screen.
      * @param {String} name - The name of the file
      * @param {String} path - The path of the file
@@ -1058,6 +1063,7 @@ class FileViewer {
     }
 
     /**
+     * @ignore
      * Open the file(s) with the specified path.
      * @param {(string|string[])} path - A string or array of strings representing which paths to open.
      */
@@ -1209,6 +1215,7 @@ class FileViewer {
         FileSystem.addFileAtLocation(filename, filedata, filekind, filepath);
     }
     /**
+     * @ignore
      * Add a file to storage. Reads the tags if music.
      * @ignore
      * @private
@@ -1256,6 +1263,7 @@ class FileViewer {
     }
 
     /**
+     * @ignore
      * Allows the user to upload one or more files and will add it to the current folder.
      */
     uploadNewFile() {
@@ -1335,6 +1343,7 @@ class FileViewer {
     }
 
     /**
+     * @ignore
      * Unselect all files that are in other FileViewer instances
      */
     unselectNotInView() {

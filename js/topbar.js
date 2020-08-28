@@ -76,13 +76,6 @@ class TopBar {
         TopBar.addToMenu("Go To Github", "info", ()=>{ 
             window.open("https://github.com/UltimatePro-Grammer/websystem", '_blank');
         });
-        TopBar.addToMenu("DEBUG: Delete All Data", "info", ()=>{ 
-            FileSystem.clearAll();
-            sessionStorage.clear();
-            setTimeout(()=>{
-                location.reload(false);
-            }, 100);
-        });
     }
     /**
      * Clear the top bar of all things other than the time and info.

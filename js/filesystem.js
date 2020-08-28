@@ -367,12 +367,6 @@ class FileSystem {
         return filesystem.setItem("folders", folders);
     }
 
-    // ! DEBUG DO NOT INCLUDE BELOW IN PRODUCTION
-    static clearAll() {
-        localStorage.clear();
-        filesystem.clear();
-    }
-
     /**
      * Set a value at specified key and save it to the account.
      * @param {String} key 

@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      prompts.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      WebSystem
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem">repository</a>
+      
+        <a href="https://github.com/UltimatePro-Grammer/websystem/blob/master/contributing.md">contributing</a>
+      
+    
+
+    <h3>Classes</h3><ul><li id="About-nav"><a href="About.html">About</a><ul class='methods'><li data-type="method" id="About-newWindow-nav"><a href="About.html#.newWindow">newWindow</a></li></ul></li><li id="Clipboard-nav"><a href="Clipboard.html">Clipboard</a><ul class='methods'><li data-type="method" id="Clipboard-get-nav"><a href="Clipboard.html#.get">get</a></li><li data-type="method" id="Clipboard-set-nav"><a href="Clipboard.html#.set">set</a></li></ul></li><li id="FileSystem-nav"><a href="FileSystem.html">FileSystem</a><ul class='methods'><li data-type="method" id="FileSystem-addFileAtLocation-nav"><a href="FileSystem.html#.addFileAtLocation">addFileAtLocation</a></li><li data-type="method" id="FileSystem-addFolderAtLocation-nav"><a href="FileSystem.html#.addFolderAtLocation">addFolderAtLocation</a></li><li data-type="method" id="FileSystem-changeDisplayName-nav"><a href="FileSystem.html#.changeDisplayName">changeDisplayName</a></li><li data-type="method" id="FileSystem-dispatchUpdate-nav"><a href="FileSystem.html#.dispatchUpdate">dispatchUpdate</a></li><li data-type="method" id="FileSystem-moveFile-nav"><a href="FileSystem.html#.moveFile">moveFile</a></li><li data-type="method" id="FileSystem-recursiveRenameFolder-nav"><a href="FileSystem.html#.recursiveRenameFolder">recursiveRenameFolder</a></li><li data-type="method" id="FileSystem-setAccountDetail-nav"><a href="FileSystem.html#.setAccountDetail">setAccountDetail</a></li><li data-type="method" id="FileSystem-updateContent-nav"><a href="FileSystem.html#.updateContent">updateContent</a></li></ul></li><li id="FileSystemGUI-nav"><a href="FileSystemGUI.html">FileSystemGUI</a><ul class='methods'><li data-type="method" id="FileSystemGUI-requestDirectory-nav"><a href="FileSystemGUI.html#.requestDirectory">requestDirectory</a></li><li data-type="method" id="FileSystemGUI-requestFile-nav"><a href="FileSystemGUI.html#.requestFile">requestFile</a></li></ul></li><li id="GlobalStyle-nav"><a href="GlobalStyle.html">GlobalStyle</a><ul class='methods'><li data-type="method" id="GlobalStyle-addRaw-nav"><a href="GlobalStyle.html#.addRaw">addRaw</a></li><li data-type="method" id="GlobalStyle-newClass-nav"><a href="GlobalStyle.html#.newClass">newClass</a></li><li data-type="method" id="GlobalStyle-newRulesByIdentifier-nav"><a href="GlobalStyle.html#.newRulesByIdentifier">newRulesByIdentifier</a></li></ul></li><li id="Window-nav"><a href="Window.html">Window</a><ul class='methods'><li data-type="method" id="Window-clear-nav"><a href="Window.html#clear">clear</a></li><li data-type="method" id="Window-close-nav"><a href="Window.html#close">close</a></li><li data-type="method" id="Window-configureElement-nav"><a href="Window.html#configureElement">configureElement</a></li><li data-type="method" id="Window-dispatchFocus-nav"><a href="Window.html#dispatchFocus">dispatchFocus</a></li><li data-type="method" id="Window-focused-nav"><a href="Window.html#focused">focused</a></li><li data-type="method" id="Window-forceClose-nav"><a href="Window.html#forceClose">forceClose</a></li><li data-type="method" id="Window-getHeader-nav"><a href="Window.html#getHeader">getHeader</a></li><li data-type="method" id="Window-getHeaderText-nav"><a href="Window.html#getHeaderText">getHeaderText</a></li><li data-type="method" id="Window-getHeight-nav"><a href="Window.html#getHeight">getHeight</a></li><li data-type="method" id="Window-getHeightInEm-nav"><a href="Window.html#getHeightInEm">getHeightInEm</a></li><li data-type="method" id="Window-getWidth-nav"><a href="Window.html#getWidth">getWidth</a></li><li data-type="method" id="Window-getWidthInEm-nav"><a href="Window.html#getWidthInEm">getWidthInEm</a></li><li data-type="method" id="Window-getWindow-nav"><a href="Window.html#getWindow">getWindow</a></li><li data-type="method" id="Window-getWindowHeight-nav"><a href="Window.html#getWindowHeight">getWindowHeight</a></li><li data-type="method" id="Window-getWindowWidth-nav"><a href="Window.html#getWindowWidth">getWindowWidth</a></li><li data-type="method" id="Window-giveFocus-nav"><a href="Window.html#giveFocus">giveFocus</a></li><li data-type="method" id="Window-makeString-nav"><a href="Window.html#makeString">makeString</a></li><li data-type="method" id="Window-removeFocus-nav"><a href="Window.html#removeFocus">removeFocus</a></li><li data-type="method" id="Window-setBackgroundColor-nav"><a href="Window.html#setBackgroundColor">setBackgroundColor</a></li><li data-type="method" id="Window-setHeaderColor-nav"><a href="Window.html#setHeaderColor">setHeaderColor</a></li><li data-type="method" id="Window-setHeaderTextColor-nav"><a href="Window.html#setHeaderTextColor">setHeaderTextColor</a></li><li data-type="method" id="Window-setMinHeight-nav"><a href="Window.html#setMinHeight">setMinHeight</a></li><li data-type="method" id="Window-setMinWidth-nav"><a href="Window.html#setMinWidth">setMinWidth</a></li><li data-type="method" id="Window-setTitle-nav"><a href="Window.html#setTitle">setTitle</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#account">account</a></li><li><a href="global.html#appImagePaths">appImagePaths</a></li><li><a href="global.html#clearSelected">clearSelected</a></li><li><a href="global.html#em">em</a></li><li><a href="global.html#files">files</a></li><li><a href="global.html#folders">folders</a></li><li><a href="global.html#isHover">isHover</a></li><li><a href="global.html#makeFunctions">makeFunctions</a></li><li><a href="global.html#NAME">NAME</a></li><li><a href="global.html#OFFLINE">OFFLINE</a></li><li><a href="global.html#openPossibilities">openPossibilities</a></li><li><a href="global.html#outerHeight">outerHeight</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        prompts.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>/**
+ * WebSystem's version of window.alert(). Almost exactly the same as alert(),
+ * though it notably does not pause the site. (Which is important in the context of an operating system)
+ * 
+ * @param {String} message - The message to be given to the user
+ * @param {String} fontSize - The font size (in em) for the window to use.
+ */
+window.alert = (message, fontSize="1.2")=>{
+    let cover = coverScreen();
+    let box = makeAlertWindow("Alert");
+
+    let wind = box.getWindow();
+    wind.style.zIndex = "42";
+
+    let container = makeContainer(wind);
+
+    let header = box.getHeader();
+    makeHeaderNoMove(header);
+    
+
+    let content = document.createElement("div");
+    content.style.minWidth = "90%";
+    content.style.display = "inline-block";
+    content.style.overflow = "hidden";
+    content.style.alignSelf = "flex-start";
+    content.style.textAlign = "center";
+    content.style.margin = "auto 5%";
+    content.style.fontSize = fontSize+"em";
+    content.textContent = message;
+    container.appendChild(content);
+
+    let closeContainer = document.createElement("div");
+    closeContainer.style.minWidth = "100%";
+    closeContainer.style.margin = "auto";
+    
+    closeContainer.style.alignSelf = "flex-end";
+    container.appendChild(closeContainer);
+    
+    let close = document.createElement("button");
+    close.textContent = "Close";
+    close.style.margin = "0 auto";
+    close.style.fontSize = fontSize+"em";
+    closeContainer.appendChild(close);
+
+    close.onclick = ()=>{
+        box.close();
+        cover.remove();
+    }
+
+    // remove window on red x pushed
+    wind.addEventListener("window-destroy", ()=>{
+        cover.remove();
+    }, { once:true });
+
+
+    const keydownHandler = (event)=>{
+        if(box === undefined) {
+            document.removeEventListener("keydown", keydownHandler);
+        }
+        if(event.key == "Enter" || event.key == " ") {
+            box.close();
+            cover.remove();
+        }
+        if(!document.body.contains(cover)) {
+            document.removeEventListener("keydown", keydownHandler);
+        }
+    }
+    document.addEventListener("keydown", keydownHandler);
+}
+
+
+/**
+ * Prompt the user to enter input.
+ * @param {String} message 
+ * @param {String} defaultValue - The default value for the input. Not a placeholder, a value.
+ * @param {String} fontSize - The font size to be used for the text.
+ * @returns {Promise&lt;(String|null)>} Returns a promise with the result being null if cancel is pressed and the value of the input if OK is pressed. 
+ */
+window.prompt = (message, defaultValue="", fontSize="1.2")=>{
+    return new Promise((resolve)=>{
+        let cover = coverScreen();
+        let box = makeAlertWindow("Prompt");
+
+        let wind = box.getWindow();
+        wind.style.zIndex = "42";
+
+        let container = makeContainer(wind);
+
+        let header = box.getHeader();
+        makeHeaderNoMove(header);
+
+        let content = document.createElement("div");
+        content.style.minWidth = "90%";
+        content.style.display = "inline-block";
+        content.style.overflow = "hidden";
+        content.style.alignSelf = "flex-start";
+        content.style.textAlign = "center";
+        content.style.margin = "auto 5%";
+        content.style.fontSize = fontSize+"em";
+        content.textContent = message;
+        container.appendChild(content);
+
+        let input = document.createElement("input");
+        input.style.minWidth = "70%";
+        input.style.display = "inline-block";
+        input.style.overflow = "hidden";
+        input.style.margin = "auto 5%";
+        input.style.fontSize = "1em";
+        input.type = "text";
+        input.value = defaultValue;
+        container.appendChild(input);
+
+        input.onkeydown = (event)=>{
+            if(event.key == "Enter") {
+                remove(input.value);
+            }
+        }
+        setTimeout(()=>{
+            input.focus();
+            input.select();
+        }, 50);
+
+        let buttonContainer = document.createElement("div");
+        buttonContainer.style.minWidth = "100%";
+        buttonContainer.style.margin = "auto";
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.alignSelf = "flex-end";
+        container.appendChild(buttonContainer);
+        
+        let ok = document.createElement("button");
+        ok.textContent = "OK";
+        ok.style.margin = "0 auto";
+        ok.style.fontSize = fontSize+"em";
+        ok.style.minWidth = "5em";
+        buttonContainer.appendChild(ok);
+
+        let cancel = document.createElement("button");
+        cancel.textContent = "Cancel";
+        cancel.style.margin = "0 auto";
+        cancel.style.fontSize = fontSize+"em";
+        buttonContainer.appendChild(cancel);
+
+        ok.classList.add("default-button");
+        
+
+        cancel.onclick = ()=>{ remove(null); };
+        ok.onclick = ()=>{ remove(input.value); };
+
+        // remove window on red x pushed
+        wind.addEventListener("window-destroy", ()=>{
+            if(!isRemoving) {
+                cover.remove();
+                resolve(null); // emulate normal confirm() behavior
+            }
+        }, { once:true });
+        let isRemoving = false;
+
+        function remove(isCancel) {
+            isRemoving = true;
+            box.close();
+            cover.remove();
+            resolve(isCancel); // emulate normal confirm() behavior
+        }
+    });
+}
+
+/**
+ * Confirm something. Similar to window.confirm(), though is asynchronous and returns a promise.
+ * @param {String} message 
+ * @param {Boolean} [defaultCancel=true] 
+ * @param {String} [fontSize="1.2"] 
+ * @returns {Promise} Unlike normal window.confirm(), since other things can run in the background, this returns an asynchronous promise that resolves &lt;code>true&lt;/code> if OK was pressed and &lt;code>false&lt;/code> if Cancel was pressed.
+ */
+window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
+    return new Promise((resolve)=>{
+        let cover = coverScreen();
+        let box = makeAlertWindow("Confirm");
+
+        let wind = box.getWindow();
+        wind.style.zIndex = "42";
+
+        let container = makeContainer(wind);
+
+        let header = box.getHeader();
+        makeHeaderNoMove(header);
+
+        let content = document.createElement("div");
+        content.style.minWidth = "90%";
+        content.style.display = "inline-block";
+        content.style.overflow = "hidden";
+        content.style.alignSelf = "flex-start";
+        content.style.textAlign = "center";
+        content.style.margin = "auto 5%";
+        content.style.fontSize = fontSize+"em";
+        content.textContent = message;
+        container.appendChild(content);
+
+        let buttonContainer = document.createElement("div");
+        buttonContainer.style.minWidth = "100%";
+        buttonContainer.style.margin = "auto";
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.alignSelf = "flex-end";
+        container.appendChild(buttonContainer);
+        
+        let ok = document.createElement("button");
+        ok.textContent = "OK";
+        ok.style.margin = "0 auto";
+        ok.style.fontSize = fontSize+"em";
+        ok.style.minWidth = "5em";
+        buttonContainer.appendChild(ok);
+
+        let cancel = document.createElement("button");
+        cancel.textContent = "Cancel";
+        cancel.style.margin = "0 auto";
+        cancel.style.fontSize = fontSize+"em";
+        buttonContainer.appendChild(cancel);
+
+        if(defaultCancel == true) {
+            cancel.classList.add("default-button");
+        } else {
+            ok.classList.add("default-button");
+        }
+        
+
+        cancel.onclick = ()=>{ remove(true); };
+        ok.onclick = ()=>{ remove(false); };
+
+        // remove window on red x pushed
+        wind.addEventListener("window-destroy", ()=>{
+            if(!isRemoving) {
+                cover.remove();
+                resolve(false);
+            }
+        }, { once:true });
+        let isRemoving = false;
+
+        function remove(isCancel) {
+            isRemoving = true;
+            box.close();
+            cover.remove();
+            resolve(!isCancel); // emulate normal confirm() behavior
+        }
+
+        let cancelFocused = defaultCancel;
+
+        const keydownHandler = (event)=>{
+            if(box === undefined) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
+            if(event.key == "Enter" || event.key == " ") {
+                remove(cancelFocused);
+            }
+
+            if(event.key == "Tab") {
+                event.preventDefault(); // tabbing to another element
+                if(cancelFocused) {
+                    cancelFocused = false;
+                    cancel.classList.remove("default-button");
+                    ok.classList.add("default-button");
+                } else {
+                    cancelFocused = true;
+                    cancel.classList.add("default-button");
+                    ok.classList.remove("default-button");
+                }
+            }
+
+            if(!document.body.contains(cover)) {
+                document.removeEventListener("keydown", keydownHandler);
+            }
+        }
+        document.addEventListener("keydown", keydownHandler);
+    });
+}
+
+
+function coverScreen() {
+    // cover screen
+    let cover = document.createElement("div");
+    cover.style.width = "100%";
+    cover.style.height = "100%";
+    cover.style.position = "absolute";
+    cover.style.top = "0";
+    cover.style.left = "0";
+    cover.style.zIndex = "41";
+    let coversLength = mainContent.querySelectorAll(".semi-screen-cover").length;
+    if(coversLength &lt; 3) {
+        cover.style.backgroundColor = "rgba(0,0,0,0.25)";
+    } else if(coversLength => 4 &amp;&amp; coversLength &lt;= 8) {
+        cover.style.backgroundColor = "rgba(0,0,0,"+((12 - coversLength)*0.01).toString()+")";
+    } else {
+        cover.style.backgroundColor = "none";
+    }
+    cover.classList.add("semi-screen-cover");
+    mainContent.appendChild(cover);
+    return cover;
+}
+
+function makeAlertWindow(name) {
+    let boxWidth = 20;
+    let boxHeight = 13;
+    return new Window(0,0, name, boxWidth, boxHeight, {
+        x: (window.innerWidth/em/2)-boxWidth/2,
+        y: (window.innerHeight/em/2)-Math.round(boxHeight), // make it higher than the middle
+        resizeDisabled: true,
+        zIndexDisabled: true
+    });
+}
+
+function makeHeaderNoMove(header) {
+    header.classList.add("no-move", "no");
+    header.childNodes.forEach((node)=>{
+        if(!node.classList.contains("no-move")) {
+            node.classList.add("no-move", "no");
+        }
+    });
+}
+
+function makeContainer(wind) {
+    let container = document.createElement("div");
+    container.style.height = "calc(100% - 1.2em)";
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container.style.flexDirection = "column";
+    wind.appendChild(container);
+    return container;
+}</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>

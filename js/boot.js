@@ -8,13 +8,16 @@ function boot() {
     let name = localStorage.getItem("name");
     if(!name) {
         firstLogin = true;
+        let bg = document.createElement("img");
+        bg.src = "assets/licensed/bg1.jpg";
+        bg.classList.add("new-account-bg");
+        document.body.appendChild(bg);
         // main box
         let dialogboxcontainer = document.createElement("div");
-        dialogboxcontainer.classList.add("small-window");
-        dialogboxcontainer.style.overflow = "auto";
+        dialogboxcontainer.classList.add("dialog-container-container");
         // centered container
         let dialogbox = document.createElement("div");
-        dialogbox.classList.add("centered");
+        dialogbox.classList.add("dialog-container");
         // top text
         let header = document.createElement("a");
         header.innerText = "Login";
@@ -25,51 +28,65 @@ function boot() {
         let username = document.createElement("h2");
         username.classList.add("black", "medium", "sans-serif", "regular", "unselectable");
         dialogbox.appendChild(username);
+        username.style.width = "75%";
         username.innerText = "Welcome to WebSystem. Create a new account?";
+
+        let inContainer = document.createElement("div");
+        inContainer.classList.add("in-container");
         // create label
         let label = document.createElement("label");
         label.innerText = "Name: ";
         label.classList.add("black", "sans-serif", "normal", "fancy-input-label", "unselectable");
-        dialogbox.appendChild(label);
+        inContainer.appendChild(label);
 
         // create name input
         let newAccountName = document.createElement("input");
         newAccountName.classList.add("fancy-input");
-        dialogbox.appendChild(newAccountName);
+        newAccountName.placeholder = "John Doe";
+        inContainer.appendChild(newAccountName);
+        inContainer.appendChild(document.createElement("span")); // for ::after
+
+        dialogbox.appendChild(inContainer);
 
         // create create button
-        let createButton = document.createElement("div");
+        let createButton = document.createElement("button");
         createButton.classList.add("form-button", "black", "sans-serif", "unselectable");
-        createButton.innerHTML = "Create!";
+        createButton.textContent = "Create!";
         dialogbox.appendChild(createButton);
+
+        newAccountName.onkeyup = ()=>{
+            if(newAccountName.classList.contains("invalid-name")) {
+                newAccountName.style.borderBottom = "";
+                newAccountName.classList.remove("invalid-name");
+            }
+        }
+        newAccountName.onkeydown = (event)=>{
+            if(event.key == "Enter") {
+                createButton.click();
+            }
+        }
 
         // create onclick of create button
         createButton.onclick = ()=>{
-            // Set Name
-            localStorage.setItem("name", newAccountName.value);
-            // set global name value
-            NAME = newAccountName.value;
-            // Set Downloads
-            localStorage.setItem('downloads', '');
+            let val = newAccountName.value;
+            console.log();
+            if(val && (val.length != 1 || (val.length == 1 && val[0].toUpperCase() != val[0].toLowerCase()))) {
+                // Set Name
+                localStorage.setItem("name", val);
+                // set global name value
+                NAME = val;
 
-
-            // Setup localforage file system
-            if(window.Worker) {
-                let setup = new Worker('js/setup.js');
-                setup.postMessage(NAME);
-                setup.onmessage = (event) => {
-                    fadeAndRemove(dialogboxcontainer, true);
-                }
-            } else { // pseudo polyfill for browsers that don't support webworkers
-                console.warn("No webworker support. May be buggy.");
-                let loader = document.createElement("script");
-                loader.src = "js/setup.js";
-                document.body.appendChild(loader);
-                setTimeout(()=>{
-                    filesystem.getItem("folders").then((data)=>{
+                // Setup localforage file system
+                if(window.Worker) {
+                    let setup = new Worker('js/setup.js');
+                    setup.postMessage(NAME);
+                    setup.onmessage = ()=>{
                         fadeAndRemove(dialogboxcontainer, true);
-                    });
-                }, 30);
+                    }
+                }
+            } else {
+                newAccountName.style.borderBottom = "4px solid rgb(230,0,0)";
+                newAccountName.classList.add("invalid-name");
             }
         }
 

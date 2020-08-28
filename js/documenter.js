@@ -1,3 +1,4 @@
+(function() {
 /**
  * The word processor in WebSystem.
  * Effectively a WebSystem wrapper for the CKEditor document editor.
@@ -22,7 +23,7 @@ class Documenter {
         this.win = win;
 
         let contentContainer = document.createElement("div");
-        contentContainer.style.height = "calc(100% - 1em)";
+        contentContainer.style.height = "calc(100% - 1.2em)";
         contentContainer.classList.add("documenter-container");
         this.window.appendChild(contentContainer);
 
@@ -332,16 +333,25 @@ class Documenter {
 
 appImagePaths["Documenter"] = "assets/documenter.png";
 makeFunctions["Documenter"] = ()=>{ new Documenter; };
-fileNewPossibilities.push(
-    {
-        name: "Document",
-        callback: (path)=>{
-            FileSystem.addFileAtLocation("New File.html", "", "Text", path);
-        }
+openPossibilities["Text"] = (name, path)=>{ new Documenter(name, path); };
+document.addEventListener("file-system-ready", ()=>{
+    if(!folders["/Users/"+NAME+"/Applications/Documenter.app/"]) {
+        delete makeFunctions["Documenter"];
+        delete appImagePaths["Documenter"];
+    } else {
+        fileNewPossibilities.push(
+            {
+                name: "Document",
+                callback: (path)=>{
+                    FileSystem.addFileAtLocation("New File.html", "", "Text", path);
+                }
+            }
+        );
     }
-)
+}, {once: true});
 
-// The CSS Code is taken from the following CKEditor tutorial:
+
+// The CSS Code is taken from the following CKEditor guide:
 // https://ckeditor.com/docs/ckeditor5/latest/framework/guides/deep-dive/ui/document-editor.html
 GlobalStyle.addRaw(`
 .documenter-container {
@@ -409,3 +419,4 @@ GlobalStyle.addRaw(`
     margin-left: calc( 2 * var(--ck-spacing-large) );
     margin-right: calc( 2 * var(--ck-spacing-large) );
 }`);
+}());

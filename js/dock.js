@@ -420,15 +420,15 @@
             FileSystem.setAccountDetail("pinned-apps", [
                 "/Users/"+NAME+"/Applications/File Viewer.app/",
                 "|",
-                "/Users/"+NAME+"/Applications/Documenter.app/",
-                // "/Users/"+NAME+"/Applications/Calculator.app/",
                 "/Users/"+NAME+"/Applications/App Store.app/",
-                "/Users/"+NAME+"/Applications/Music.app/",
-                "/Users/"+NAME+"/Applications/Image Viewer.app/"
+                "/Users/"+NAME+"/Applications/System Settings.app/",
+                "/Users/"+NAME+"/Applications/Documenter.app/",
+                "/Users/"+NAME+"/Applications/Image Viewer.app/",
+                "/Users/"+NAME+"/Applications/Calculator.app/"
             ]);
         }
         dock.create();
-    });
+    }, {once:true});
     
     Dock.addTextToMenuForApp("|", "Remove Break", (line)=>{
         let indexOfLine = Array.from(dock.bar.childNodes).indexOf(line);

@@ -35,4 +35,4 @@ class About {
         containerDiv.appendChild(versionDiv);
     }
 }
-GlobalStyle.newClass("about-container", "height: calc(100% - 1em);", "width: 100%;", "display: flex;", "flex-flow: wrap;", "align-items: center;", "justify-content: center;", "color: black;", "text-align: center;");
+GlobalStyle.newClass("about-container", "height: calc(100% - 1.2em);", "width: 100%;", "display: flex;", "flex-flow: wrap;", "align-items: center;", "justify-content: center;", "color: black;", "text-align: center;");

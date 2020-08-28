@@ -243,9 +243,11 @@ input[type="checkbox"].switch:checked::after {
 
 /* DESKTOP */
 .desktop {
-    height:100%;
-    width:100%;
+    height:calc(100% - 2em);
+    width:calc(100% - 2em);
     padding: 1em 1em;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .desktop-background {
     position: fixed;
@@ -302,9 +304,10 @@ input[type="checkbox"].switch:checked::after {
 :not(.icon-container[name*=" "]).icon-container div { /* Selects all text in 'icon-container's that doesn't have spaces, and makes it so they break at the end of the width so they don't just cut off */
     word-break: break-all;
 }
-.desktop-text {
-    text-shadow: 0 0 4px rgba(0, 0, 0, 1) !important;
-    color: white !important;
+/* below ':not(#\9)' is a hack to increase specificity from https://stackoverflow.com/a/61781795/ . */
+:not(#\9) .desktop-text {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+    color: white;
 }
 .icon-selected img {
     background-color:rgba(0, 0, 0, 0.1);
@@ -322,7 +325,7 @@ input[type="checkbox"].switch:checked::after {
 }
 
 .icon-rename div {
-    background-color:rgba(0, 119, 255, 0.658);
+    background-color:rgba(calc(var(--select-r) * 1.3), calc(var(--select-g) * 1.3), calc(var(--select-b) * 1.3), 0.7);
     padding-left:3px;
     padding-right:3px;
 }
@@ -386,10 +389,14 @@ input[type="checkbox"].switch:checked::after {
     background-color:black;
     cursor:move;
     color:white;
+    height: 1.2em;
+}
+.window-title {
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    height: 1.2em;
+    width: calc(100% - 3.4em);
+    display: inline-block;
 }
 
 .resize {
@@ -485,6 +492,21 @@ input[type="checkbox"].switch:checked::after {
 .minimize:hover {
     background-color:rgb(253, 181, 27);
 }
+.maximize {
+    right:2.4em;
+    top:0;
+    background-color:rgb(60, 190, 0);
+    text-align:center;
+}
+.maximize:hover {
+    background-color:rgb(64, 202, 0);
+}
+.maximize-disabled {
+    right:2.4em;
+    top:0;
+    background-color: rgb(90, 90, 90);
+    cursor: not-allowed;
+}
 .right-click {
     width:0; /* Hack because display changes opacity for some reason */
     height:0;
@@ -541,7 +563,7 @@ input[type="checkbox"].switch:checked::after {
 
 /* FILE SYSTEM */
 .file-back-container {
-    display:inline;
+    display:inline-block;
     margin-right:0.2em;
     cursor: pointer;
 }

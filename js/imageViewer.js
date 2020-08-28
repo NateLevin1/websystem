@@ -1,4 +1,4 @@
-GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1em);", "width: 100%;");
+(function() {
 /**
  * The image viewer interface for websystem. Opens in standalone mode if no name and path is provided, otherwise will open the actual image.
  */
@@ -79,7 +79,7 @@ class ImageViewer {
             if(this.win === undefined) {
                 document.removeEventListener("keydown", shortcutHandler);
             }
-            if(this.win !== undefined || this.win.focused()) {
+            if(this.win !== undefined && this.win.focused()) {
                 if(event.metaKey || event.ctrlKey) {
                     if(event.key == "=" || event.key == "+") {
                         event.preventDefault();
@@ -197,7 +197,17 @@ class ImageViewer {
     }
 }
 
-GlobalStyle.newClass("image-viewer-standalone-container", "height: calc(100% - 1em);", "display: flex;", "justify-content:center;", "align-items:center;");
+GlobalStyle.newClass("image-viewer-standalone-container", "height: calc(100% - 1.2em);", "display: flex;", "justify-content:center;", "align-items:center;");
+GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1.2em);", "width: 100%;");
 
 appImagePaths["Image Viewer"] = "assets/image.png";
 makeFunctions["Image Viewer"] = ()=>{ new ImageViewer };
+openPossibilities["Image"] = (name, path)=>{ new ImageViewer(name, path); };
+
+document.addEventListener("file-system-ready", ()=>{
+    if(!folders["/Users/"+NAME+"/Applications/Image Viewer.app/"]) {
+        delete makeFunctions["Image Viewer"];
+        delete appImagePaths["Image Viewer"];
+    }
+}, {once: true});
+}());

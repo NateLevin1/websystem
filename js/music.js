@@ -1,4 +1,4 @@
-// (function () {
+(function(){
   class Music {
     constructor(name="", path="") {
         var win;
@@ -16,7 +16,7 @@
         this.window.classList.add("heavy-blurred");
 
         this.contentContainer = document.createElement("div");
-        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.height = "calc(100% - 1.2em)";
         // this.contentContainer.style.display = "flex";
         this.contentContainer.style.color = "rgb(40, 40, 40)";
         this.window.appendChild(this.contentContainer);
@@ -40,7 +40,7 @@
             // title, artist, genre, picture
             name = tags.tags.title;
             artist = tags.tags.artist;
-            thumbnail = Music.getThumbnail(tags);
+            thumbnail = getThumbnail(tags);
         }
 
         let thumb = document.createElement("img");
@@ -303,7 +303,7 @@
         let thumbnailSrc = "assets/music.png";
         if(mediaTags) {
           artistName = mediaTags.tags.artist;
-          thumbnailSrc = Music.getThumbnail(mediaTags);
+          thumbnailSrc = getThumbnail(mediaTags);
           name = mediaTags.tags.title;
         }
 
@@ -349,32 +349,7 @@
       });
     }
 
-    static getThumbnail(tags) {
-      if(musicThumbnailsMemoizer.get(tags)) { // serve from "cache"
-        return musicThumbnailsMemoizer.get(tags);
-      } else {
-        if(tags.tags.picture) {
-          // jsmediatags thumbnail array to src: https://stackoverflow.com/a/45859810/
-          let picture = tags.tags.picture; // create reference to track art
-          let base64String = "";
-          for (var i = 0; i < picture.data.length; i++) {
-              base64String += String.fromCharCode(picture.data[i]);
-          }
-          let data = "data:" + picture.format + ";base64," + window.btoa(base64String);
-
-          musicThumbnailsMemoizer.set(tags, data);
-          
-          return data;
-      } else {
-          // generic, replace with "no track art" later
-          musicThumbnailsMemoizer.set("assets/music.png");
-          return "assets/music.png";
-      }
-      }
-    }
-
     // modified (to remove jquery) from https://stackoverflow.com/a/20382559
-
     createTopBar() {
       TopBar.addToTop("File", "file");
       TopBar.addToMenu("Find Songs", "file", ()=>{ 
@@ -401,8 +376,13 @@
 
 appImagePaths["Music"] = "assets/musicPlayer.png";
 makeFunctions["Music"] = ()=>{ new Music };
-
-var musicThumbnailsMemoizer = new WeakMap; // WeakMap as the keys are tag objects
+openPossibilities["Music"] = (name, path)=>{ new Music(name, path); };
+document.addEventListener("file-system-ready", ()=>{
+  if(!folders["/Users/"+NAME+"/Applications/Music.app/"]) {
+      delete makeFunctions["Music"];
+      delete appImagePaths["Music"];
+  }
+}, {once: true});
 
 // STYLES
 GlobalStyle.newClass("music-song-title", "overflow: hidden;", "white-space: nowrap;", "text-overflow: ellipsis;", "text-align: center;", "margin-top:5px;");
@@ -509,4 +489,4 @@ GlobalStyle.addRaw(`input[type=range].music-song-range {
     }
   }
 `);
-// }());
+}());

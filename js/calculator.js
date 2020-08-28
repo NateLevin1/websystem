@@ -1,9 +1,10 @@
+(function(){
 // CSS Definitions
 GlobalStyle.newClass("calc-screen-container", "background-color: #8c8c8c;", "width:100%;", "height: 30%;");
 GlobalStyle.newClass("calc-screen", "position: absolute;", "top: 10%;", "width: 99%;", "font-size: 4em;", "text-align: right;");
-GlobalStyle.newClass("calc-button", /*"padding-top:5%;", "padding-bottom:5%;",*/ "display: table-cell;", "background-color: rgba(180,180,180,0.3);", "border: 0.2em solid black;", "text-align: center;", "vertical-align: middle;", "transition: background-color 0.03s;", "font-size: 1.3em;");
+GlobalStyle.newClass("calc-button","display: table-cell;", "background-color: rgba(180,180,180,0.3);", "border: 0.2em solid black;", "text-align: center;", "vertical-align: middle;", "transition: background-color 0.03s;", "font-size: 1.3em;");
 GlobalStyle.newClass("calc-button:active", "background-color: rgba(255, 255, 255, 0.4);"); // on click
-GlobalStyle.newClass("calc-button-container", "display:table;", "width:100%;","height:63%;");
+GlobalStyle.newClass("calc-button-container", "display:table;", "width:100%;","height:calc(100% - 30%);");
 GlobalStyle.newClass("calc-button-row", "display: table-row;", "height:20%;");
 GlobalStyle.newClass("calc-modifier", "background-color: rgba(255, 159, 12, 0.8);");
 GlobalStyle.newClass("calc-modifier:active", "background-color: rgba(255, 159, 12, 1);");
@@ -17,13 +18,17 @@ class Calculator {
         this.currentNumber = "";
         this.oldFontSize = "";
 
-        let win = new Window(117, 262, "Calculator", 20,35,{x: 20, y: 2.2, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Calculator.app/" });
+        let win = new Window(195, 352, "Calculator", 20,35,{x: 20, y: 2.2, topBarCreator: this.createTopBar, thisContext: this, pathToApp: "/Users/"+NAME+"/Applications/Calculator.app/", maximizeDisabled: true});
         this.window = win.getWindow();
         this.header = win.getHeader();
         this.win = win;
         this.win.setBackgroundColor("rgb(40,40,40)");
         this.window.style.color = "white"; // make white
 
+        let allContainer = document.createElement("div");
+        allContainer.style.height = "calc(100% - 1.2em)";
+        this.window.appendChild(allContainer);
+        
         let screenContainer = document.createElement("div");
         screenContainer.classList.add("calc-screen-container");
 
@@ -33,12 +38,12 @@ class Calculator {
         screen.classList.add("calc-screen");
         this.fitText(screen);
         
-        this.window.appendChild(screenContainer);
+        allContainer.appendChild(screenContainer);
 
         // The button rows are a bunch of divs using table display
         let buttonContainer = document.createElement("div"); 
         buttonContainer.classList.add("calc-button-container");
-        this.window.appendChild(buttonContainer);
+        allContainer.appendChild(buttonContainer);
 
         // Rows
         let row1 = document.createElement("div");
@@ -426,7 +431,7 @@ class Calculator {
             About.newWindow("Calculator", "Do calculations, beautifully.", "1.0", "assets/calc.png")
          });
         TopBar.addToMenu("Keyboard Shortcuts", "help", ()=>{ 
-            let w = new Window(400, 270, "Calculator Keyboard Shortcuts", 400/em, 270/em, {resizeDisabled: false});
+            let w = new Window(400, 270, "Calculator Keyboard Shortcuts", 400/em, 270/em);
             let newWindow = w.getWindow();
             newWindow.classList.add("unselectable")
             let text = document.createElement("p");
@@ -440,3 +445,11 @@ class Calculator {
 
 appImagePaths["Calculator"] = "assets/calc.png";
 makeFunctions["Calculator"] = ()=>{ new Calculator; };
+
+document.addEventListener("file-system-ready", ()=>{
+    if(!folders["/Users/"+NAME+"/Applications/Calculator.app/"]) {
+        delete makeFunctions["Calculator"];
+        delete appImagePaths["Calculator"];
+    }
+}, {once: true});
+}());

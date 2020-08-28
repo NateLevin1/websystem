@@ -30,6 +30,7 @@ class Desktop extends FileViewer {
         this.createTopBar();
         this.addBoxSelection();
         this.addSystemUpdateListeners();
+        this.addScrollListeners();
 
         // set current folder for both use cases
         super.setCurrentFolder("/Users/"+NAME+"/Desktop/");

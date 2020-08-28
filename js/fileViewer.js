@@ -35,6 +35,11 @@ class FileViewer {
         backImg.classList.add("file-back");
         backImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTMuMDI1IDFsLTIuODQ3IDIuODI4IDYuMTc2IDYuMTc2aC0xNi4zNTR2My45OTJoMTYuMzU0bC02LjE3NiA2LjE3NiAyLjg0NyAyLjgyOCAxMC45NzUtMTF6Ii8+PC9zdmc+";
         back.appendChild(backImg);
+        
+        // lower width and height of top left resizer because bit prevents back button from getting use
+        let tl = this.window.querySelector(".resize-top-left");
+        tl.style.width = "0.3em";
+        tl.style.height = "0.3em";
 
         this.header.insertBefore(back, win.getHeaderText());
 
@@ -42,9 +47,10 @@ class FileViewer {
         this.back.onclick = ()=>{this.goBackParent();};
 
         this.win.setTitle(path);
+        win.getHeaderText().style.width = "calc(100% - 4.6em)";
 
         this.contentContainer = document.createElement("div");
-        this.contentContainer.style.height = "calc(100% - 1em)";
+        this.contentContainer.style.height = "calc(100% - 1.2em)";
         this.contentContainer.style.display = "flex";
         this.window.appendChild(this.contentContainer);
 
@@ -93,6 +99,7 @@ class FileViewer {
 
         this.addBoxSelection();
         this.addSystemUpdateListeners();
+        this.addScrollListeners();
     }
 
     addRightClickMenu() {
@@ -152,7 +159,7 @@ class FileViewer {
             confirm("Are you sure you want to uninstall "+uninstallText+"?")
             .then((decision)=>{
                 if(decision) {
-                    paths.forEach((path, index)=>{
+                    paths.forEach((path)=>{
                         // delete from make
                         delete makeFunctions[folders[path].name];
 
@@ -170,6 +177,8 @@ class FileViewer {
                             setTimeout(()=>{
                                 pinnedObj.element.remove();
                             }, 280);
+
+                            delete dock.pinnedIcons[path];
                         }
 
                         // remove from filesystem
@@ -332,7 +341,6 @@ class FileViewer {
                 let data = child.data;
                 this._addFileToDifferentLocation(child.name, data, child.reference.kind, parent);
             }
-            // }
         });
     }
     moveSelectedToTrash() {
@@ -398,34 +406,33 @@ class FileViewer {
         }
 
         invisibleInput.onblur = ()=>{
-            let txt = text.innerText;
+            let txt = text.textContent;
             if(txt === "") {
                 txt = "untitled";
             }
             let path = this.currentFolder+txt+"/";
-            if(Object.keys(folders).includes(path)) {
-                let i = 2;
-                while(Object.keys(folders).includes(path)) {
-                    text.innerText = txt+" "+i;
-                    i++;
-                    path = this.currentFolder+text.innerText+"/";
+            if(path != oldPath) { // don't change anything if it is the same path
+                if(Object.keys(folders).includes(path)) {
+                    let i = 2;
+                    while(Object.keys(folders).includes(path)) {
+                        text.textContent = txt+" "+i;
+                        i++;
+                        path = this.currentFolder+text.textContent+"/";
+                    }
                 }
+                selected.setAttribute("path", path);
+                selected.setAttribute("name", txt);
+
+                this.shownSubfolders.splice(this.shownSubfolders.indexOf(oldPath), 1, path);
+
+
+                selected.querySelector("div").textContent = txt;
+
+                // actually changing stuff
+                FileSystem.renameAny(oldPath, path, txt);
             }
             invisibleInput.remove();
             selected.classList.remove("icon-rename");
-            
-            let newName = text.textContent;
-
-            selected.setAttribute("path", path);
-            selected.setAttribute("name", newName);
-
-            this.shownSubfolders.splice(this.shownSubfolders.indexOf(oldPath), 1, path);
-
-
-            selected.querySelector("div").textContent = newName;
-
-            // actually changing stuff
-            FileSystem.renameAny(oldPath, path, newName);
         }
     }
     copyFiles() {
@@ -476,7 +483,7 @@ class FileViewer {
                         num++;
                     }
 
-                    this._addFolderToStorage(element["top"]);
+                    this._addFolderToStorage(element["top"], false);
                     let subs = element["subs"];
                     this.recursiveAddFromObject(subs, path, element);
                 }
@@ -504,26 +511,30 @@ class FileViewer {
         this.background.appendChild(box);
         this.background.addEventListener("mousedown", (event)=>{
             if(event.target == this.background && event.button == 0) { // prevent on folders
-                box.style.display = "block";
-                box.style.left = event.x+"px";
-                left = event.x;
-                box.style.top = event.y+"px";
-                top = event.y;
-                document.body.style.cursor = "default";
-                document.body.classList.add("unselectable");
-                isShown = true;
+                scrollBarShown = this.background.scrollHeight > this.background.clientHeight; // from https://stackoverflow.com/a/29188509/13608595
+                if(!scrollBarShown || (scrollBarShown && event.x < this.background.clientWidth - 1*em)) {
+                    box.style.display = "block";
+                    box.style.left = event.x+"px";
+                    left = event.x;
+                    box.style.top = event.y+"px";
+                    top = event.y;
+                    document.body.style.cursor = "default";
+                    document.body.classList.add("unselectable");
+                    isShown = true;
 
-                // disable pointer events on all windows
-                document.querySelectorAll(".window").forEach((element)=>{
-                    if(element != this.window) {
-                        element.style.pointerEvents = "none";
-                    }
-                });
+                    // disable pointer events on all windows
+                    document.querySelectorAll(".window").forEach((element)=>{
+                        if(element != this.window) {
+                            element.style.pointerEvents = "none";
+                        }
+                    });
+                }
             }
         });
         var left = 0;
         var top = 0;
         var isShown = false;
+        var scrollBarShown;
 
         const moveHandler = (event)=>{
             if(this.win === undefined) { // this reference is removed at close time
@@ -537,7 +548,15 @@ class FileViewer {
                     height = Math.abs(event.y - top);
 
                     // window.requestAnimationFrame causes an issue with fast mouse movements, so less performance it is.
-                    let backgroundRect = this.background.getBoundingClientRect();
+                    let rect = this.background.getBoundingClientRect();
+                    let backgroundRect = {};
+                    for(const i in rect) {
+                        backgroundRect[i] = rect[i]; // allow for changing
+                    }
+                    if(scrollBarShown) {
+                        // scroll bar is shown, add 1em (width of scrollbar) to backgroundRect.right
+                        backgroundRect.right -= 1*em;
+                    }
                     let boxRect = box.getBoundingClientRect();
                     if(boxRect.left + width <= backgroundRect.right - event.movementX && boxRect.right - width >= backgroundRect.left - event.movementX) {
                         box.style.width = width+"px";
@@ -612,7 +631,7 @@ class FileViewer {
                     } else {
                         this.createFile(fRef.name, pathAffected, fRef.kind, true);
                     }
-                    this.shownSubfolders.push(pathAffected);                    
+                    // this.shownSubfolders.push(pathAffected); // dealt with in createFolder. this caused a nasty bug
                 } else if(type == "remove" && this.shownSubfolders.includes(pathAffected)) { // if removing and it does exist
                     let subs = this.background.querySelectorAll(".icon-container");
                     subs.forEach((e)=>{ // remove if is affected
@@ -622,9 +641,6 @@ class FileViewer {
                     });
                     this.shownSubfolders.splice(this.shownSubfolders.indexOf(pathAffected), 1);
                 } else if(type == "rename" && this.shownSubfolders.includes(renameOldPath)) {
-
-                    // TODO: Change this so that it does not delete and re-add. Make it so that it *changes* the element e that is removed after the if statement instead of removing it and re adding its renamed version
-
                     let subs = this.background.querySelectorAll(".icon-container");
                     subs.forEach((e)=>{ // remove if is affected
                         if(e.getAttribute("path") == renameOldPath) {
@@ -640,7 +656,7 @@ class FileViewer {
                     } else {
                         this.createFile(fRef.name, pathAffected, fRef.kind, true);
                     }
-                    this.shownSubfolders.push(pathAffected);
+                    // this.shownSubfolders.push(pathAffected); // dealt with in createFolder. this caused a nasty bug
                 }
             } else if(event.actions.type == "remove" && event.actions.pathAffected == this.currentFolder) {
                 this.win.close();
@@ -670,6 +686,40 @@ class FileViewer {
             }
         }
         document.addEventListener("fv-user-sidebar-change", sidebarChangeHandler);
+    }
+    addScrollListeners() {
+        // Text-shadow and box-shadow causes scrolling to be
+        // very slow. This code turns off those properties when scrolling.
+
+        // from https://gomakethings.com/detecting-when-a-visitor-has-stopped-scrolling-with-vanilla-javascript/
+        var isScrolling;
+        let hasDisabled = false;
+        this.background.onscroll = ()=>{
+            if(this.background.childNodes.length > 16 && performanceModeEnabled) { // it gets slow around this number
+                if(!hasDisabled) {
+                    hasDisabled = true;
+                    this.background.childNodes.forEach((node)=>{
+                        let text = node.querySelector("div");
+                        if(text) {
+                            text.style.textShadow = "unset";
+                        }
+                        // text.style.textShadow = "unset";
+                    });
+                }
+                clearTimeout(isScrolling);
+                isScrolling = setTimeout(()=>{
+                    hasDisabled = false;
+                    this.background.childNodes.forEach((node)=>{
+                        let text = node.querySelector("div");
+                        if(text) {
+                            text.style.removeProperty("text-shadow");
+                            console.log("remove prop");
+                        }
+                        // text.style.textShadow = "unset";
+                    });
+                }, 66);
+            }
+        }
     }
     createSidebarItem(name, path, newClass=undefined) {
         let folder = document.createElement("div");
@@ -813,9 +863,6 @@ class FileViewer {
             text.classList.add("desktop-text");
         }
     
-        // double vs single click logic
-        // var previousSelection;
-
         newFolderContainer.ondblclick = (event)=>{
             if(newWindow == true) {
                 let n = new FileViewer;
@@ -823,27 +870,12 @@ class FileViewer {
             } else {
                 this.openFolder(newFolderContainer.getAttribute("path"));
             }
-            // if(previousSelection) {
-            //     previousSelection.forEach((element)=>{
-            //         if(element != newFolderContainer) {
-            //             this.intelligentOpen(element.getAttribute("path"));
-            //         }
-            //         if(!element.classList.contains("icon-selected")) {
-            //             element.classList.add("icon-selected");
-            //         }
-            //     });
-            //     previousSelection = null;
-            // }
         }
 
         // select
         newFolderContainer.onclick = function(event) {
             if(event.detail === 1) { // only run if single click
-                // previousSelection = document.querySelectorAll(".icon-selected");
                 selectElement(event, newFolderContainer);
-                // setTimeout(()=>{
-                //     previousSelection = null; // prevent weird stuff
-                // }, 250);
             }
         }
 
@@ -914,7 +946,7 @@ class FileViewer {
             newFileContainer.classList.add("app");
         } else if(filetype == "Music") {
             if(folders[path].content.mediaTags) { // use thumbnail
-                newFile.src = Music.getThumbnail(folders[path].content.mediaTags);
+                newFile.src = getThumbnail(folders[path].content.mediaTags);
             } else {
                 newFile.src = "assets/music.png";
             }
@@ -993,33 +1025,15 @@ class FileViewer {
         name = null; // no longer needed, let garbage collect
         path = null;
 
-        // double vs single click logic
-        // var previousSelection;
-
         newFileContainer.ondblclick = (event)=>{
             let path = newFileContainer.getAttribute("path");
             this.intelligentOpen(path);
-            // if(previousSelection) {
-            //     previousSelection.forEach((element)=>{
-            //         if(element != newFileContainer) {
-            //             this.intelligentOpen(element.getAttribute("path"));
-            //         }
-            //         if(!element.classList.contains("icon-selected")) {
-            //             element.classList.add("icon-selected");
-            //         }
-            //     });
-            //     previousSelection = null;
-            // }
         }
 
 
         newFileContainer.onclick = function(event) {
             if(event.detail === 1) { // only run if single click
-                // previousSelection = document.querySelectorAll(".icon-selected");
                 selectElement(event, newFileContainer);
-                // setTimeout(()=>{
-                //     previousSelection = null; // prevent weird stuff
-                // }, 250);
             }
         }
         newFileContainer.addEventListener("contextmenu", (event)=>{
@@ -1064,22 +1078,17 @@ class FileViewer {
 
     // Private
     _intelligentOpenOnce(path, newFolderWindow=false) {
-        if(folders[path].kind != "Folder") {
+        if(folders[path].isFile) {
             if(folders[path].kind == "App") {
                 try {
                     makeFunctions[folders[path].name]();
                 } catch(e) {
                     console.error("No function was provided for making the app named "+folders[path].name+" OR there was an error from creating the app. The error thrown was ", e);
-                    
                 }
-            } else if(folders[path].kind == "Image") {
-                new ImageViewer(folders[path].name, path);
-            } else if(folders[path].kind == "Music") {
-                new Music(folders[path].name, path);
-            } else if(folders[path].kind == "Text") {
-                new Documenter(folders[path].name, path);
+            } else if(openPossibilities[folders[path].kind]) {
+                openPossibilities[folders[path].kind](folders[path].name, path);
             } else {
-                alert("Opened File '"+folders[path].name+"'!");
+                alert("Unable to open file "+folders[path].name+".");
             }
         } else { // folder
             if(newFolderWindow || !this.window) { // desktop returns true for second
@@ -1188,8 +1197,8 @@ class FileViewer {
         FileSystem.addFolderAtLocation(name, this.currentFolder);
         if(addFolder) { // false on folder make
             this.createFolder("", this.currentFolder+name+"/", !this.window, true);
+            this.shownSubfolders.push(path); 
         }
-        this.shownSubfolders.push(path); 
     }
 
     _addFolderToDifferentLocation(name, parentPath) {
@@ -1404,10 +1413,36 @@ document.addEventListener("file-system-ready", ()=>{
     } else {
         sidebarInitialized = true;
     }
-});
+}, {once: true});
 let sidebarInitialized = false;
 
 
 // Generic app things
 appImagePaths["File Viewer"] = "assets/folder.png";
 makeFunctions["File Viewer"] = ()=>{ let tmp = new FileViewer; tmp.openFolderWindow("/Users/"+NAME+"/"); };
+
+
+function getThumbnail(tags) {
+    if(musicThumbnailsMemoizer.get(tags)) { // serve from "cache"
+        return musicThumbnailsMemoizer.get(tags);
+    } else {
+        if(tags.tags.picture) {
+            // jsmediatags thumbnail array to src: https://stackoverflow.com/a/45859810/
+            let picture = tags.tags.picture; // create reference to track art
+            let base64String = "";
+            for (var i = 0; i < picture.data.length; i++) {
+                base64String += String.fromCharCode(picture.data[i]);
+            }
+            let data = "data:" + picture.format + ";base64," + window.btoa(base64String);
+
+            musicThumbnailsMemoizer.set(tags, data);
+            
+            return data;
+        } else {
+            // generic, replace with "no track art" later
+            musicThumbnailsMemoizer.set("assets/music.png");
+            return "assets/music.png";
+        }
+    }
+}
+var musicThumbnailsMemoizer = new WeakMap; // WeakMap as the keys are tag objects

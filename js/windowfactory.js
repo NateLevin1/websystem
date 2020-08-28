@@ -13,11 +13,12 @@ class Window {
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
      * @param {Boolean} options.zIndexDisabled - Whether or not to adjust z indexes on click etc. Useful for popups.
+     * @param {Boolean} options.maximizeDisabled - Whether or not to to allow maximization of the app.
      * @param {String} options.pathToApp - The path to the app that is being opened. Used in the dock.
      */
-    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }) {
+    constructor(minWidth, minHeight, title, defaultWidth=30, defaultHeight=30, options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, maximizeDisabled: false, appName:"", pathToApp:"" }) {
       // Take options into account
-      let {x, y, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, appName, pathToApp} = options;
+      let {x, y, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, maximizeDisabled, appName, pathToApp} = options;
       x = x ? x : 3;
       y = y ? y : 3;
       if(!topBarCreator) { // use default 'file -> quit'
@@ -41,7 +42,8 @@ class Window {
       let header = document.createElement("div");
       header.classList.add("window-header", "unselectable");
 
-      let titleText = document.createElement("a");
+      let titleText = document.createElement("div");
+      titleText.classList.add("window-title");
       titleText.innerText = title;
       
       let close = document.createElement("div");
@@ -49,19 +51,38 @@ class Window {
       close.onclick = ()=>{
         this.close();
       }
-
-      let minimize = document.createElement("div");
-      minimize.classList.add("minimize", "unselectable", "no-move", "no-focus", "window-action");
-      minimize.onclick = ()=>{
-        this.window.style.opacity = "0";
-        this.window.style.transform = "scaleX(0.1) translateY(100vh)";
-        this.window.classList.remove("window"); // prevents from being focused
-        this.minimized = true;
-        focusNewWindow();
-      }
-
+      
       header.appendChild(titleText);
-      header.appendChild(minimize);
+      if(!resizeDisabled) {
+        // note that the icon is still shown on maximize disabled, it is just grayed out
+        let maximize = document.createElement("div");
+        maximize.classList.add(maximizeDisabled ? "maximize-disabled" : "maximize", "unselectable", "no-move", "no-focus", "window-action");
+        if(!maximizeDisabled) {
+          maximize.onclick = ()=>{
+            this.dispatchFocus();
+            this.window.style.left = "0.2em";
+            this.window.style.top = "0.2em";
+            this.window.style.width = "calc(100vw - 0.6em)";
+            this.window.style.height = "calc(100% - 0.7em)";
+            this.window.dispatchEvent(resizeEvent);
+            this.fakeOffsetTop = this.window.offsetTop; // updates for moving
+          }
+        }
+        header.appendChild(maximize);
+      }
+      if(pathToApp) { // the only way to open a minimized app is to click on it on dock. Apps without app path cannot be on dock
+        let minimize = document.createElement("div");
+        minimize.classList.add("minimize", "unselectable", "no-move", "no-focus", "window-action");
+        minimize.onclick = ()=>{
+          this.window.style.opacity = "0";
+          this.window.style.transform = "scaleX(0.1) translateY(100vh)";
+          this.window.classList.remove("window"); // prevents from being focused
+          this.minimized = true;
+          this.hasFocus = false;
+          focusNewWindow();
+        }
+        header.appendChild(minimize);
+      }
       header.appendChild(close);
 
       window.appendChild(header);
@@ -390,7 +411,7 @@ class Window {
         }
       });
 
-      let fakeOffsetTop = elmnt.offsetTop;
+      this.fakeOffsetTop = elmnt.offsetTop;
       function elementDrag(e) {
         e = e || window.event;
         e.preventDefault();
@@ -401,24 +422,24 @@ class Window {
         pos4 = e.clientY;
         
         // set the element's new position:
-        elmnt.style.top = (fakeOffsetTop - pos2) + "px";
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
         elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-        if((fakeOffsetTop - pos2) < 0) {
+        if((this.fakeOffsetTop - pos2) < 0) {
           elmnt.style.top = "0px";
-          fakeOffsetTop = fakeOffsetTop - pos2;
+          this.fakeOffsetTop = this.fakeOffsetTop - pos2;
         } else {
-          fakeOffsetTop = elmnt.offsetTop;
+          this.fakeOffsetTop = elmnt.offsetTop;
         }
       }
 
       function closeDragElement(e) {
-        fakeOffsetTop = elmnt.offsetTop;
+        this.fakeOffsetTop = elmnt.offsetTop;
         // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
       }
       const closeResizeElement = (e)=>{
-        fakeOffsetTop = elmnt.offsetTop;
+        this.fakeOffsetTop = elmnt.offsetTop;
         // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
@@ -432,6 +453,12 @@ class Window {
           elmnt.dispatchEvent(resizeEvent);
           mainContent.removeChild(fakeEl);
         }
+        oldLeft = 0;
+        oldWidth = 0;
+        oldHeight = 0;
+        oldTop = 0;
+        x = 0;
+        y = 0;
       }
 
       // not w3schools
@@ -463,16 +490,16 @@ class Window {
       let x = 0;
       let y = 0;
       const resizeFunction = (e, func)=>{
-          e = e || window.event;
-          e.preventDefault();
-          x = e.clientX;
-          y = e.clientY;
-          if(!performanceModeEnabled) {
-            func(elmnt);
-            elmnt.dispatchEvent(resizeEvent);
-          } else {
-            func(fakeEl);
-          }
+        e = e || window.event;
+        e.preventDefault();
+        x = e.clientX;
+        y = e.clientY;
+        if(!performanceModeEnabled) {
+          func(elmnt);
+          elmnt.dispatchEvent(resizeEvent);
+        } else {
+          func(fakeEl);
+        }
       }
       const doResize = (el)=>{
         rightXResize(x, el)

@@ -78,6 +78,10 @@ const isHover = e => e.parentElement.querySelector(':hover') === e;
 // The name of a custom app should be added to this. The value should be a function which makes an instance of the app's class.
 makeFunctions = {};
 
+// openPossibilities
+// All apps that can open a file type should be added to this. The keys are a filekind (e.g. "Image" or "Text") and the value is a function that has its first argument as the name of the opened file and its second as the path to the opened file
+openPossibilities = {};
+
 // ! DEBUG ONLY
 // ! THIS SHOULD BE REMOVED FOR RELEASE
 function jsonEscapeNewlines(source) {

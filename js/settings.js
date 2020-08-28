@@ -12,7 +12,7 @@ class SystemSettings {
         win.setBackgroundColor("rgb(230,230,230)");
 
         let contentContainer = document.createElement("div");
-        contentContainer.style.height = "calc(100% - 1em)";
+        contentContainer.style.height = "calc(100% - 1.2em)";
         contentContainer.classList.add("settings-container");
         this.window.appendChild(contentContainer);
         this.contentContainer = contentContainer;
@@ -42,7 +42,7 @@ class SystemSettings {
                 performanceModeEnabled = onoff;
                 save("general", "performanceModeEnabled", performanceModeEnabled);
             });
-            this.addDescription("Shows a placeholder when resizing windows. Good for computers with poor performance or battery.");
+            this.addDescription("Various features that are good for computers with poor performance or battery are enabled.");
         
             this.addSection("Desktop Background");
             let thumbArr = ["assets/licensed/thumbbg1.jpg","assets/licensed/thumbbg2.jpg", "assets/licensed/thumbbg3.jpg", "assets/licensed/thumbbg4.jpg", "assets/licensed/thumbbg5.jpg", "assets/licensed/thumbbg6.jpg", "upload"];
@@ -352,7 +352,7 @@ document.addEventListener("file-system-ready", ()=>{
     performanceModeEnabled = JSON.parse(folders["/etc/general.json/"].content).performanceModeEnabled;
     highlightColor = JSON.parse(folders["/etc/general.json/"].content).highlightColor;
     setSelect(highlightColor);
-});
+}, {once: true});
 
 appImagePaths["System Settings"] = "assets/settings.png";
 makeFunctions["System Settings"] = ()=>{ new SystemSettings; };
@@ -468,4 +468,4 @@ input[type=range].settings-slider {
 
 var performanceModeEnabled = false;
 var highlightColor = "rgba(0, 89, 221, 1)";
-var volume = 100;
+var volume = 75;

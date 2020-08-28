@@ -317,7 +317,7 @@ function makeHeaderNoMove(header) {
 
 function makeContainer(wind) {
     let container = document.createElement("div");
-    container.style.height = "calc(100% - 1em)";
+    container.style.height = "calc(100% - 1.2em)";
     container.style.display = "flex";
     container.style.alignItems = "center";
     container.style.flexDirection = "column";

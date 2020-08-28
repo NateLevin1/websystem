@@ -30,7 +30,7 @@ class FileSystemGUI {
             
 
             let container = document.createElement("div");
-            container.style.height = "calc(100% - 1em)";
+            container.style.height = "calc(100% - 1.2em)";
             container.style.display = "flex";
             container.style.flexDirection = "column";
 
@@ -232,7 +232,7 @@ class FileSystemGUI {
             
 
             let container = document.createElement("div");
-            container.style.height = "calc(100% - 1em)";
+            container.style.height = "calc(100% - 1.2em)";
             container.style.display = "flex";
             container.style.flexDirection = "column";
 

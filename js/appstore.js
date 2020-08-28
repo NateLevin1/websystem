@@ -1,16 +1,16 @@
 // CSS
-GlobalStyle.newClass("appstore-sidebar", "height:calc(100% - 1em); width:30%; border-right:5px solid black; box-sizing: border-box; display:inline-block; background-color: darkgray; overflow:auto; vertical-align:top;");
+GlobalStyle.newClass("appstore-sidebar", "height:calc(100% - 1.2em); width:30%; border-right:5px solid black; box-sizing: border-box; display:inline-block; background-color: darkgray; overflow:auto; vertical-align:top;");
 GlobalStyle.newClass("appstore-main", "height:calc(100% - 1.1em); width:70%; box-sizing: border-box; overflow: auto; display:inline-block; border-bottom:2px solid white;");
 GlobalStyle.newClass("appstore-search", "border: 2px solid black; border-radius:20px; outline: none; -webkit-appearance: none; width:90%; height:10%; font-size:1em; margin-top: 5%; margin-left: 5%; margin-right: 5%; text-align: center; transition: text-align 1s;");
 GlobalStyle.newClass("appstore-search:focus", "text-align: left;");
 GlobalStyle.newClass("appstore-menuitem", "background-color:white; border:2px solid black; color:black; height:20%; font-size: 1.5em; width:80%; margin-top:10%; margin-left:auto; margin-right:auto; display: flex; justify-content: center; align-content: center; flex-direction: column; text-align: center; transition: background-color 0.1s, color 0.1s, border-color 0.1s;");
 GlobalStyle.newClass("appstore-menuitem-selected", "background-color:black; color:white; border:2px solid white;")
-GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;")
-GlobalStyle.newClass("appstore-thumbnail", "width:4em; height:4em;");
-GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%; vertical-align:top; margin-top:0.8em;");
+GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;", "display: flex;", "align-items: center;")
+GlobalStyle.newClass("appstore-thumbnail", "max-height:4em;", "max-width:4em;");
+GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%;");
 GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
 GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
-GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; vertical-align: top; margin-top:1em; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
+GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
 GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254)); border-color: rgb(7,84,207); color: white;");
 
 /**
@@ -268,17 +268,28 @@ class Appstore {
             FileSystem.addFileAtLocation(title+".app", script, "App", "/Users/"+NAME+"/Applications/", { alias: title });
         }
 
-        // ? Dispatch event on document to update open fileViewer windows
-
         // finally, update the app store button from install to open
         if(button) {
             button.classList.add("appstore-installed");
             button.innerText = "Open";
+            let ogClick = button.onclick;
             button.onclick = ()=>{
-                makeFunctions[title]();
+                if(!makeFunctions[title]) {
+                    button.classList.remove("appstore-installed");
+                    button.innerText = "Install";
+                    button.onclick = ogClick;
+                } else {
+                    makeFunctions[title]();
+                }
             }
+            setTimeout(()=>{
+                if(!makeFunctions[title]) {
+                    button.classList.remove("appstore-installed");
+                    button.innerText = "Install";
+                    button.onclick = ogClick;
+                }
+            }, 30);
         }
-        
     }
 
     createTopBar() {

@@ -21,7 +21,24 @@ class Window {
       let {x, y, topBarCreator, thisContext, resizeDisabled, zIndexDisabled, maximizeDisabled, appName, pathToApp} = options;
       x = x ? x : 3;
       y = y ? y : 3;
-      if(!topBarCreator) { // use default 'file -> quit'
+
+      // if there was a coord, use it
+      if(pathToApp) {
+        let windows = Array.from(mainContent.querySelectorAll(".window")).filter((node)=>{ return node.getAttribute("pathToApp") == pathToApp; });
+        if(windows.length > 0) { // only do this if there are already open windows of this kind
+          if(lastCoordinateOfApp[pathToApp]) {
+            let pos = lastCoordinateOfApp[pathToApp];
+            x = pos.x+1;
+            y = pos.y+1;
+          }
+          lastCoordinateOfApp[pathToApp] = {x: x, y: y};
+        } else {
+          lastCoordinateOfApp[pathToApp] = {x: x, y: y};
+        }
+      }
+      
+
+      if(!topBarCreator) { // use default 'file -> close window'
         topBarCreator = ()=>{
           TopBar.addToTop("File", "file");
           TopBar.addToMenu("Close Window", "file", ()=>{ this.close(); });
@@ -38,6 +55,7 @@ class Window {
       window.classList.add("window", "absolute", "window-slow");
       window.style.top = y+"em";
       window.style.left = x+"em";
+      window.setAttribute("pathToApp", pathToApp);
 
       let header = document.createElement("div");
       header.classList.add("window-header", "unselectable");
@@ -674,6 +692,7 @@ class Window {
 }
 
 var preventCloseWindowReason = "";
+let lastCoordinateOfApp = {};
 
 
 

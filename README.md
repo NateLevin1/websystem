@@ -1,27 +1,28 @@
 # websystem
-Websystem is a web-based operating system taking advantage of WebAssembly, WebWorkers, IndexedDB, and other emerging web technologies.
+WebSystem is a a fully functioning operating system built in pure Javascript, HTML and CSS.
 
   - Fully Customizable File System
-  - Rapid and Easy App Development
-  - Integrated IDE and Terminal Shell
+  - Rapid and Easy API for App Development
+  - Integrated App Store
   - Files are Saved Locally Through IndexedDB/WebSQL (localForage)
 
-### Tech
-Websystem uses WebWorkers to enable multithreading and gets the best performance out of the browser. WebAssembly is used to speed up calculations and improve user experience.
-
 ##### Installation
-All that is needed to install is to download and run the `index.html` file! 
-Note: Some browsers may require a server to be run for Websystem to have all features.
+Download the source and open the `index.html` file. In order to use the app store, open a terminal in the `index.html` file's directory, cd into the `node` folder, and run `npm start`.
+```
+cd backend/node
+npm start
+```
 
 ### Libraries
-WebSystem currently uses the localForage library for desktop storage, however eventually a custom library for WebSystem will be written.
+WebSystem uses:
+- localForage for file system storage.
+- CKEditor 5 for the Documenter
+- jsMediaTags to read audio file tags
 
-### Terminal
-The terminal uses bash-like syntax and allows for complete control over the operating system. `not-implemented`
 
 ### Contributing
-Want to contribute to the source itself? Open a pull request! 
-Want to add an app to the app store? Open a pull request with the exported file from the IDE! `not-implemented`
+Want to contribute to the source itself? Open a pull request!.
+Want to add an app to the app store? Open a pull request with the name and source of the app.
 
 License
 ----

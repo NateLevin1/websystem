@@ -81,7 +81,12 @@ function boot() {
                     let setup = new Worker('js/setup.js');
                     setup.postMessage(NAME);
                     setup.onmessage = ()=>{
-                        fadeAndRemove(dialogboxcontainer, true);
+                        dialogboxcontainer.style.animation = "fade-out 0.3s";
+                        setTimeout(()=>{
+                            dialogboxcontainer.remove();
+                            bg.remove();
+                            startDesktop();
+                        }, 290);
                     }
                 }
             } else {
@@ -104,9 +109,6 @@ function setFileSystem() {
     // Set folders{} to correct value
     filesystem.getItem("folders").then((result)=>{
         folders = result;
-
-        // ! DEBUG
-        console.log(folders);
 
         // add all app scripts to the document
         for(const val in folders) {
@@ -144,21 +146,6 @@ function setFileSystem() {
             new Desktop;
         });
     });
-}
-function fadeAndRemove(element, start=false) {
-    var op = 1;  // initial opacity
-    var timer = setInterval(function () {
-        if (op <= 0.1){
-            clearInterval(timer);
-            element.remove();
-            if(start) {
-                startDesktop();
-            }
-        }
-        element.style.opacity = op;
-        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-        op -= op * 0.1;
-    }, 10);
 }
 
 function startDesktop() {

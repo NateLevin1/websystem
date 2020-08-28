@@ -697,11 +697,11 @@ input[type="checkbox"].switch:checked::after {
 }
 .top-bar-top-name {
     font-weight: bolder;
-    margin-top: -0.1em;
     padding: 0 0;
     color:rgb(0, 0, 0);
     max-width:20%;
     overflow: hidden;
+    vertical-align: text-top;
     white-space: nowrap;
     text-overflow: ellipsis;
 }

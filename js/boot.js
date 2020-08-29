@@ -104,46 +104,50 @@ function boot() {
     
 }
 function setFileSystem() {
-    mainContent.classList.add("main-content");
-    document.body.appendChild(mainContent);
-    // Set folders{} to correct value
-    filesystem.getItem("folders").then((result)=>{
-        folders = result;
-
-        // add all app scripts to the document
-        for(const val in folders) {
-            let file = folders[val];
-            if(file.kind == "App" && !makeFunctions[file.name]) { // if is an app and not installed by default
-                if(typeof file.content == "string") { // scripts must be strings, this prevents not apps from erroring
-                    Appstore.installApp(file.name, file.content);
+    return new Promise((resolve, reject)=>{
+        mainContent.classList.add("main-content");
+        document.body.appendChild(mainContent);
+        // Set folders{} to correct value
+        filesystem.getItem("folders").then((result)=>{
+            folders = result;
+    
+            // add all app scripts to the document
+            for(const val in folders) {
+                let file = folders[val];
+                if(file.kind == "App" && !makeFunctions[file.name]) { // if is an app and not installed by default
+                    if(typeof file.content == "string") { // scripts must be strings, this prevents not apps from erroring
+                        Appstore.installApp(file.name, file.content);
+                    }
                 }
             }
-        }
-
-        filesystem.iterate((value, key)=>{
-            if(key != "folders") {
-                if(key != "account") {
-                    files[key] = value;
-                } else {
-                    account = value;
+    
+            filesystem.iterate((value, key)=>{
+                if(key != "folders") {
+                    if(key != "account") {
+                        files[key] = value;
+                    } else {
+                        account = value;
+                    }
                 }
-            }
-        }).then(()=>{
-            if(isSafari && firstLogin) { // add the websystem logo.png file
-                FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
-                fetch("../assets/trash.png")
-                .then(function(response) {
-                    return response.blob();
-                })
-                .then(function(blob) {
-                    // convert to file
-                    let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
-                    FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
-                });
-            }
-            document.dispatchEvent(fileSystemReady);
-            // add desktop once folders and files is done
-            new Desktop;
+            }).then(()=>{
+                if(isSafari && firstLogin) { // add the websystem logo.png file
+                    FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
+                    fetch("../assets/trash.png")
+                    .then(function(response) {
+                        return response.blob();
+                    })
+                    .then(function(blob) {
+                        // convert to file
+                        let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
+                        FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
+                    });
+                }
+                document.dispatchEvent(fileSystemReady);
+                // add desktop once folders and files is done
+                new Desktop;
+
+                resolve();
+            });
         });
     });
 }
@@ -172,19 +176,17 @@ function startDesktop() {
     // Add top bar
     new TopBar;
     // Show desktop + set folders to correct value
-    setFileSystem();
-    
-
-    setTimeout(()=>{
-        let faders = document.querySelectorAll(".load-fade");
-        faders.forEach(element =>{
-            element.classList.remove("load-fade");
-            setTimeout(()=>{
-                element.remove();
-            }, 300);
-        });
-    }, 500)
-    
+    setFileSystem().then(()=>{
+        desktopBackground.onload = ()=>{
+            let faders = document.querySelectorAll(".load-fade");
+            faders.forEach(element =>{
+                element.classList.remove("load-fade");
+                setTimeout(()=>{
+                    element.remove();
+                }, 300);
+            });
+        }
+    });
 }
 var firstLogin = false;
 /**

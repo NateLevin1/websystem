@@ -23,9 +23,6 @@ class FileSystem {
         // Set new folder as subfolder of parent
         folders[parentPath].subfolders.unshift(path);
 
-        // Set up metadata
-        let currentDate = Date.now();
-
         // update folders{}
         folders[path] = {
             "name": name,
@@ -35,19 +32,20 @@ class FileSystem {
             parent: parentPath,
     
             meta: {
-                size:0,
+                // Since this has not been integrated with the file viewer, it will be disabled to save space.
+                // size:0,
 
-                "creation-date": currentDate,
-                "modified-date": currentDate,
-                "last-opened-date": "Never",
+                // "creation-date": currentDate,
+                // "modified-date": currentDate,
+                // "last-opened-date": "Never",
 
-                locked: false,
+                // locked: false,
 
-                "system-comments": [],
-                "user-comments": [],
+                // "system-comments": [],
+                // "user-comments": [],
 
-                hasTags: false,
-                tags: []
+                // hasTags: false,
+                // tags: []
             }
         };
         this.dispatchUpdate(parentPath, { type: "add", pathAffected: path });
@@ -104,9 +102,6 @@ class FileSystem {
         // Set new folder as subfolder of parent
         folders[parentPath].subfolders.unshift(path);
 
-        // Set up metadata
-        let currentDate = Date.now();
-
         // update folders{}
         folders[path] = {
             isFile: true,
@@ -119,19 +114,20 @@ class FileSystem {
             "content": content,
 
             meta: {
-                size:0,
+                // Since this has not been integrated with the file viewer, it will be disabled to save space.
+                // size:0,
 
-                "creation-date": currentDate,
-                "modified-date": currentDate,
-                "last-opened-date": "Never",
+                // "creation-date": currentDate,
+                // "modified-date": currentDate,
+                // "last-opened-date": "Never",
 
-                locked: false,
+                // locked: false,
                 
-                "system-comments": [],
-                "user-comments": [],
+                // "system-comments": [],
+                // "user-comments": [],
 
-                hasTags: false,
-                tags: []
+                // hasTags: false,
+                // tags: []
             }
         };
         this.dispatchUpdate(parentPath, { type: "add", pathAffected: path });

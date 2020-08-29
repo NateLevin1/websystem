@@ -8,21 +8,22 @@ onmessage = function (event) {
     localforage.clear().then(()=>{ // wait until cleared
     const NAME = event.data;
     filesystem.setItem("account", {accounts:[NAME], admin:NAME});
-    let currentDate = Date.now();
+    // let currentDate = Date.now();
     let defaultMeta = {
-        size:0,
+        // Since this has not been integrated with the file viewer, it will be disabled to save space.
+        // size:0,
 
-        "creation-date": currentDate,
-        "modified-date": currentDate,
-        "last-opened-date": "Never",
+        // "creation-date": currentDate,
+        // "modified-date": currentDate,
+        // "last-opened-date": "Never",
 
-        locked: false,
+        // locked: false,
 
-        "system-comments": [],
-        "user-comments": [],
+        // "system-comments": [],
+        // "user-comments": [],
 
-        hasTags: false,
-        tags: []
+        // hasTags: false,
+        // tags: []
     };
 
     filesystem.setItem("folders", {

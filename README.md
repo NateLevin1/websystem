@@ -7,7 +7,14 @@ WebSystem is a a fully functioning operating system built in pure Javascript, HT
   - Files are Saved Locally Through IndexedDB/WebSQL (localForage)
 
 ##### Installation
-Download the source and open the `index.html` file. In order to use the app store, open a terminal in the `index.html` file's directory, cd into the `node` folder, and run `npm start`.
+WebSystem needs a server to run. To do this, run the following in the terminal:
+```
+npm i
+./node_modules/http-server/bin/http-server
+```
+Then go to [http://127.0.0.1:8080](http://127.0.0.1:8080) and WebSystem should be running!
+
+In order to use the app store, open a terminal, cd into the `node` folder, and run `npm start`.
 ```
 cd backend/node
 npm start

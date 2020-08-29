@@ -7,8 +7,8 @@ class Window {
      * @param {Number} [defaultWidth=30] - The default width of the window in em.
      * @param {Number} [defaultHeight=30] - The default width of the window in em.
      * @param {Object} [options={ x: 3, y: 3, topBarCreator: ()=>{}, thisContext: this, resizeDisabled: false, zIndexDisabled: false, appName:"", pathToApp:"" }] - The options object
-     * @param {Number} options.x - The default x position on the screen.
-     * @param {Number} options.y The default y position on the screen.
+     * @param {Number} options.x - The default x position on the screen in vw.
+     * @param {Number} options.y The default y position on the screen in vh.
      * @param {Function} options.topBarCreator - The function to be called when a top bar is requested
      * @param {class} options.thisContext - The 'this' context for any callbacks run in the window.
      * @param {Boolean} options.resizeDisabled - Whether or not to disable resizing on the window
@@ -50,11 +50,14 @@ class Window {
       appName = !appName && pathToApp ? folders[pathToApp].name : appName;
       this.appName = appName;
       this.pathToApp = pathToApp;
+
+      this.defaultX = x;
+      this.defaultY = y;
       
       let window = document.createElement("div");
       window.classList.add("window", "absolute", "window-slow");
-      window.style.top = y+"em";
-      window.style.left = x+"em";
+      window.style.top = y+"vh";
+      window.style.left = x+"vw";
       window.setAttribute("pathToApp", pathToApp);
 
       let header = document.createElement("div");
@@ -383,6 +386,15 @@ class Window {
      */
     configureElement(elmnt, header, defaultWidth, defaultHeight) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+      while((defaultWidth * em) + 2 * (this.defaultX * window.innerWidth/100) > mainContent.clientWidth && (defaultWidth - 0.1) * em > this.minWidth) { // "2 *" for equal spacing
+        defaultWidth -= 0.1;
+        elmnt.dispatchEvent(resizeEvent);
+      }
+      while((defaultHeight * em) + 2 * (this.defaultY * window.innerHeight/100) > mainContent.clientHeight && (defaultHeight - 0.1) * em > this.minHeight) { // "2 *" for equal spacing
+        defaultHeight -= 0.1;
+        elmnt.dispatchEvent(resizeEvent);
+      }
       elmnt.style.width = defaultWidth+"em";
       elmnt.style.height = defaultHeight+"em";
 
@@ -552,18 +564,22 @@ class Window {
       }
 
       const leftXResize = (x, el)=>{
-        if(oldWidth - (x - oldLeft) > this.minWidth) {
-          el.style.width = oldWidth - (x - oldLeft) + "px";
-          el.style.left = x + "px";
-        } else {
-          el.style.width = this.minWidth+"px";
+        if(x > 0) {
+          if(oldWidth - (x - oldLeft) > this.minWidth) {
+            el.style.width = oldWidth - (x - oldLeft) + "px";
+            el.style.left = x + "px";
+          } else {
+            el.style.width = this.minWidth+"px";
+          }
         }
       }
       const rightXResize = (x, el)=>{
-        if((x - el.offsetLeft)+msOffset > this.minWidth) {
-          el.style.width = (x - el.offsetLeft)+msOffset + "px";
-        } else {
-          el.style.width = this.minWidth+"px";
+        if(x < window.innerWidth - 2) {
+          if((x - el.offsetLeft)+msOffset > this.minWidth) {
+            el.style.width = (x - el.offsetLeft)+msOffset + "px";
+          } else {
+            el.style.width = this.minWidth+"px";
+          }
         }
       }
       const topYResize = (y, el)=>{
@@ -577,10 +593,12 @@ class Window {
         }
       }
       const bottomYResize = (y, el)=>{
-        if((y - el.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
-          el.style.height = (y - el.offsetTop)+msOffset - 1.7*em + "px";
-        } else {
-          el.style.height = this.minHeight+"px";
+        if(y < window.innerHeight - 4.2*em) {
+          if((y - el.offsetTop)+msOffset - 1.7*em > this.minHeight) { // the 1.7em is to offset the topbar
+            el.style.height = (y - el.offsetTop)+msOffset - 1.7*em + "px";
+          } else {
+            el.style.height = this.minHeight+"px";
+          }
         }
       }
     }

@@ -359,10 +359,10 @@ appImagePaths["System Settings"] = "assets/settings.png";
 makeFunctions["System Settings"] = ()=>{ new SystemSettings; };
 
 GlobalStyle.newClass("settings-container", "display: flex;", "flex-wrap: wrap;");
-GlobalStyle.newClass("settings-sidebar", "flex: 2;", "background-color: rgba(0,0,0,0.1);", "min-width:9em;", "max-width: 14em;");
+GlobalStyle.newClass("settings-sidebar", "flex: 2;", "background-color: rgba(0,0,0,0.1);", "min-width:9em;", "max-width: 14em;", "height: 100%;", "overflow-y: auto;");
 GlobalStyle.newClass("settings-sidebar-item", "font-weight: bold;", "font-size: 1.2em;", "padding: 0.5em;", "display: block;", "cursor: pointer;", "white-space: nowrap;", "overflow: hidden;", "text-overflow: ellipsis;");
-GlobalStyle.newClass("settings-sidebar-item-selected", "background-color: var(--select);", "color: white;")
-GlobalStyle.newClass("settings-content", "flex: 5;", "overflow-y: auto;", "overflow-x: hidden;", "padding-bottom: 1em;");
+GlobalStyle.newClass("settings-sidebar-item-selected", "background-color: var(--select);", "color: white;");
+GlobalStyle.newClass("settings-content", "flex: 5;", "overflow-y: auto;", "overflow-x: hidden;", "padding-bottom: 1em;", "height: calc(100% - 1.2em);");
 GlobalStyle.newClass("settings-content-description", "text-align: center;", "color: rgba(0,0,0,0.6);", "font-size: 0.6em;", "margin: 0 10%;");
 GlobalStyle.newClass("settings-content-section", "text-align: center;", "color: rgba(0,0,0,1);", "font-size: 1em;", "margin-top: 3em;", "margin-bottom: 0.3em;");
 GlobalStyle.newClass("settings-content-header", "text-align: center;", "margin-top: 0.4em;", "font-size: 2em;");

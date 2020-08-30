@@ -1,5 +1,6 @@
-(function () {
-    document.body.onload = boot;
+document.body.onload = boot;
+var bg;
+var dialogboxcontainer;
 /**
  * Begin boot sequence.
  * Runs on page onload.
@@ -9,12 +10,12 @@ function boot() {
     if(!name) {
         // GUEST
         firstLogin = true;
-        let bg = document.createElement("img");
+        bg = document.createElement("img");
         bg.src = "assets/licensed/bg1.jpg";
         bg.classList.add("new-account-bg");
         document.body.appendChild(bg);
         // main box
-        let dialogboxcontainer = document.createElement("div");
+        dialogboxcontainer = document.createElement("div");
         dialogboxcontainer.classList.add("dialog-container-container");
         // centered container
         let dialogbox = document.createElement("div");
@@ -32,76 +33,38 @@ function boot() {
         username.innerText = "Welcome to WebSystem.";
         dialogbox.appendChild(username);
 
-        // google sing in button
-        let sign = document.createElement("div");
-        sign.classList.add("g-signin2");
-        sign.setAttribute("data-onsuccess", "userSignIn");
-        console.log(sign.outerHTML);
+        // move google sing in button
+        let sign = document.getElementById("sign-in");
+        sign.style.display = "inline-block";
         dialogbox.appendChild(sign);
 
 
-        let inContainer = document.createElement("div");
-        inContainer.classList.add("in-container");
-        // create label
+        // let inContainer = document.createElement("div");
+        // inContainer.classList.add("in-container");
+        // // create label
         let label = document.createElement("label");
-        label.innerText = "Name: ";
+        label.innerText = "Or";
         label.classList.add("black", "sans-serif", "normal", "fancy-input-label", "unselectable");
-        inContainer.appendChild(label);
+        dialogbox.appendChild(label);
 
         // create name input
-        let newAccountName = document.createElement("input");
-        newAccountName.classList.add("fancy-input");
-        newAccountName.placeholder = "John Doe";
-        inContainer.appendChild(newAccountName);
-        inContainer.appendChild(document.createElement("span")); // for ::after
+        // let newAccountName = document.createElement("input");
+        // newAccountName.classList.add("fancy-input");
+        // newAccountName.placeholder = "John Doe";
+        // inContainer.appendChild(newAccountName);
+        // inContainer.appendChild(document.createElement("span")); // for ::after
 
-        dialogbox.appendChild(inContainer);
+        // dialogbox.appendChild(inContainer);
 
         // create create button
         let createButton = document.createElement("button");
         createButton.classList.add("form-button", "black", "sans-serif", "unselectable");
-        createButton.textContent = "Create!";
+        createButton.textContent = "Enter as Guest";
         dialogbox.appendChild(createButton);
-
-        newAccountName.onkeyup = ()=>{
-            if(newAccountName.classList.contains("invalid-name")) {
-                newAccountName.style.borderBottom = "";
-                newAccountName.classList.remove("invalid-name");
-            }
-        }
-        newAccountName.onkeydown = (event)=>{
-            if(event.key == "Enter") {
-                createButton.click();
-            }
-        }
 
         // create onclick of create button
         createButton.onclick = ()=>{
-            let val = newAccountName.value;
-            console.log();
-            if(val && (val.length != 1 || (val.length == 1 && val[0].toUpperCase() != val[0].toLowerCase()))) {
-                // Set Name
-                localStorage.setItem("name", val);
-                // set global name value
-                NAME = val;
-
-                // Setup localforage file system
-                if(window.Worker) {
-                    let setup = new Worker('js/setup.js');
-                    setup.postMessage(NAME);
-                    setup.onmessage = ()=>{
-                        dialogboxcontainer.style.animation = "fade-out 0.3s";
-                        setTimeout(()=>{
-                            dialogboxcontainer.remove();
-                            bg.remove();
-                            startDesktop();
-                        }, 290);
-                    }
-                }
-            } else {
-                newAccountName.style.borderBottom = "4px solid rgb(230,0,0)";
-                newAccountName.classList.add("invalid-name");
-            }
+            initiateSignup("Guest");
         }
 
         dialogboxcontainer.appendChild(dialogbox);
@@ -113,7 +76,7 @@ function boot() {
     
 }
 function setFileSystem() {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve)=>{
         mainContent.classList.add("main-content");
         document.body.appendChild(mainContent);
         // Set folders{} to correct value
@@ -186,6 +149,7 @@ function startDesktop() {
     new TopBar;
     // Show desktop + set folders to correct value
     setFileSystem().then(()=>{
+        isGuest = account["isGuest"];
         desktopBackground.onload = ()=>{
             let faders = document.querySelectorAll(".load-fade");
             faders.forEach(element =>{
@@ -198,21 +162,11 @@ function startDesktop() {
     });
 }
 
-function userSignIn(user) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-}
-
-
 var firstLogin = false;
 /**
  * Called on the document when the file system has been fully loaded.
  */
 var fileSystemReady = new Event("file-system-ready");
-}());
 
 var mainContent = document.createElement("div");
 
@@ -223,3 +177,39 @@ var mainContent = document.createElement("div");
  */
 var account = {};
 
+var isGuest = true;
+// Google stuff
+function onSignIn(googleUser) {
+    isGuest = false;
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    initiateSignup(profile.getName());
+
+    // The following can change in between logins and so is not set to filesystem
+    account["id"] = profile.getId();
+    account["image"] = profile.getImageUrl();
+    account["email"] = profile.getEmail();
+}
+function initiateSignup(val) {
+    localStorage.setItem("name", val);
+    NAME = val;
+    // Setup localforage file system
+    if(window.Worker) {
+        let setup = new Worker('js/setup.js');
+        setup.postMessage(NAME);
+        setup.onmessage = ()=>{
+            dialogboxcontainer.style.animation = "fade-out 0.3s";
+            setTimeout(()=>{
+                dialogboxcontainer.remove();
+                bg.remove();
+                startDesktop();
+            }, 290);
+            if(isGuest) {
+                FileSystem.setAccountDetail("isGuest", isGuest);
+            }
+        }
+    }
+}

@@ -60,7 +60,18 @@ class SystemSettings {
             this.clearContent();
             this.selectItem(1);
             this.addContentHeader("Account");
-
+            if(!isGuest) {
+                this.addSection("Log Out of WebSystem");
+                this.addButton("Log Out", ()=>{
+                    alert("Logging you out. The window will reload...");
+                    var auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut().then(()=>{
+                        localStorage.setItem("name", "");
+                        window.location.reload(false);
+                    });
+                });
+                this.addDescription("Logs you out of the current account. Your data is still saved.");
+            }
             this.addSection("Factory Reset");
             this.addButton("Reset", ()=>{
                 confirm("Are you sure you want to factory reset? This will irreversibly delete all of the data stored on this machine.")

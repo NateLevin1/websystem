@@ -160,6 +160,24 @@ body {
     text-align: center;
     display: block;
 }
+#sign-in {
+    margin-bottom: 1em;
+    font-size: 1vh;
+}
+#sign-in div div span span::after {
+    content: " with Google";
+}
+#sign-in div div span span {
+    font-size: 2vh;
+}
+#sign-in {
+    display: inline-block;
+}
+#sign-in div {
+    display: inline-block;
+    height: unset !important;
+    width: unset !important;
+}
 
 /* GENERIC WEBSYSTEM BUTTON BELOW */
 button {

@@ -1,0 +1,232 @@
+body {
+    margin: 0;
+    padding:0;
+    font-size: 1em;
+    font-family: 'Roboto', sans-serif;
+    background-color: rgba(0,0,0,0.02);
+    overflow-x: hidden;
+}
+#topbar {
+    height:2.5em;
+    background-color: #351191;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left:0;
+    width:100%;
+    z-index: 2;
+}
+#topbar a {
+    color: white;
+    font-weight: bold;
+    margin-left: 12px;
+    font-size: 1.3em;
+    text-decoration: none;
+}
+#topbar img {
+    width:1.6em;
+    height: 1.6em;
+    margin-left: 9px;
+    cursor: pointer;
+}
+#hero {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    margin-top: 1.5em;
+    height:calc(50vh - 2.2em);
+}
+#hero #hero-img {
+    width: 100vw;
+    height: 20em;
+    transform: scaleX(2.2) scaleY(1.5) translateX(-1em) translateY(1em);
+    z-index: -1;
+}
+#hero h1 {
+    position: absolute;
+    top:0.92em;
+    font-size: 4em;
+    left:0;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+#below-hero {
+    height:40vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-x: hidden;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.027);
+}
+#below-hero h3 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: normal;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    max-width: 60vw;
+}
+#call {
+    margin-top: 3em;
+}
+#call a {
+    display: inline-block;
+    font-size: 1.2em;
+    color: black;
+    text-decoration: none;
+}
+#down-arrow {
+    height:3em;
+    width: 0.1em;
+    box-sizing: border-box;
+    border: 2px solid black;
+    display: inline-block;
+    position: relative;
+    top: 0.7em;
+    margin-right: 2em;
+    border-radius: 10px;
+}
+#down-arrow::after {
+    content:"";
+    height:1em;
+    width: 0.1em;
+    box-sizing: border-box;
+    border: 2px solid black;
+    display: inline-block;
+    position: relative;
+    top: 0.67em;
+    left:0.26em;
+    transform: rotateZ(40deg);
+    border-radius: 10px;
+
+}
+#down-arrow::before {
+    content:"";
+    height:1em;
+    width: 0.1em;
+    box-sizing: border-box;
+    border: 2px solid black;
+    display: inline-block;
+    position: relative;
+    top: 1.94em;
+    left:-0.5em;
+    transform: rotateZ(-45deg);
+    border-radius: 10px;
+
+}
+
+.reason {
+    content-visibility: auto;
+    height: calc(40vh + 1em);
+    width: 100vw;
+}
+.reason h2, #waiting-for {
+    margin: 0;
+    margin-top: 1.5rem;
+    margin-left: 1rem;
+    font-size: 3em;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+}
+.reason div{
+    margin-top: 3em;
+    height: 20vh;
+    margin-bottom: 1em;
+}
+.reason div p {
+    max-width: 40%;
+    margin: 0 1em;
+    margin-right: 0;
+    height:65%;
+    display: inline-block;
+    vertical-align: top;
+    font-size:1.3em;
+}
+.reason div object {
+    width: calc(57% - 1em);
+    height: 90%;
+    position: relative;
+    top: -1em;
+}
+.reason:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+.reason-long div p {
+    max-width: 100%;
+}
+.reason-long div object {
+    width: 100%;
+    height: 90%;
+    position: normal;
+}
+.reason-long {
+    height: calc(50vh + 1em);
+}
+.reason:last-of-type {
+    padding-bottom: 2em;
+}
+.reason:last-of-type div object {
+    position: relative;
+    top: 0.4em;
+}
+
+#open-now {
+    /* button reset */
+    border: none;
+    margin: 0;
+    width: auto;
+    overflow: visible;
+    background: transparent;
+    font: inherit;
+    line-height: normal;
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+
+    /* actual styling */
+    background-color: #0454DE;
+    color: white;
+    border-radius: 7px;
+    padding: 0.5em 2em;
+    display: inline-block;
+    cursor: pointer;
+    font-size:2em;
+}
+#button-container {
+    text-align: center;
+    padding-bottom: 2em;
+    position: relative;
+    width: 100vw;
+}
+#mouse {
+    width:1.5em;
+    height: 1.5em;
+    filter: 
+        drop-shadow(-1px 1px 0 white)
+        drop-shadow(2px -1px 0 white)
+        drop-shadow(-1px -1px 0 white);
+    position: absolute;
+    bottom: 1.5em;
+    right: 20%;
+}
+#footer {
+    content-visibility: auto;
+    background-color: #351191;
+    height: 2em;
+    width: 100%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#footer a {
+    color: white;
+}

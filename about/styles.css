@@ -1,14 +1,18 @@
+:root {
+    --highlight: #0454DE;
+}
 body {
     margin: 0;
     padding:0;
     font-size: 1em;
     font-family: 'Roboto', sans-serif;
     background-color: rgba(0,0,0,0.02);
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
+    scroll-behavior: smooth;
 }
 #topbar {
     height:2.5em;
-    background-color: #351191;
+    background-color: var(--highlight);
     display: flex;
     align-items: center;
     position: fixed;
@@ -33,10 +37,11 @@ body {
 #hero {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
     overflow: hidden;
     position: relative;
-    margin-top: 1.5em;
+    /* margin-top: 1.5em; */
     height:calc(50vh - 2.2em);
 }
 #hero #hero-img {
@@ -44,19 +49,17 @@ body {
     height: 20em;
     transform: scaleX(2.2) scaleY(1.5) translateX(-1em) translateY(1em);
     z-index: -1;
+    position: absolute;
 }
 #hero h1 {
-    position: absolute;
-    top:0.92em;
-    font-size: 4em;
-    left:0;
+    font-size: 16vw;
     color: white;
-    font-weight: bold;
+    font-weight: 900;
     width: 100%;
     text-align: center;
 }
 #below-hero {
-    height:40vh;
+    /* height:40vh; */
     width: 100%;
     display: flex;
     align-items: center;
@@ -64,6 +67,7 @@ body {
     overflow-x: hidden;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.027);
+    padding: 5em 0;
 }
 #below-hero h3 {
     color: black;
@@ -126,8 +130,9 @@ body {
 
 .reason {
     content-visibility: auto;
-    height: calc(40vh + 1em);
+    /* height: calc(40vh + 1em); */
     width: 100vw;
+    padding: 2em 0;
 }
 .reason h2, #waiting-for {
     margin: 0;
@@ -135,11 +140,17 @@ body {
     margin-left: 1rem;
     font-size: 3em;
     margin-bottom: 1.5rem;
-    max-width: 100%;
+    max-width: 90%;
+}
+#waiting-for {
+    margin-top:2em;
+    text-align: center;
+    max-width:100%;
+    width: 100%;
 }
 .reason div{
     margin-top: 3em;
-    height: 20vh;
+    /* height: 20vh; */
     margin-bottom: 1em;
 }
 .reason div p {
@@ -153,33 +164,32 @@ body {
 }
 .reason div object {
     width: calc(57% - 1em);
-    height: 90%;
+    height: 20vh;
     position: relative;
     top: -1em;
-}
-.reason:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
 }
 .reason-long div p {
     max-width: 100%;
 }
 .reason-long div object {
     width: 100%;
-    height: 90%;
-    position: normal;
-}
-.reason-long {
-    height: calc(50vh + 1em);
-}
-.reason:last-of-type {
-    padding-bottom: 2em;
-}
-.reason:last-of-type div object {
+    height: 20vh;
     position: relative;
-    top: 0.4em;
+    top:0.8em;
 }
-
-#open-now {
+@media (max-width: 700px) {
+    .reason:last-of-type {
+        padding-bottom: 2em;
+    }
+    .reason:last-of-type div object {
+        position: relative;
+        top: 0.4em;
+    }
+    .reason:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+}
+.open {
     /* button reset */
     border: none;
     margin: 0;
@@ -195,10 +205,25 @@ body {
     background-color: #0454DE;
     color: white;
     border-radius: 7px;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.4);
+}
+.open:active {
+    box-shadow: -1px -1px 10px rgba(0, 0, 0, 0.4);
+    
+}
+#open-now-top {
+    padding: 0.2em 1em;
+    display: inline-block;
+    position: absolute;
+    right:1vw;
+    background-color: rgb(24, 195, 167);
+}
+#open-now {
     padding: 0.5em 2em;
     display: inline-block;
-    cursor: pointer;
     font-size:2em;
+    margin-bottom: 2em;
 }
 #button-container {
     text-align: center;
@@ -219,7 +244,7 @@ body {
 }
 #footer {
     content-visibility: auto;
-    background-color: #351191;
+    background-color: var(--highlight);
     height: 2em;
     width: 100%;
     color: white;
@@ -229,4 +254,44 @@ body {
 }
 #footer a {
     color: white;
+}
+
+#reasons {
+    display: flex;
+    /* flex-direction: column; */
+    flex-wrap: wrap;
+}
+@media (min-width: 700px) {
+    .reason {
+        width: 50%;
+    }
+    #hero #hero-img {
+        height: 80vh;
+        transform: scaleX(1.8) scaleY(1.5) translateX(-3em) translateY(1em);
+    }
+    #hero {
+        height:calc(65vh - 2.2em);
+    }
+    #hero h1 {
+        font-size:8.3em;
+        top:2vh;
+    }
+    #below-hero h3 {
+        color: black;
+        font-size: 4em;
+        font-weight: normal;
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        max-width: 60vw;
+    }
+    .reason:nth-child(2), .reason:nth-child(3) {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+}
+@media (min-width:900px) {
+    #hero h1 {
+        font-size:10em;
+    }
 }

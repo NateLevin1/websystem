@@ -7,6 +7,7 @@
 function boot() {
     let name = localStorage.getItem("name");
     if(!name) {
+        // GUEST
         firstLogin = true;
         let bg = document.createElement("img");
         bg.src = "assets/licensed/bg1.jpg";
@@ -27,9 +28,17 @@ function boot() {
         // username text
         let username = document.createElement("h2");
         username.classList.add("black", "medium", "sans-serif", "regular", "unselectable");
-        dialogbox.appendChild(username);
         username.style.width = "75%";
-        username.innerText = "Welcome to WebSystem. Create a new account?";
+        username.innerText = "Welcome to WebSystem.";
+        dialogbox.appendChild(username);
+
+        // google sing in button
+        let sign = document.createElement("div");
+        sign.classList.add("g-signin2");
+        sign.setAttribute("data-onsuccess", "userSignIn");
+        console.log(sign.outerHTML);
+        dialogbox.appendChild(sign);
+
 
         let inContainer = document.createElement("div");
         inContainer.classList.add("in-container");
@@ -188,6 +197,16 @@ function startDesktop() {
         }
     });
 }
+
+function userSignIn(user) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
+
+
 var firstLogin = false;
 /**
  * Called on the document when the file system has been fully loaded.

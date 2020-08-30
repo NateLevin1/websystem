@@ -210,7 +210,6 @@ body {
 }
 .open:active {
     box-shadow: -1px -1px 10px rgba(0, 0, 0, 0.4);
-    
 }
 #open-now-top {
     padding: 0.2em 1em;

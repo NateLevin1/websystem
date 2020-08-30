@@ -104,7 +104,7 @@ function setFileSystem() {
             }).then(()=>{
                 if(isSafari && firstLogin) { // add the websystem logo.png file
                     FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
-                    fetch("../assets/trash.png")
+                    fetch("../assets/logo.png")
                     .then(function(response) {
                         return response.blob();
                     })
@@ -182,14 +182,10 @@ var isGuest = true;
 function onSignIn(googleUser) {
     isGuest = false;
     var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     initiateSignup(profile.getName());
 
     // The following can change in between logins and so is not set to filesystem
-    account["id"] = profile.getId();
+    account["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
     account["image"] = profile.getImageUrl();
     account["email"] = profile.getEmail();
 }

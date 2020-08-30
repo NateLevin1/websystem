@@ -291,7 +291,7 @@ onmessage = function (event) {
         }).then(()=>{
             // FILES
             if(!isSafari) {
-                fetch("../assets/trash.png")
+                fetch("../assets/logo.png")
                 .then(function(response) {
                    return response.blob();
                  })

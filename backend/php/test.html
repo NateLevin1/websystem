@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Send a request</title>
+</head>
+<body>
+    <button onclick="send()">Send!</button>
+    <button onclick="get()">Get!</button>
+    <script>
+        async function send(json) {
+            console.log("sending...");
+            let formData = new FormData;
+            formData.append("id", "2");
+            formData.append("json", JSON.stringify(json ? json : {"/":{parent:null, subfolders:[]}}));
+            const rawResponse = await fetch('https://www.websystem.io/backend/php/set.php', {
+                method: 'POST',
+                body: formData
+            });
+            const content = await rawResponse.text();
+
+            console.log(content);
+        }
+        
+        async function get(id=2) {
+            console.log("Getting...");
+            console.log(await (await fetch("https://www.websystem.io/backend/php/get.php?id="+id)).json());
+        }
+    </script>
+</body>
+</html>

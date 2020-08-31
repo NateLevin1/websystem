@@ -182,6 +182,7 @@ var isGuest = true;
 function onSignIn(googleUser) {
     isGuest = false;
     var profile = googleUser.getBasicProfile();
+    // var id_token = googleUser.getAuthResponse().id_token;
     initiateSignup(profile.getName());
 
     // The following can change in between logins and so is not set to filesystem

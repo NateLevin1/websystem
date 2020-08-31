@@ -4,3 +4,4 @@ backend/node/node_modules
 .vscode
 .DS_Store
 assets/licensed/Make Thumbnail.app
+backend/php/vendor

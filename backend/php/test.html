@@ -10,7 +10,7 @@
         async function send(json) {
             console.log("sending...");
             let formData = new FormData;
-            formData.append("id", "2");
+            formData.append("id_token", "2");
             formData.append("json", JSON.stringify(json ? json : {"/":{parent:null, subfolders:[]}}));
             const rawResponse = await fetch('https://www.websystem.io/backend/php/set.php', {
                 method: 'POST',

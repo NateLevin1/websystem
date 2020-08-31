@@ -182,13 +182,24 @@ var isGuest = true;
 function onSignIn(googleUser) {
     isGuest = false;
     var profile = googleUser.getBasicProfile();
-    // var id_token = googleUser.getAuthResponse().id_token;
+    var id_token = googleUser.getAuthResponse().id_token;
     initiateSignup(profile.getName());
 
     // The following can change in between logins and so is not set to filesystem
     account["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
     account["image"] = profile.getImageUrl();
     account["email"] = profile.getEmail();
+    console.log("sending data to server...");
+    let formData = new FormData;
+    formData.append("id_token", id_token);
+    formData.append("json", JSON.stringify({"/":{parent:"test", subfolders:[]}}));
+    const rawResponse = await fetch('https://www.websystem.io/backend/php/set.php', {
+        method: 'POST',
+        body: formData
+    });
+    const content = await rawResponse.text();
+
+    console.log(content);
 }
 function initiateSignup(val) {
     localStorage.setItem("name", val);

@@ -148,7 +148,7 @@ function startDesktop() {
     // Add top bar
     new TopBar;
     // Show desktop + set folders to correct value
-    setFileSystem().then(()=>{
+    setFileSystem().then(async ()=>{
         isGuest = account["isGuest"];
         desktopBackground.onload = ()=>{
             let faders = document.querySelectorAll(".load-fade");
@@ -216,7 +216,7 @@ function initiateSignup(val) {
     if(window.Worker) {
         let setup = new Worker('js/setup.js');
         setup.postMessage(NAME);
-        setup.onmessage = async ()=>{
+        setup.onmessage = ()=>{
             dialogboxcontainer.style.animation = "fade-out 0.3s";
             setTimeout(()=>{
                 dialogboxcontainer.remove();

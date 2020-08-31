@@ -20,8 +20,10 @@ window.alert = (message, fontSize="1.2")=>{
 
     let content = document.createElement("div");
     content.style.minWidth = "90%";
+    content.style.paddingRight = "5%";
     content.style.display = "inline-block";
-    content.style.overflow = "hidden";
+    content.style.maxHeight = "70%";
+    content.style.overflow = "auto";
     content.style.alignSelf = "flex-start";
     content.style.textAlign = "center";
     content.style.margin = "auto 5%";
@@ -91,8 +93,10 @@ window.prompt = (message, defaultValue="", fontSize="1.2")=>{
 
         let content = document.createElement("div");
         content.style.minWidth = "90%";
+        content.style.paddingRight = "5%";
         content.style.display = "inline-block";
-        content.style.overflow = "hidden";
+        content.style.maxHeight = "70%";
+        content.style.overflow = "auto";
         content.style.alignSelf = "flex-start";
         content.style.textAlign = "center";
         content.style.margin = "auto 5%";
@@ -186,8 +190,10 @@ window.confirm = (message, defaultCancel=true, fontSize="1.2")=>{
 
         let content = document.createElement("div");
         content.style.minWidth = "90%";
+        content.style.paddingRight = "5%";
         content.style.display = "inline-block";
-        content.style.overflow = "hidden";
+        content.style.maxHeight = "70%";
+        content.style.overflow = "auto";
         content.style.alignSelf = "flex-start";
         content.style.textAlign = "center";
         content.style.margin = "auto 5%";
@@ -299,10 +305,10 @@ function makeAlertWindow(name) {
     let boxWidth = 20;
     let boxHeight = 13;
     return new Window(0,0, name, boxWidth, boxHeight, {
-        x: (window.innerWidth/em/2)-boxWidth/2,
-        y: (window.innerHeight/em/2)-Math.round(boxHeight), // make it higher than the middle
+        x: 40-boxWidth/2,
+        y: 40-Math.round(boxHeight), // make it higher than the middle
         resizeDisabled: true,
-        zIndexDisabled: true
+        zIndexDisabled: true, 
     });
 }
 

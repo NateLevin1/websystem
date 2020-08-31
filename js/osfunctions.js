@@ -145,3 +145,13 @@ var files = {};
 
 // Third party media tag getter
 var jsmediatags = window.jsmediatags;
+
+class viewport {
+    // from https://stackoverflow.com/a/44109531/13608595
+    static get vh() {
+        return window.innerHeight / 100;
+    }
+    static get vw() {
+        return window.innerWidth / 100;
+    }
+}

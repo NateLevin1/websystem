@@ -387,11 +387,11 @@ class Window {
     configureElement(elmnt, header, defaultWidth, defaultHeight) {
       var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
-      while((defaultWidth * em) + 2 * (this.defaultX * window.innerWidth/100) > mainContent.clientWidth && (defaultWidth - 0.1) * em > this.minWidth) { // "2 *" for equal spacing
+      while((defaultWidth * em) + 2 * (this.defaultX * viewport.vw) > mainContent.clientWidth && (defaultWidth - 0.1) * em > this.minWidth) { // "2 *" for equal spacing
         defaultWidth -= 0.1;
         elmnt.dispatchEvent(resizeEvent);
       }
-      while((defaultHeight * em) + 2 * (this.defaultY * window.innerHeight/100) > mainContent.clientHeight && (defaultHeight - 0.1) * em > this.minHeight) { // "2 *" for equal spacing
+      while((defaultHeight * em) + 2 * (this.defaultY * viewport.vh) > mainContent.clientHeight && (defaultHeight - 0.1) * em > this.minHeight) { // "2 *" for equal spacing
         defaultHeight -= 0.1;
         elmnt.dispatchEvent(resizeEvent);
       }

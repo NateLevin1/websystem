@@ -183,32 +183,25 @@ function onSignIn(googleUser) {
     isGuest = false;
     var profile = googleUser.getBasicProfile();
     var id_token = googleUser.getAuthResponse().id_token;
-    initiateSignup(profile.getName());
 
     // The following can change in between logins and so is not set to filesystem
     account["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
+    account["id_token"] = id_token; // Do not send to backend. Use ID token instead.
     account["image"] = profile.getImageUrl();
     account["email"] = profile.getEmail();
-    console.log("sending data to server...");
-    let formData = new FormData;
-    formData.append("id_token", id_token);
-    formData.append("json", JSON.stringify({"/":{parent:"test", subfolders:[]}}));
-    const rawResponse = await fetch('https://www.websystem.io/backend/php/set.php', {
-        method: 'POST',
-        body: formData
-    });
-    const content = await rawResponse.text();
-
-    console.log(content);
+    if(firstLogin) {
+        initiateSignup(profile.getName());
+    }
 }
 function initiateSignup(val) {
     localStorage.setItem("name", val);
     NAME = val;
+
     // Setup localforage file system
     if(window.Worker) {
         let setup = new Worker('js/setup.js');
         setup.postMessage(NAME);
-        setup.onmessage = ()=>{
+        setup.onmessage = async ()=>{
             dialogboxcontainer.style.animation = "fade-out 0.3s";
             setTimeout(()=>{
                 dialogboxcontainer.remove();
@@ -217,6 +210,21 @@ function initiateSignup(val) {
             }, 290);
             if(isGuest) {
                 FileSystem.setAccountDetail("isGuest", isGuest);
+            } else {
+                // send data to server
+                let formData = new FormData;
+                formData.append("id_token", account["id_token"]);
+                formData.append("json", JSON.stringify(folders));
+                try {
+                    await fetch('https://www.websystem.io/backend/php/set.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } catch(e) {
+                    console.log("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+                    alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+                }
+                
             }
         }
     }

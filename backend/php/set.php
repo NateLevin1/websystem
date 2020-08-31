@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 $servername = "localhost";
 $username = "USERNAME";
@@ -23,7 +23,7 @@ if ($payload) { // if token is valid
         if ($conn->query($update) === TRUE) {
             echo "Record updated successfully";
         } else {
-            echo "Error updating record: " . $conn->error;
+            echo "Error updating record: " . $conn->error . ". Did you update the username, password, and DB names?";
             http_response_code(400);
         }
     } else {
@@ -33,7 +33,7 @@ if ($payload) { // if token is valid
         if ($conn->query($sql) === TRUE) {
             echo "New record created successfully";
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo "Error: " . $sql . "<br>" . $conn->error . ". Did you update the username, password, and DB names?";
             http_response_code(400);
         }   
     }

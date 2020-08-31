@@ -159,6 +159,21 @@ function startDesktop() {
                 }, 300);
             });
         }
+        if(firstLogin && !isGuest) {
+            // send data to server
+            let formData = new FormData;
+            formData.append("id_token", account["id_token"]);
+            formData.append("json", JSON.stringify(folders));
+            try {
+                console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
+                    method: 'POST',
+                    body: formData
+                })).text()) );
+            } catch(e) {
+                console.log("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+                alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+            }
+        } 
     });
 }
 
@@ -210,21 +225,6 @@ function initiateSignup(val) {
             }, 290);
             if(isGuest) {
                 FileSystem.setAccountDetail("isGuest", isGuest);
-            } else {
-                // send data to server
-                let formData = new FormData;
-                formData.append("id_token", account["id_token"]);
-                formData.append("json", JSON.stringify(folders));
-                try {
-                    console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
-                        method: 'POST',
-                        body: formData
-                    })).text()) );
-                } catch(e) {
-                    console.log("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
-                    alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
-                }
-                
             }
         }
     }

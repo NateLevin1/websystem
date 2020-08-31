@@ -216,10 +216,10 @@ function initiateSignup(val) {
                 formData.append("id_token", account["id_token"]);
                 formData.append("json", JSON.stringify(folders));
                 try {
-                    await fetch('https://www.websystem.io/backend/php/set.php', {
+                    console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
                         method: 'POST',
                         body: formData
-                    });
+                    })).text()) );
                 } catch(e) {
                     console.log("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
                     alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);

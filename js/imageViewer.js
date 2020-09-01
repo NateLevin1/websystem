@@ -202,7 +202,7 @@ class ImageViewer {
 GlobalStyle.newClass("image-viewer-standalone-container", "height: calc(100% - 1.2em);", "display: flex;", "justify-content:center;", "align-items:center;");
 GlobalStyle.newClass("image-view-scroll", "display:flex;", "justify-content: center;", "align-items: center;", "overflow: auto;", "height: calc(100% - 1.2em);", "width: 100%;");
 
-appImagePaths["Image Viewer"] = "assets/image.png";
+appImagePaths["Image Viewer"] = "assets/imageviewer.png";
 makeFunctions["Image Viewer"] = ()=>{ new ImageViewer };
 openPossibilities["Image"] = (name, path)=>{ new ImageViewer(name, path); };
 

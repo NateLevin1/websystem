@@ -6,6 +6,9 @@ $username = "USERNAME";
 $password = "PASSWORD";
 $dbname = "DBNAME";
 
+if(gettype($_POST['id_token']) != "string") {
+    echo "Invalid Token Type.";
+}
 
 $client = new Google_Client(['client_id' => "321811210964-jcb9c7kbtrf53ghv2ugvj82a47shm5hg.apps.googleusercontent.com"]);
 $payload = $client->verifyIdToken($_POST['id_token']);

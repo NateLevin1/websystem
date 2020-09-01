@@ -127,8 +127,13 @@ function* foldersSignIn() {
     .then((response)=>{
         return response.json();
     })
-    .then((json)=>{
-        folders = json;
+    .then(async (json)=>{
+        console.log(json);
+        folders = json.folders;
+        let f64 = json.files;
+        for(let key in f64) {
+            files[key] = await (await fetch(f64[key])).blob(); // this is the reverse of what happens when it is converted to b64
+        }
         readySystem();
     });
 }

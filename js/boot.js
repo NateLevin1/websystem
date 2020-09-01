@@ -162,7 +162,7 @@ function startDesktop() {
         if(firstLogin && !isGuest) {
             // send data to server
             let formData = new FormData;
-            formData.append("id_token", account["id_token"]);
+            formData.append("id_token", googleProfile["id_token"]);
             formData.append("json", JSON.stringify(folders));
             try {
                 console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
@@ -193,6 +193,7 @@ var mainContent = document.createElement("div");
 var account = {};
 
 var isGuest = true;
+var googleProfile = {};
 // Google stuff
 function onSignIn(googleUser) {
     isGuest = false;
@@ -200,10 +201,11 @@ function onSignIn(googleUser) {
     var id_token = googleUser.getAuthResponse().id_token;
 
     // The following can change in between logins and so is not set to filesystem
-    account["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
-    account["id_token"] = id_token; // Do not send to backend. Use ID token instead.
-    account["image"] = profile.getImageUrl();
-    account["email"] = profile.getEmail();
+    
+    googleProfile["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
+    googleProfile["id_token"] = id_token;
+    googleProfile["image"] = profile.getImageUrl();
+    googleProfile["email"] = profile.getEmail();
     if(firstLogin) {
         initiateSignup(profile.getName());
     }

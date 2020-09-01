@@ -111,8 +111,7 @@ class FileViewer {
         RightClickMenu.addToMenu("Open in New Window", [this.generatedWindow+"-folder", this.generatedWindow+"-trash"], ()=>{
             var selected = document.querySelectorAll(".icon-selected");
             selected.forEach((element)=>{
-                let tmp = new FileViewer;
-                tmp.openFolderWindow(element.getAttribute("path"));
+                this._intelligentOpenOnce(element.getAttribute("path"), true);
             });
         });
         RightClickMenu.addLineToMenu([this.generatedWindow+"-app"]); // breaking line

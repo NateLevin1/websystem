@@ -74,8 +74,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     font-size: 2.6vh;
+    height:85%;
+    width:90%;
 }
 
 .dialog-container-container {
@@ -112,6 +114,16 @@ body {
     width:100%;
     text-align: center;
 }
+.privacy-notice {
+    padding-top:4%;
+    color: black;
+    font-size:0.7em;
+    max-width:40%;
+}
+.welcome {
+    max-width:75%;
+    /* margin:0; */
+}
 
 /* FORMS */
 
@@ -140,7 +152,7 @@ body {
 .fancy-input-label {
     font-size:1.4em;
     font-weight: 400;
-    margin-right: 0.5em;
+    /* margin-right: 0.5em; */
     display: inline-block;
 }
 /* END INPUTS */
@@ -150,7 +162,7 @@ body {
     width:50%;
     margin-left:auto;
     margin-right:auto;
-    margin-top:1em;
+    /* margin-top:1em; */
     padding:10px 10px;
     font-size:1.3em;
 }

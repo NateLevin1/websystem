@@ -26,12 +26,11 @@ function boot() {
         header.classList.add("black", "bold", "big", "sans-serif", "unselectable");
         dialogbox.appendChild(header);
 
-        // username text
-        let username = document.createElement("h2");
-        username.classList.add("black", "medium", "sans-serif", "regular", "unselectable");
-        username.style.width = "75%";
-        username.innerText = "Welcome to WebSystem.";
-        dialogbox.appendChild(username);
+        // welcome text
+        let welcome = document.createElement("h2");
+        welcome.classList.add("black", "medium", "sans-serif", "regular", "unselectable", "welcome");
+        welcome.innerText = "Welcome to WebSystem.";
+        dialogbox.appendChild(welcome);
 
         // move google sing in button
         let sign = document.getElementById("sign-in");
@@ -59,13 +58,18 @@ function boot() {
         // create create button
         let createButton = document.createElement("button");
         createButton.classList.add("form-button", "black", "sans-serif", "unselectable");
-        createButton.textContent = "Enter as Guest";
+        createButton.textContent = "Login as Guest";
         dialogbox.appendChild(createButton);
 
         // create onclick of create button
         createButton.onclick = ()=>{
             initiateSignup("Guest");
         }
+
+        let notice = document.createElement("p");
+        notice.innerHTML = "By signing in you agree to our <a href=\"/privacy.html\">Privacy Policy</a>";
+        notice.classList.add("privacy-notice");
+        dialogbox.appendChild(notice);
 
         dialogboxcontainer.appendChild(dialogbox);
         document.body.appendChild(dialogboxcontainer);

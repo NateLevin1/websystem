@@ -163,7 +163,7 @@ function startDesktop() {
             // send data to server
             let formData = new FormData;
             formData.append("id_token", googleProfile["id_token"]);
-            formData.append("json", encodeURI(JSON.stringify(folders)).replace(/'/g, "\'")); // replace 's with \'s and encodeURI() to prevent from breaking sql statement
+            formData.append("json", JSON.stringify(folders).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n"));
             try {
                 console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
                     method: 'POST',

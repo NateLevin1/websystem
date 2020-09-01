@@ -1094,7 +1094,7 @@ class FileViewer {
             } else if(openPossibilities[folders[path].kind]) {
                 openPossibilities[folders[path].kind](folders[path].name, path);
             } else {
-                alert("Unable to open file "+folders[path].name+".");
+                alert("Unable to open file \""+folders[path].name+"\". Try searching for \""+folders[path].extension+"\" on the app store.");
             }
         } else { // folder
             if(newFolderWindow || !this.window) { // desktop returns true for second

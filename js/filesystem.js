@@ -66,9 +66,9 @@ class FileSystem {
         let path = parentPath+name+"/";
         var extension;
         if(kind != "App") { // app files don't have extensions in their names
-            extension = name.match(/\.[^.]+$/)[0];
+            extension = name.match(/\.[^.]+$/)[0].substring(1); // substring to remove dot
         } else {
-            extension = ".app";
+            extension = "app";
         }
         let binary = true;
         let content = "";

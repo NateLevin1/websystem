@@ -152,7 +152,7 @@ function startDesktop() {
     // Add top bar
     new TopBar;
     // Show desktop + set folders to correct value
-    setFileSystem().then(async ()=>{
+    setFileSystem().then(()=>{
         isGuest = account["isGuest"];
         desktopBackground.onload = ()=>{
             let faders = document.querySelectorAll(".load-fade");
@@ -164,21 +164,27 @@ function startDesktop() {
             });
         }
         if(firstLogin && !isGuest) {
-            // send data to server
-            let formData = new FormData;
-            formData.append("id_token", googleProfile["id_token"]);
-            formData.append("json", JSON.stringify(folders).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n"));
-            try {
-                console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
-                    method: 'POST',
-                    body: formData
-                })).text()) );
-            } catch(e) {
-                console.log("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
-                alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
-            }
-        } 
+            sendDataToServer(true)
+        }
     });
+}
+
+async function sendDataToServer(showAlert=false) {
+    // send data to server
+    let formData = new FormData;
+    formData.append("id_token", googleProfile["id_token"]);
+    formData.append("json", JSON.stringify(folders).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n"));
+    try {
+        console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
+            method: 'POST',
+            body: formData
+        })).text()) );
+    } catch(e) {
+        console.warn("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+        if(showAlert) {
+            alert("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
+        }
+    }
 }
 
 var firstLogin = false;

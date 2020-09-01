@@ -347,9 +347,20 @@ class FileSystem {
      * @param {String} [actions.renameOldPath] - The path that was removed during rename. This is the old path.
      */
     static dispatchUpdate(parentPath, actions) {
+        FileSystem.updateServer();
         fileSystemUpdate.parentPath = parentPath;
         fileSystemUpdate.actions = actions;
         document.dispatchEvent(fileSystemUpdate);
+    }
+
+    static updateServer() {
+        if(!isGuest) {
+            clearTimeout(serverUpdateTimeout);
+            serverUpdateTimeout = setTimeout(()=>{
+                // only update on the last change to avoid unnecessary post requests
+                sendDataToServer();
+            }, 100);
+        }
     }
 
     /**
@@ -376,6 +387,8 @@ class FileSystem {
 
 // The path to the trash. May become an array later.
 var trashPath = "/Users/"+NAME+"/Desktop/Trash Can/";
+
+var serverUpdateTimeout;
 
 // The event that tells fileViewer windows to update their display
 var fileSystemUpdate = new Event("file-system-update"); // dispatched on the document whenever there is a change to the filesystem. The 

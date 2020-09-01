@@ -353,14 +353,39 @@ class FileSystem {
         document.dispatchEvent(fileSystemUpdate);
     }
 
-    static updateServer() {
+    static updateServer(showAlert=false) {
         if(!isGuest) {
             clearTimeout(serverUpdateTimeout);
-            serverUpdateTimeout = setTimeout(()=>{
+            serverUpdateTimeout = setTimeout(async ()=>{
                 // only update on the last change to avoid unnecessary post requests
-                sendDataToServer();
-            }, 100);
+                
+                files64 = {};
+                // convert Blobs in files to base64 for server storage
+                for(let key in files) {
+                    if(files[key] instanceof Blob) {
+                        await this._readFn(key);
+                    } else {
+                        // if not blob it is probably fine to just stringify
+                        files64[key] = files[key];
+                    }
+                }
+
+                sendDataToServer(showAlert);
+            }, 200);
         }
+    }
+
+    static _readFn(key) {
+        return new Promise((resolve)=>{
+            // from https://stackoverflow.com/a/18650249
+            var reader = new FileReader();
+            reader.readAsDataURL(files[key]); 
+            reader.onloadend = function() {
+                var base64data = reader.result;
+                files64[key] = base64data;
+                resolve();
+            }
+        });
     }
 
     /**
@@ -392,3 +417,5 @@ var serverUpdateTimeout;
 
 // The event that tells fileViewer windows to update their display
 var fileSystemUpdate = new Event("file-system-update"); // dispatched on the document whenever there is a change to the filesystem. The 
+
+var files64 = {};

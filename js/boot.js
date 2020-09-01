@@ -163,7 +163,7 @@ function readySystem() {
             });
         }
         if(firstLogin && !isGuest) {
-            sendDataToServer(true)
+            FileSystem.updateServer(true);
         }
 }
 
@@ -194,11 +194,16 @@ function startDesktop() {
     setFileSystem();
 }
 
+function safeStringify(obj) { // allows for storage in db
+    return JSON.stringify(obj).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n")
+}
+
 async function sendDataToServer(showAlert=false) {
     // send data to server
     let formData = new FormData;
     formData.append("id_token", googleProfile["id_token"]);
-    formData.append("json", JSON.stringify(folders).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n"));
+    formData.append("json", safeStringify(folders));
+    formData.append("files", safeStringify(files64));
     try {
         console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
             method: 'POST',

@@ -1,3 +1,4 @@
+![The WebSystem Logo](https://raw.githubusercontent.com/UltimatePro-Grammer/websystem/master/favicon/android-chrome-192x192.png)
 # websystem
 WebSystem is a a fully functioning operating system built in pure Javascript, HTML and CSS.
 

@@ -84,6 +84,20 @@ class SystemSettings {
                             sessionStorage.clear();
                             filesystem.clear();
 
+                            if(!isGuest) {
+                                // delete from folders{} and files{}
+                                for(let key in files) {
+                                    delete files[key];
+                                }
+                                for(let key in folders) {
+                                    delete folders[key];
+                                }
+
+                                // after clearing, update the server
+                                FileSystem.updateServer();
+                            }
+                            
+
                             alert("Data deleted. Reloading in 5 seconds...");
                             setTimeout(()=>{
                                 window.location.reload(false);

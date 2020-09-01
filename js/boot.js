@@ -123,23 +123,18 @@ function* foldersSignIn() {
     if(!firstLogin) {
         yield;
     }
-    if(firstLogin) {
+    fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
+    .then((response)=>{
+        return response.json();
+    })
+    .then(async (json)=>{
+        folders = json.folders;
+        let f64 = json.files;
+        for(let key in f64) {
+            files[key] = await (await fetch(f64[key])).blob(); // this is the reverse of what happens when it is converted to b64
+        }
         readySystem();
-    } else {
-        fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
-        .then((response)=>{
-            return response.json();
-        })
-        .then(async (json)=>{
-            console.log(json);
-            folders = json.folders;
-            let f64 = json.files;
-            for(let key in f64) {
-                files[key] = await (await fetch(f64[key])).blob(); // this is the reverse of what happens when it is converted to b64
-            }
-            readySystem();
-        });
-    }
+    });
 }
 
 const fsi = foldersSignIn();

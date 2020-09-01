@@ -28,30 +28,29 @@ if ($payload) { // if token is valid
   } 
 
 
-  echo "{\"folders\":";
   $sql = "SELECT json FROM folders WHERE id={$id}";
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
+      echo "{\"folders\":";
       echo $row["json"];
     }
   }
 
 
-  echo ",\"files\":";
   $sql2 = "SELECT files FROM files WHERE id={$id}";
   $result2 = $conn->query($sql2);
 
   if ($result2->num_rows > 0) {
     // output data of each row
     while($row = $result2->fetch_assoc()) {
+      echo ",\"files\":";
       echo $row["files"];
+      echo "}";
     }
   }
-
-  echo "}";
 
   $conn->close();
 } else {

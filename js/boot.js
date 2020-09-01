@@ -106,26 +106,65 @@ function setFileSystem() {
                     }
                 }
             }).then(()=>{
-                if(isSafari && firstLogin) { // add the websystem logo.png file
-                    FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
-                    fetch("../assets/logo.png")
-                    .then(function(response) {
-                        return response.blob();
-                    })
-                    .then(function(blob) {
-                        // convert to file
-                        let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
-                        FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
-                    });
+                if(account["isGuest"]) { // this case is handled in onSignIn
+                    readySystem();
+                    resolve();
+                } else {
+                    fsi.next();
+                    resolve();
                 }
-                document.dispatchEvent(fileSystemReady);
-                // add desktop once folders and files is done
-                new Desktop;
-
-                resolve();
             });
         });
     });
+}
+
+// generator because both have to be ready for it to work
+function* foldersSignIn() {
+    if(!firstLogin) {
+        yield;
+    }
+    fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
+    .then((response)=>{
+        return response.json();
+    })
+    .then((json)=>{
+        folders = json;
+        readySystem();
+    });
+}
+
+const fsi = foldersSignIn();
+
+function readySystem() {
+    if(isSafari && firstLogin) { // add the websystem logo.png file
+        FileSystem.deleteAnyAtLocation("/Users/"+NAME+"/Desktop/WebSystem/logo.png/");
+        fetch("../assets/logo.png")
+        .then(function(response) {
+            return response.blob();
+        })
+        .then(function(blob) {
+            // convert to file
+            let data = new File([blob], "logo.png", {lastModified: new Date(), type:"image/png"});
+            FileSystem.addFileAtLocation("logo.png", data, "Image", "/Users/"+NAME+"/Desktop/WebSystem/");
+        });
+    }
+    document.dispatchEvent(fileSystemReady);
+    // add desktop once folders and files is done
+    new Desktop;
+                
+    // isGuest = account["isGuest"];
+        desktopBackground.onload = ()=>{
+            let faders = document.querySelectorAll(".load-fade");
+            faders.forEach(element =>{
+                element.classList.remove("load-fade");
+                setTimeout(()=>{
+                    element.remove();
+                }, 300);
+            });
+        }
+        if(firstLogin && !isGuest) {
+            sendDataToServer(true)
+        }
 }
 
 function startDesktop() {
@@ -152,21 +191,7 @@ function startDesktop() {
     // Add top bar
     new TopBar;
     // Show desktop + set folders to correct value
-    setFileSystem().then(()=>{
-        isGuest = account["isGuest"];
-        desktopBackground.onload = ()=>{
-            let faders = document.querySelectorAll(".load-fade");
-            faders.forEach(element =>{
-                element.classList.remove("load-fade");
-                setTimeout(()=>{
-                    element.remove();
-                }, 300);
-            });
-        }
-        if(firstLogin && !isGuest) {
-            sendDataToServer(true)
-        }
-    });
+    setFileSystem();
 }
 
 async function sendDataToServer(showAlert=false) {
@@ -217,7 +242,10 @@ function onSignIn(googleUser) {
     googleProfile["image"] = profile.getImageUrl();
     googleProfile["email"] = profile.getEmail();
     if(firstLogin) {
+        FileSystem.setAccountDetail("isGuest", false);
         initiateSignup(profile.getName());
+    } else {
+        fsi.next();
     }
 }
 function initiateSignup(val) {

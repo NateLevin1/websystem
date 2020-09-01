@@ -23,7 +23,17 @@ if ($payload) { // if token is valid
         $update = "UPDATE folders SET json='{$_POST['json']}' WHERE id='{$id}'";
 
         if ($conn->query($update) === TRUE) {
-            echo "Record updated successfully";
+            echo "Folders record updated successfully";
+        } else {
+            echo "Error updating record: " . $conn->error . ". Did you update the username, password, and DB names?";
+            http_response_code(400);
+        }
+
+
+        $update2 = "UPDATE files SET files='{$_POST['files']}' WHERE id='{$id}'";
+
+        if ($conn->query($update2) === TRUE) {
+            echo "Files record updated successfully";
         } else {
             echo "Error updating record: " . $conn->error . ". Did you update the username, password, and DB names?";
             http_response_code(400);
@@ -33,11 +43,22 @@ if ($payload) { // if token is valid
     VALUES ('{$id}', '{$_POST['json']}')";
 
         if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
+            echo "New folders record created successfully...";
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error . ". Did you update the username, password, and DB names?";
+            echo "Error: " . $sql . "<br>" . $conn->error . ". Did you update the username, password, and DB names? ";
             http_response_code(400);
-        }   
+        }
+
+
+        $sql2 = "INSERT INTO files (id, files)
+    VALUES ('{$id}', '{$_POST['files']}')";
+
+        if ($conn->query($sql2) === TRUE) {
+            echo "New files record created successfully";
+        } else {
+            echo "Error: " . $sql2 . "<br>" . $conn->error . ". Did you update the username, password, and DB names?";
+            http_response_code(400);
+        }
     }
 
     $conn->close();

@@ -19,7 +19,6 @@ if ($payload) { // if token is valid
   // Create connection
   $conn = new mysqli($servername, $username, $password, $dbname);
 
-  $sql = "SELECT json FROM folders WHERE id={$id}";
 
 
   // Check connection
@@ -28,6 +27,9 @@ if ($payload) { // if token is valid
     http_response_code(400);
   } 
 
+
+  echo "{\"folders\":";
+  $sql = "SELECT json FROM folders WHERE id={$id}";
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
@@ -37,6 +39,19 @@ if ($payload) { // if token is valid
     }
   }
 
+
+  echo ",\"files\":";
+  $sql2 = "SELECT files FROM files WHERE id={$id}";
+  $result2 = $conn->query($sql2);
+
+  if ($result2->num_rows > 0) {
+    // output data of each row
+    while($row = $result2->fetch_assoc()) {
+      echo $row["files"];
+    }
+  }
+
+  echo "}";
 
   $conn->close();
 } else {

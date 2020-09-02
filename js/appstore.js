@@ -107,7 +107,7 @@ class Appstore {
         }
         if(str == "popular") {
             this.popular.classList.add("appstore-menuitem-selected");
-            fetch("http://localhost:3000/applist/popular")
+            fetch("/backend/appstore/popular.json")
             .then(function(response) {
                 return response.json();
             })
@@ -122,7 +122,7 @@ class Appstore {
             });
         } else if(str == "recent") {
             this.recent.classList.add("appstore-menuitem-selected");
-            fetch("http://localhost:3000/applist/recent")
+            fetch("/backend/appstore/recent.json")
             .then(function(response) {
                 return response.json();
             })
@@ -139,7 +139,7 @@ class Appstore {
             this.search.classList.add("appstore-menuitem-selected");
             // custom search
             if(this.searchList === undefined) {
-                fetch("http://localhost:3000/applist/search")
+                fetch("/backend/appstore/recent.json")
                 .then(function(response) {
                     return response.json();
                 })

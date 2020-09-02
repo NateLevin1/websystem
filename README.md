@@ -15,6 +15,8 @@ npm i
 ```
 Then go to [http://127.0.0.1:8080](http://127.0.0.1:8080) and WebSystem should be running!
 
+*For security reasons,  when running locally signing in with Google will not work.*
+
 ### Libraries
 WebSystem uses:
 - localForage for file system storage.

@@ -276,7 +276,6 @@ function onSignIn(googleUser) {
     googleProfile["image"] = profile.getImageUrl();
     googleProfile["email"] = profile.getEmail();
     if(firstLogin) {
-        localStorage.setItem("isGuest", false);
         initiateSignup(profile.getName());
     } else {
         fsi.next();

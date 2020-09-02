@@ -58,6 +58,7 @@ function boot() {
         // create create button
         let createButton = document.createElement("button");
         createButton.classList.add("form-button", "black", "sans-serif", "unselectable");
+        createButton.id = "guest";
         createButton.textContent = "Login as Guest";
         dialogbox.appendChild(createButton);
 
@@ -275,7 +276,7 @@ function onSignIn(googleUser) {
     googleProfile["image"] = profile.getImageUrl();
     googleProfile["email"] = profile.getEmail();
     if(firstLogin) {
-        FileSystem.setAccountDetail("isGuest", false);
+        localStorage.setItem("isGuest", false);
         initiateSignup(profile.getName());
     } else {
         fsi.next();
@@ -285,20 +286,55 @@ function initiateSignup(val) {
     localStorage.setItem("name", val);
     NAME = val;
 
-    // Setup localforage file system
-    if(window.Worker) {
-        let setup = new Worker('js/setup.js');
-        setup.postMessage(NAME);
-        setup.onmessage = ()=>{
-            dialogboxcontainer.style.animation = "fade-out 0.3s";
-            setTimeout(()=>{
-                dialogboxcontainer.remove();
-                bg.remove();
-                startDesktop();
-            }, 290);
-            if(isGuest) {
-                FileSystem.setAccountDetail("isGuest", isGuest);
+    // check if already exists
+    if(!isGuest) {
+        // say that it is checking if you have an account
+        let checking = document.createElement("label");
+        checking.classList.add("black", "sans-serif", "fancy-input-label");
+        checking.textContent = "Checking to see if you have an account...";
+        checking.style.fontSize = "0.9em";
+        checking.style.maxWidth = "70%";
+        let sign = document.getElementById("sign-in");
+        sign.parentNode.insertBefore(checking, sign.nextSibling);
+
+        let g = document.getElementById("guest");
+        g.previousSibling.remove();
+        g.remove();
+
+        fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
+        .then((response)=>{
+            return response.text();
+        })
+        .then((val)=>{
+            if(!val) { // only reset if there is no account on the file system
+                setUpSystem();
+            } else {
+                dialogboxcontainer.style.animation = "fade-out 0.3s";
+                setTimeout(()=>{
+                    dialogboxcontainer.remove();
+                    bg.remove();
+                    startDesktop();
+                }, 290);
             }
+        });
+    } else {
+        setUpSystem();
+    }
+}
+
+const setUpSystem = ()=>{
+    // Setup localforage file system
+    let setup = new Worker('js/setup.js');
+    setup.postMessage(NAME);
+    setup.onmessage = ()=>{
+        if(isGuest) {
+            FileSystem.setAccountDetail("isGuest", isGuest);
         }
+        dialogboxcontainer.style.animation = "fade-out 0.3s";
+        setTimeout(()=>{
+            dialogboxcontainer.remove();
+            bg.remove();
+            startDesktop();
+        }, 290);
     }
 }

@@ -23,7 +23,7 @@ if ($payload) { // if token is valid
         $update = "UPDATE folders SET json='{$_POST['json']}' WHERE id='{$id}'";
 
         if ($conn->query($update) === TRUE) {
-            echo "Folders record updated successfully";
+            echo "Folders record updated successfully...";
         } else {
             echo "Error updating record: " . $conn->error . ". Did you update the username, password, and DB names?";
             http_response_code(400);

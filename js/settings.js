@@ -85,23 +85,22 @@ class SystemSettings {
                             filesystem.clear();
 
                             if(!isGuest) {
-                                // delete from folders{} and files{}
-                                for(let key in files) {
-                                    delete files[key];
-                                }
-                                for(let key in folders) {
-                                    delete folders[key];
-                                }
-
-                                // after clearing, update the server
-                                FileSystem.updateServer();
+                                // delete the row containing user data on server
+                                alert("Data deleted. Reloading...");
+                                fetch("https://www.websystem.io/backend/php/remove.php?id_token="+googleProfile["id_token"]).then(()=>{
+                                    setTimeout(()=>{
+                                        window.location.reload(false);
+                                    }, 1000);    
+                                });
+                            } else {
+                                alert("Data deleted. Reloading in 5 seconds...");
+                                setTimeout(()=>{
+                                    window.location.reload(false);
+                                }, 5000);
                             }
                             
 
-                            alert("Data deleted. Reloading in 5 seconds...");
-                            setTimeout(()=>{
-                                window.location.reload(false);
-                            }, 5000);
+                            
                         });
                     }
                 });

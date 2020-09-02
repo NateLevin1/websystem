@@ -311,6 +311,7 @@ function initiateSignup(val) {
             } else {
                 dialogboxcontainer.style.animation = "fade-out 0.3s";
                 setTimeout(()=>{
+                    fsi.next();
                     dialogboxcontainer.remove();
                     bg.remove();
                     startDesktop();

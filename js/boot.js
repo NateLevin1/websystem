@@ -306,6 +306,7 @@ function initiateSignup(val) {
             return response.text();
         })
         .then((val)=>{
+            firstLogin = !val; // set properly
             if(!val) { // only reset if there is no account on the file system
                 setUpSystem();
             } else {

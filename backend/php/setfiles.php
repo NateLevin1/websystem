@@ -14,6 +14,20 @@ $client = new Google_Client(['client_id' => "321811210964-jcb9c7kbtrf53ghv2ugvj8
 $payload = $client->verifyIdToken($_POST['id_token']);
 if ($payload) { // if token is valid
     $id = $payload['sub'];
+
+    $c = new mysqli($servername, $username, $password, $dbname);
+    // set max_allowed_packet
+    $setPacket = "SET GLOBAL max_allowed_packet=1073741824";
+    if ($c->query($setPacket) === TRUE) {
+        echo "Max packet global updated successfully";
+    } else {
+        echo "Error updating max packet global: " . $c->error . ".";
+        http_response_code(500);
+    }
+    $c->close();
+
+
+    
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
 

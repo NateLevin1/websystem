@@ -215,14 +215,16 @@ async function sendDataToServer(showAlert=false) {
     formData.append("json", safeStringify(folders));
     filesData.append("files", safeStringify(files64));
     try {
-        console.log( await ((await fetch('https://www.websystem.io/backend/php/set.php', {
+        let fo = await ((await fetch('https://www.websystem.io/backend/php/set.php', {
             method: 'POST',
             body: formData
-        })).text()) );
-        console.log( await ((await fetch('https://www.websystem.io/backend/php/setfiles.php', {
+        })).text());
+        let fi = await ((await fetch('https://www.websystem.io/backend/php/setfiles.php', {
             method: 'POST',
             body: filesData
-        })).text()) );
+        })).text());
+        console.log(fo);
+        console.log(fi);
     } catch(e) {
         console.warn("There was an issue sending your data to the server. Your data will be saved, but it will not be synced to your account until the server can be reached. Error: "+e);
         if(showAlert) {

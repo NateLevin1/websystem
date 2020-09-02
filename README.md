@@ -15,12 +15,6 @@ npm i
 ```
 Then go to [http://127.0.0.1:8080](http://127.0.0.1:8080) and WebSystem should be running!
 
-In order to use the app store, open a terminal, cd into the `node` folder, and run `npm start`.
-```
-cd backend/node
-npm start
-```
-
 ### Libraries
 WebSystem uses:
 - localForage for file system storage.

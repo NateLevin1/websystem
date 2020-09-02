@@ -303,6 +303,13 @@ input[type="checkbox"].switch:checked::after {
 .load-fade {
     opacity:1;
 }
+.load-sign {
+    position: absolute;
+    top:70%;
+    width: 100%;
+    text-align:center;
+    z-index:2;
+}
 /* END LOADING */
 
 /* DESKTOP */

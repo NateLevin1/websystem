@@ -63,6 +63,7 @@ function boot() {
 
         // create onclick of create button
         createButton.onclick = ()=>{
+            localStorage.setItem("isGuest", true);
             initiateSignup("Guest");
         }
 
@@ -188,6 +189,17 @@ function startDesktop() {
     // text container
     let welcomeTextContainer = document.createElement("div");
     welcomeTextContainer.classList.add("spinner-text", "loading", "load-fade", "unselectable");
+
+    if(!localStorage.getItem("isGuest")) {
+        let sign = document.getElementById("sign-in");
+        if(sign) {
+            sign.style.display = "inline-block";
+            sign.classList.add("load-sign", "loading", "load-fade");
+            document.body.appendChild(sign);
+        }
+        
+    }
+    
 
     // actual text
     let welcomeText = document.createElement("h1");

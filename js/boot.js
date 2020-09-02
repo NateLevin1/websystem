@@ -136,6 +136,8 @@ function* foldersSignIn() {
             }
             readySystem();
         });
+    } else {
+        readySystem();
     }
 }
 

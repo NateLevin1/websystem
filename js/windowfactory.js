@@ -100,6 +100,7 @@ class Window {
           this.window.classList.remove("window"); // prevents from being focused
           this.minimized = true;
           this.hasFocus = false;
+          this.useZIndexes = false;
           focusNewWindow();
         }
         header.appendChild(minimize);
@@ -344,16 +345,17 @@ class Window {
      * Give the current window focus. Used internally, may be annoying to user if this is run.
      */
     dispatchFocus() {
+      if(this.minimized) { // minimize
+        this.minimized = false;
+        this.useZIndexes = true;
+        this.window.classList.add("window");
+        this.window.style.transform = "";
+        this.window.style.opacity = "1";
+      }
       if(!this.hasFocus) {
         this.giveFocus(); // give opened window focus
         focusEvent.window = this.window;
         document.dispatchEvent(focusEvent);
-      }
-      if(this.minimized) { // minimize
-        this.minimized = false;
-        this.window.classList.add("window");
-        this.window.style.transform = "";
-        this.window.style.opacity = "1";
       }
     }
 

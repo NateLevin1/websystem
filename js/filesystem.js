@@ -358,7 +358,7 @@ class FileSystem {
             clearTimeout(serverUpdateTimeout);
             serverUpdateTimeout = setTimeout(async ()=>{
                 // only update on the last change to avoid unnecessary post requests
-                
+                let oldFiles64 = files64;
                 files64 = {};
                 // convert Blobs in files to base64 for server storage
                 for(let key in files) {
@@ -369,9 +369,13 @@ class FileSystem {
                         files64[key] = files[key];
                     }
                 }
-
-                sendDataToServer(showAlert);
-            }, 200);
+                var p = Object.keys(files64);
+                if(Object.keys(oldFiles64).every(function (i) { return p.indexOf(i) !== -1; }) && p.every(function (i) { return objectEquals(files64[i], oldFiles64[i]); })) {
+                    sendDataToServer(showAlert, false);
+                } else {
+                    sendDataToServer(showAlert, true);
+                }
+            }, 100);
         }
     }
 
@@ -396,6 +400,9 @@ class FileSystem {
      */
     static updateContent(path, newContent) {
         folders[path].content = newContent;
+        if(!isGuest) {
+            sendDataToServer(false, false);
+        }
         return filesystem.setItem("folders", folders);
     }
 
@@ -406,6 +413,9 @@ class FileSystem {
      */
     static setAccountDetail(key, newValue) {
         account[key] = newValue;
+        if(!isGuest) {
+            sendDataToServer(false, true);
+        }
         return filesystem.setItem("account", account);
     }
 }

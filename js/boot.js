@@ -134,7 +134,11 @@ function* foldersSignIn() {
             folders = json.folders;
             let f64 = json.files;
             for(let key in f64) {
-                files[key] = await (await fetch(f64[key])).blob(); // this is the reverse of what happens when it is converted to b64
+                if(key == "account") {
+                    account = f64[key];
+                } else {
+                    files[key] = await (await fetch(f64[key])).blob(); // this is the reverse of what happens when it is converted to b64
+                }
             }
             readySystem();
         });
@@ -219,23 +223,31 @@ function safeStringify(obj) { // allows for storage in db
     return JSON.stringify(obj).replace(/'/g, "\\\'").replace(/"/g, "\\\"").replace(/\\n/g, "\\\\n")
 }
 
-async function sendDataToServer(showAlert=false) {
+async function sendDataToServer(showAlert=false, includeFiles=true) {
     // send data to server
     let formData = new FormData;
-    let filesData = new FormData;
     formData.append("id_token", googleProfile["id_token"]);
-    filesData.append("id_token", googleProfile["id_token"]);
     formData.append("json", safeStringify(folders));
-    filesData.append("files", safeStringify(files64));
+    var filesData;
+    if(includeFiles) {
+        filesData = new FormData;
+        filesData.append("id_token", googleProfile["id_token"]);
+        files64.account = account;
+        filesData.append("files", safeStringify(files64));
+    }
+    
     try {
         let fo = await ((await fetch('https://www.websystem.io/backend/php/set.php', {
             method: 'POST',
             body: formData
         })).text());
-        let fi = await ((await fetch('https://www.websystem.io/backend/php/setfiles.php', {
-            method: 'POST',
-            body: filesData
-        })).text());
+        var fi = "Files skipped.";
+        if(includeFiles) {
+            fi = await ((await fetch('https://www.websystem.io/backend/php/setfiles.php', {
+                method: 'POST',
+                body: filesData
+            })).text());
+        }
         console.log(fo);
         console.log(fi);
     } catch(e) {

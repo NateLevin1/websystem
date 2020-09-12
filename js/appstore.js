@@ -5,12 +5,12 @@ GlobalStyle.newClass("appstore-search", "border: 2px solid black; border-radius:
 GlobalStyle.newClass("appstore-search:focus", "text-align: left;");
 GlobalStyle.newClass("appstore-menuitem", "background-color:white; border:2px solid black; color:black; height:20%; font-size: 1.5em; width:80%; margin-top:10%; margin-left:auto; margin-right:auto; display: flex; justify-content: center; align-content: center; flex-direction: column; text-align: center; transition: background-color 0.1s, color 0.1s, border-color 0.1s;");
 GlobalStyle.newClass("appstore-menuitem-selected", "background-color:black; color:white; border:2px solid white;")
-GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;", "display: flex;", "align-items: center;")
+GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;", "display: flex;", "align-items: center;", "position: relative")
 GlobalStyle.newClass("appstore-thumbnail", "max-height:4em;", "max-width:4em;");
-GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40%; margin-left:5%;");
-GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
+GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:calc(80% - 7.8em); margin-left:5%;");
+GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:block;", "max-width: 100%;", "overflow: hidden;", "white-space: no-wrap;", "text-overflow: ellipsis;");
 GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
-GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
+GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; transition: background-color 0.3s; min-width:3.8em; width: 20%;", "position: absolute;", "right:1em;");
 GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 1.1)), rgb(min(230, calc(var(--select-r) * 1.4)), min(230, calc(var(--select-g) * 1.4)), min(230, calc(var(--select-b) * 1.4)))); border-color: rgb(calc(var(--select-r) * 1), calc(var(--select-g) * 0.98), calc(var(--select-b) * 0.9)); color: white;");
 
 class Appstore {
@@ -198,9 +198,6 @@ class Appstore {
         titleText.classList.add("appstore-title");
         titleText.innerText = title;
         textContainer.appendChild(titleText);
-
-        let breaker = document.createElement("br");
-        textContainer.appendChild(breaker);
 
         let description = document.createElement("a");
         description.innerText = desc;

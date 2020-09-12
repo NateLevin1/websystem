@@ -138,55 +138,58 @@ class FileViewer {
                 // disallow uninstalling the app store
                 return (node.classList.contains("app") && node.getAttribute("name") != "App Store" && node.getAttribute("name") != "System Settings");
             });
-            
-            let names = selected.map((el)=>{return el.getAttribute("name");})
-            let paths = selected.map((el)=>{return el.getAttribute("path");})
-            let uninstallText = "";
-            
-            if(names.length != 1) {
-                names.forEach((name, index)=>{
-                    if(index == names.length - 1) {
-                        // last one
-                        uninstallText += "and "+name;
-                    } else {
-                        uninstallText += name+", ";
+            if(selected.length > 0) {
+                let names = selected.map((el)=>{return el.getAttribute("name");})
+                let paths = selected.map((el)=>{return el.getAttribute("path");})
+                let uninstallText = "";
+                
+                if(names.length != 1) {
+                    names.forEach((name, index)=>{
+                        if(index == names.length - 1) {
+                            // last one
+                            uninstallText += "and "+name;
+                        } else {
+                            uninstallText += name+", ";
+                        }
+                    });
+                } else {
+                    uninstallText = names[0];
+                }
+    
+                
+                confirm("Are you sure you want to uninstall "+uninstallText+"?")
+                .then((decision)=>{
+                    if(decision) {
+                        paths.forEach((path)=>{
+                            // delete from make
+                            delete makeFunctions[folders[path].name];
+    
+                            // remove from dock if pinned
+                            let pinnedObj = dock.pinnedIcons[path];
+                            if(pinnedObj) {
+                                let index = Array.from(dock.bar.childNodes).indexOf(pinnedObj.element);
+                                account["pinned-apps"].splice(index, 1);
+                                FileSystem.setAccountDetail("pinned-apps", account["pinned-apps"]);
+    
+                                // play animation and remove
+                                pinnedObj.element.style.animation = "fade-out 0.3s, move-app-left 0.3s";
+                                pinnedObj.element.style.position = "absolute"; // remove from flow
+                                pinnedObj.element.style.zIndex = "-1";
+                                setTimeout(()=>{
+                                    pinnedObj.element.remove();
+                                }, 280);
+    
+                                delete dock.pinnedIcons[path];
+                            }
+    
+                            // remove from filesystem
+                            FileSystem.deleteAnyAtLocation(path);
+                        });
                     }
                 });
             } else {
-                uninstallText = names[0];
+                alert("Uninstallation is not allowed for this app.");
             }
-
-            
-            confirm("Are you sure you want to uninstall "+uninstallText+"?")
-            .then((decision)=>{
-                if(decision) {
-                    paths.forEach((path)=>{
-                        // delete from make
-                        delete makeFunctions[folders[path].name];
-
-                        // remove from dock if pinned
-                        let pinnedObj = dock.pinnedIcons[path];
-                        if(pinnedObj) {
-                            let index = Array.from(dock.bar.childNodes).indexOf(pinnedObj.element);
-                            account["pinned-apps"].splice(index, 1);
-                            FileSystem.setAccountDetail("pinned-apps", account["pinned-apps"]);
-
-                            // play animation and remove
-                            pinnedObj.element.style.animation = "fade-out 0.3s, move-app-left 0.3s";
-                            pinnedObj.element.style.position = "absolute"; // remove from flow
-                            pinnedObj.element.style.zIndex = "-1";
-                            setTimeout(()=>{
-                                pinnedObj.element.remove();
-                            }, 280);
-
-                            delete dock.pinnedIcons[path];
-                        }
-
-                        // remove from filesystem
-                        FileSystem.deleteAnyAtLocation(path);
-                    });
-                }
-            });
         });
 
         RightClickMenu.addToMenu("Empty Trash", [this.generatedWindow+"-trash"], ()=>{

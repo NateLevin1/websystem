@@ -276,21 +276,25 @@ var account = {};
 var isGuest = true;
 var googleProfile = {};
 // Google stuff
+var hasSignedIn = false;
 function onSignIn(googleUser) {
-    isGuest = false;
-    var profile = googleUser.getBasicProfile();
-    var id_token = googleUser.getAuthResponse().id_token;
+    if(!hasSignedIn) { // only allow signing in once
+        hasSignedIn = true;
+        isGuest = false;
+        var profile = googleUser.getBasicProfile();
+        var id_token = googleUser.getAuthResponse().id_token;
 
-    // The following can change in between logins and so is not set to filesystem
-    
-    googleProfile["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
-    googleProfile["id_token"] = id_token;
-    googleProfile["image"] = profile.getImageUrl();
-    googleProfile["email"] = profile.getEmail();
-    if(firstLogin) {
-        initiateSignup(profile.getName());
-    } else {
-        fsi.next();
+        // The following can change in between logins and so is not set to filesystem
+        
+        googleProfile["id"] = profile.getId(); // Do not send to backend. Use ID token instead.
+        googleProfile["id_token"] = id_token;
+        googleProfile["image"] = profile.getImageUrl();
+        googleProfile["email"] = profile.getEmail();
+        if(firstLogin) {
+            initiateSignup(profile.getName());
+        } else {
+            fsi.next();
+        }
     }
 }
 function initiateSignup(val) {
@@ -302,7 +306,7 @@ function initiateSignup(val) {
         // say that it is checking if you have an account
         let checking = document.createElement("label");
         checking.classList.add("black", "sans-serif", "fancy-input-label");
-        checking.textContent = "Checking to see if you have an account...";
+        checking.textContent = "Checking to see if you have an account... (This may take a minute)";
         checking.style.fontSize = "0.9em";
         checking.style.maxWidth = "70%";
         let sign = document.getElementById("sign-in");

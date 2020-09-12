@@ -135,7 +135,7 @@ class FileViewer {
         RightClickMenu.addToMenu("Uninstall", [this.generatedWindow+"-app"], ()=>{
             let selected = Array.from(mainContent.querySelectorAll(".icon-selected"));
             selected = selected.filter((node)=>{
-                // disallow uninstalling the app store
+                // disallow uninstalling the app store and settings
                 return (node.classList.contains("app") && node.getAttribute("name") != "App Store" && node.getAttribute("name") != "System Settings");
             });
             if(selected.length > 0) {
@@ -163,6 +163,26 @@ class FileViewer {
                         paths.forEach((path)=>{
                             // delete from make
                             delete makeFunctions[folders[path].name];
+
+                            // delete from openPossibilities (only works for music)
+                            if(openPossibilities[folders[path].name]) {
+                                delete openPossibilities[folders[path].name];
+                            }
+                            // the below is the easiest solution to the problem that app's names are different from their openPossibility I could come up with
+                            // Despite how bad practice this is, since deleting it from openPossibilities is an improvement and not necessary this is fine IMO
+                            switch(folders[path].name) {
+                                case "Image Viewer":
+                                    delete openPossibilities["Image"];
+                                    break;
+                                case "Documenter":
+                                    delete openPossibilities["Text"];
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            // delete from imagePaths to save memory
+                            delete appImagePaths[folders[path].name];
     
                             // remove from dock if pinned
                             let pinnedObj = dock.pinnedIcons[path];

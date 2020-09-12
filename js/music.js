@@ -381,6 +381,7 @@ document.addEventListener("file-system-ready", ()=>{
   if(!folders["/Users/"+NAME+"/Applications/Music.app/"]) {
       delete makeFunctions["Music"];
       delete appImagePaths["Music"];
+      delete openPossibilities["Music"];
   }
 }, {once: true});
 

@@ -5,7 +5,7 @@ GlobalStyle.newClass("appstore-search", "border: 2px solid black; border-radius:
 GlobalStyle.newClass("appstore-search:focus", "text-align: left;");
 GlobalStyle.newClass("appstore-menuitem", "background-color:white; border:2px solid black; color:black; height:20%; font-size: 1.5em; width:80%; margin-top:10%; margin-left:auto; margin-right:auto; display: flex; justify-content: center; align-content: center; flex-direction: column; text-align: center; transition: background-color 0.1s, color 0.1s, border-color 0.1s;");
 GlobalStyle.newClass("appstore-menuitem-selected", "background-color:black; color:white; border:2px solid white;")
-GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;", "display: flex;", "align-items: center;", "position: relative")
+GlobalStyle.newClass("appstore-app-container", "margin-top:7%; margin-left:3%;", "display: flex;", "align-items: center;", "position: relative;")
 GlobalStyle.newClass("appstore-thumbnail", "max-height:4em;", "max-width:4em;");
 GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:calc(80% - 7.8em); margin-left:5%;");
 GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:block;", "max-width: 100%;", "overflow: hidden;", "white-space: no-wrap;", "text-overflow: ellipsis;");

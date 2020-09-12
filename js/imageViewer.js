@@ -210,6 +210,7 @@ document.addEventListener("file-system-ready", ()=>{
     if(!folders["/Users/"+NAME+"/Applications/Image Viewer.app/"]) {
         delete makeFunctions["Image Viewer"];
         delete appImagePaths["Image Viewer"];
+        delete openPossibilities["Image"];
     }
 }, {once: true});
 }());

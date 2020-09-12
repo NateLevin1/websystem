@@ -335,6 +335,7 @@ document.addEventListener("file-system-ready", ()=>{
     if(!folders["/Users/"+NAME+"/Applications/Documenter.app/"]) {
         delete makeFunctions["Documenter"];
         delete appImagePaths["Documenter"];
+        delete openPossibilities["Text"];
     } else {
         fileNewPossibilities.push(
             {

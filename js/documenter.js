@@ -193,12 +193,10 @@ class Documenter {
                 FileSystemGUI.requestDirectory()
                 .then((dir)=>{
                     FileSystem.addFileAtLocation(name+"."+fileExtension, this.editor.getData(), "Text", dir)
-                    [0].then(()=>{ // [0] to get the folders setItem as there isn't a files one (text)
-                        this.path = dir+name+"."+fileExtension+"/";
-                        this.currentSavedValue = this.editor.getData();
-                        this.title = "Documenter - "+name+"."+fileExtension;
-                        this.checkIfNeedsToSave();
-                    });
+                    this.path = dir+name+"."+fileExtension+"/";
+                    this.currentSavedValue = this.editor.getData();
+                    this.title = "Documenter - "+name+"."+fileExtension;
+                    this.checkIfNeedsToSave();
                 })
                 .catch(()=>{
                     // saving canceled
@@ -212,12 +210,10 @@ class Documenter {
             this.win.setTitle(this.title + " *");
             return true;
         }
-        if(this.editor.getData() != this.currentSavedValue) {
-            if(!this.needsToSave) {
-                this.needsToSave = true;
-                this.win.setTitle(this.title + " *");
-                return true;
-            }
+        if(this.editor.getData() != this.currentSavedValue && !this.needsToSave) {
+            this.needsToSave = true;
+            this.win.setTitle(this.title + " *");
+            return true;
         } else if(this.needsToSave) {
             this.needsToSave = false;
             this.win.setTitle(this.title);

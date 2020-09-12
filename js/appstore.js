@@ -11,7 +11,7 @@ GlobalStyle.newClass("appstore-text-container", "display: inline-block; width:40
 GlobalStyle.newClass("appstore-title", "font-size:1.3em; color: black; display:inline-block;");
 GlobalStyle.newClass("appstore-desc", "font-size:0.7em; color: rgb(150,150,150); display:inline-block; width:70%;");
 GlobalStyle.newClass("appstore-install", "padding:0.3em; font-size: 1.3em; background-color: rgb(3, 161, 252); display: inline-block; transition: background-color 0.3s; min-width:3.8em; width: 20%;");
-GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(7,84,207), rgb(74,144,254)); border-color: rgb(7,84,207); color: white;");
+GlobalStyle.newClass("appstore-installed", "background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 1.1)), rgb(min(230, calc(var(--select-r) * 1.4)), min(230, calc(var(--select-g) * 1.4)), min(230, calc(var(--select-b) * 1.4)))); border-color: rgb(calc(var(--select-r) * 1), calc(var(--select-g) * 0.98), calc(var(--select-b) * 0.9)); color: white;");
 
 class Appstore {
     constructor() {

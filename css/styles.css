@@ -207,12 +207,12 @@ button {
 button.default-button {
     color: white;
     background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 1.1)), rgb(min(230, calc(var(--select-r) * 1.4)), min(230, calc(var(--select-g) * 1.4)), min(230, calc(var(--select-b) * 1.4))));
-    border-color: rgb(7,84,207);
+    border-color: rgb(calc(var(--select-r) * 1), calc(var(--select-g) * 0.98), calc(var(--select-b) * 0.9));
 }
 button:active {
     color: white;
     background-image: linear-gradient(0, rgb(calc(var(--select-r) * 1.1), calc(var(--select-g) * 1.1), calc(var(--select-b) * 0.9)), rgb(min(240, calc(var(--select-r) * 1.4)), min(240, calc(var(--select-g) * 1.4)), min(240, calc(var(--select-b) * 1.4))));
-    border-color: rgb(7,84,207);
+    border-color: rgb(calc(var(--select-r) * 1), calc(var(--select-g) * 0.98), calc(var(--select-b) * 0.9));
 }
 /* END BUTTONS */
 

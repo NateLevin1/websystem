@@ -72,6 +72,32 @@ class TopBar {
         TopBar.addToMenu("About WebSystem", "info", ()=>{ 
             About.newWindow("WebSystem", "The online operating system.", "0.1.0", "assets/logo.png")
         });
+        TopBar.addToMenu("Enter Fullscreen", "info", (element)=>{
+            const isFull = window.innerHeight == screen.height;
+            if(!isFull) {
+                if(document.body.requestFullscreen) {
+                    document.body.requestFullscreen();
+                } else if(document.body.webkitRequestFullscreen) {
+                    document.body.webkitRequestFullscreen();
+                } else {
+                    alert("Your browser does not support fullscreen.");
+                }
+                setTimeout(()=>{ // prevent changing before actually being in fullscreen
+                    element.innerHTML = "Exit Fullscreen";
+                }, 100);
+            } else {
+                if(document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if(document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else {
+                    alert("Press the Escape key.");
+                }
+                setTimeout(()=>{// prevent changing before actually being in fullscreen
+                    element.innerHTML = "Enter Fullscreen";
+                }, 100);
+            }
+        });
         TopBar.addLineToMenu("info");
         TopBar.addToMenu("Go To Github", "info", ()=>{ 
             window.open("https://github.com/UltimatePro-Grammer/websystem", '_blank');
@@ -105,7 +131,7 @@ class TopBar {
         this.menuItems[from].push({el: element});
         if(options.clickable) {
             element.addEventListener("menu-select", ()=>{
-                callback();
+                callback(element);
             });
         } else {
             this.unclickables.push(element);
@@ -124,7 +150,7 @@ class TopBar {
         this.menuItems[from].push({el: element, boolFunc: booleanFunction.bind(this)});
         if(options.clickable) {
             element.addEventListener("menu-select", ()=>{
-                callback();
+                callback(element);
             });
         } else {
             this.unclickables.push(element);

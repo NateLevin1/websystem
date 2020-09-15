@@ -321,14 +321,12 @@ input[type="checkbox"].switch:checked::after {
     overflow-x: hidden;
 }
 .desktop-background {
-    position: fixed;
+    /* position: absolute;
     top:0;
-    left:0;
+    left:0; */
     z-index: -1;
     width:100%;
-    min-height: 100%;
-    /* object-fit: cover; */
-    object-position: bottom;
+    min-height: 100vh;
 }
 .main-content {
     position:absolute;

@@ -210,10 +210,12 @@ class Documenter {
             this.win.setTitle(this.title + " *");
             return true;
         }
-        if(this.editor.getData() != this.currentSavedValue && !this.needsToSave) {
-            this.needsToSave = true;
-            this.win.setTitle(this.title + " *");
-            return true;
+        if(this.editor.getData() != this.currentSavedValue) {
+            if(!this.needsToSave) {
+                this.needsToSave = true;
+                this.win.setTitle(this.title + " *");
+                return true;
+            }
         } else if(this.needsToSave) {
             this.needsToSave = false;
             this.win.setTitle(this.title);

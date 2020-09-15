@@ -80,7 +80,7 @@ class Appstore {
     searchData(searchString) {
         if(this.apps) {
             this.apps = this.apps.filter((element)=>{
-                if((element.name).toUpperCase().includes(searchString.toUpperCase())||element.tags.includes(searchString)) {
+                if((element.name).toUpperCase().includes(searchString.toUpperCase())||element.tags.includes(searchString.toLowerCase())) {
                     return true;
                 }
                 return false;

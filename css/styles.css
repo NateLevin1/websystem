@@ -446,6 +446,7 @@ input[type="checkbox"].switch:checked::after {
     opacity:0;
     overflow: hidden;
     color: black;
+    box-shadow: 0px 0px 25px rgba(0,0,0,0.15);
 }
 .window-fast {
     transition: opacity 0.15s, transform 0.3s;

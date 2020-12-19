@@ -126,7 +126,7 @@ function* foldersSignIn() {
         yield;
     }
     if(!firstLogin) {
-        fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
+        fetch("/backend/php/get.php?id_token="+googleProfile["id_token"])
         .then((response)=>{
             return response.json();
         })
@@ -237,13 +237,13 @@ async function sendDataToServer(showAlert=false, includeFiles=true) {
     }
     
     try {
-        let fo = await ((await fetch('https://www.websystem.io/backend/php/set.php', {
+        let fo = await ((await fetch('/backend/php/set.php', {
             method: 'POST',
             body: formData
         })).text());
         var fi = "Files skipped.";
         if(includeFiles) {
-            fi = await ((await fetch('https://www.websystem.io/backend/php/setfiles.php', {
+            fi = await ((await fetch('/backend/php/setfiles.php', {
                 method: 'POST',
                 body: filesData
             })).text());
@@ -316,7 +316,7 @@ function initiateSignup(val) {
         g.previousSibling.remove();
         g.remove();
 
-        fetch("https://www.websystem.io/backend/php/get.php?id_token="+googleProfile["id_token"])
+        fetch("/backend/php/get.php?id_token="+googleProfile["id_token"])
         .then((response)=>{
             return response.text();
         })

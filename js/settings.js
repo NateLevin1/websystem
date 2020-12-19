@@ -87,7 +87,7 @@ class SystemSettings {
                             if(!isGuest) {
                                 // delete the row containing user data on server
                                 alert("Data deleted. Reloading...");
-                                fetch("https://www.websystem.io/backend/php/remove.php?id_token="+googleProfile["id_token"]).then(()=>{
+                                fetch("/backend/php/remove.php?id_token="+googleProfile["id_token"]).then(()=>{
                                     setTimeout(()=>{
                                         window.location.reload(false);
                                     }, 1000);    

@@ -11,7 +11,7 @@ WebSystem is a a fully functioning operating system built in pure Javascript, HT
 WebSystem needs a server to run. To do this, run the following in the terminal:
 ```
 npm i
-./node_modules/http-server/bin/http-server
+npm start
 ```
 Then go to [http://127.0.0.1:8080](http://127.0.0.1:8080) and WebSystem should be running!
 

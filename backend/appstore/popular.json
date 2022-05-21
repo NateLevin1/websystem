@@ -1,4 +1,11 @@
 {
+    "FlyingFish": {
+        "name":"FlyingFish",
+        "description":"Avoid the obstacles in this arcade game with controls unlike anything you've played before.",
+        "tags":"game,flying,fish,fun,arcade,flyingfish",
+        "icon": "assets/flying-fish.png",
+        "script":"!function(){appImagePaths.FlyingFish=\"assets/flying-fish.png\",makeFunctions.FlyingFish=(()=>{new class{constructor(){let e=new Window(250,352,\"Flying Fish\",27,37,{x:15,y:2.2,topBarCreator:this.createTopBar,thisContext:this,pathToApp:\"/Users/\"+NAME+\"/Applications/FlyingFish.app/\"});this.window=e.getWindow(),this.header=e.getHeader(),this.win=e,this.win.setBackgroundColor(\"black\");let i=document.createElement(\"iframe\");i.src=\"https://natelev.in/portfolio/flying-fish/\",i.style.height=\"calc(100% - 1.2em)\",i.style.width=\"100%\",i.style.margin=\"0\",i.style.border=\"none\",i.innerText=\"Loading Flying Fish from https://natelev.in/portfolio/flying-fish/\",this.window.appendChild(i)}createTopBar(){TopBar.addToTop(\"File\",\"file\"),TopBar.addToMenu(\"Close Window\",\"file\",()=>{this.win.close()}),TopBar.addToTop(\"Help\",\"help\"),TopBar.addToMenu(\"About Flying Fish\",\"help\",()=>{About.newWindow(\"Flying Fish\",\"Avoid the obstacles in this arcade game with controls unlike anything you've played before.\",\"1.0\",\"assets/flying-fish.png\")})}}}),document.addEventListener(\"file-system-ready\",()=>{folders[\"/Users/\"+NAME+\"/Applications/FlyingFish.app/\"]||(delete makeFunctions.FlyingFish,delete appImagePaths.FlyingFish)},{once:!0})}();"
+    },
     "Calculator": {
         "name":"Calculator",
         "description":"Do calculations, beautifully.",

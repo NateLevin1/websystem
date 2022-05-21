@@ -77,31 +77,27 @@ class SystemSettings {
                 confirm("Are you sure you want to factory reset? This will irreversibly delete all of the data stored on this machine.")
                 .then((decision)=>{
                     if(decision) {
-                        var auth2 = gapi.auth2.getAuthInstance();
-                        auth2.signOut().then(()=>{
-                            // they want to continue, delete it
-                            localStorage.clear();
-                            sessionStorage.clear();
-                            filesystem.clear();
+                        // !!! removed to work statically
+                        // var auth2 = gapi.auth2.getAuthInstance();
+                        // they want to continue, delete it
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        filesystem.clear();
 
-                            if(!isGuest) {
-                                // delete the row containing user data on server
-                                alert("Data deleted. Reloading...");
-                                fetch("/backend/php/remove.php?id_token="+googleProfile["id_token"]).then(()=>{
-                                    setTimeout(()=>{
-                                        window.location.reload(false);
-                                    }, 1000);    
-                                });
-                            } else {
-                                alert("Data deleted. Reloading in 5 seconds...");
+                        if(!isGuest) {
+                            // delete the row containing user data on server
+                            alert("Data deleted. Reloading...");
+                            fetch("/backend/php/remove.php?id_token="+googleProfile["id_token"]).then(()=>{
                                 setTimeout(()=>{
                                     window.location.reload(false);
-                                }, 5000);
-                            }
-                            
-
-                            
-                        });
+                                }, 1000);    
+                            });
+                        } else {
+                            alert("Data deleted. Reloading in 5 seconds...");
+                            setTimeout(()=>{
+                                window.location.reload(false);
+                            }, 5000);
+                        }
                     }
                 });
             });

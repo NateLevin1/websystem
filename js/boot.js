@@ -33,18 +33,20 @@ function boot() {
         dialogbox.appendChild(welcome);
 
         // move google sing in button
-        let sign = document.getElementById("sign-in");
-        sign.style.display = "inline-block";
-        dialogbox.appendChild(sign);
+        // !!! removed to work statically
+        // let sign = document.getElementById("sign-in");
+        // sign.style.display = "inline-block";
+        // dialogbox.appendChild(sign);
 
 
         // let inContainer = document.createElement("div");
         // inContainer.classList.add("in-container");
         // // create label
-        let label = document.createElement("label");
-        label.innerText = "Or";
-        label.classList.add("black", "sans-serif", "normal", "fancy-input-label", "unselectable");
-        dialogbox.appendChild(label);
+        // !!! removed to work statically
+        // let label = document.createElement("label");
+        // label.innerText = "Or";
+        // label.classList.add("black", "sans-serif", "normal", "fancy-input-label", "unselectable");
+        // dialogbox.appendChild(label);
 
         // create name input
         // let newAccountName = document.createElement("input");
@@ -225,6 +227,8 @@ function safeStringify(obj) { // allows for storage in db
 
 async function sendDataToServer(showAlert=false, includeFiles=true) {
     // send data to server
+    // !!! removed to work statically
+    return;
     let formData = new FormData;
     formData.append("id_token", googleProfile["id_token"]);
     formData.append("json", safeStringify(folders));

@@ -99,8 +99,11 @@ class TopBar {
             }
         });
         TopBar.addLineToMenu("info");
-        TopBar.addToMenu("Go To Github", "info", ()=>{ 
+        TopBar.addToMenu("Go to GitHub", "info", ()=>{ 
             window.open("https://github.com/UltimatePro-Grammer/websystem", '_blank');
+        });
+        TopBar.addToMenu("Read the API Docs", "info", ()=>{ 
+            window.open("/docs/websystem/0.1.0/", '_blank');
         });
     }
     /**

@@ -173,28 +173,34 @@ class Documenter {
         if(!this.path) {
             this.saveAs();
         } else {
-            let data = this.editor.getData();
-            this.currentSavedValue = data;
-            if(this.extension != "html") {
-                data = this.htmlToTXT(data.replace(/<br>/g, "\n"));
-            }
-            FileSystem.updateContent(this.path, data);
+            FileSystem.updateContent(this.path, this.getSerializeableData());
             this.checkIfNeedsToSave();
         }
     }
 
     saveAs(fileExtension="html") {
         prompt("Please enter a name for the file")
-        .then((name)=>{
+        .then(async (name)=>{
             if(name) { // alert() returns null when cancel is pressed
+                const extensionRegex = /.+\.(.+)/;
+
+                const extensionMatched = name.match(extensionRegex);
+                if(extensionMatched) {
+                    const extension = extensionMatched[1];
+                    const shouldUseExtension = await confirm(`Are you sure you want to save using the file extension \".${extension}\"?`);
+                    if(shouldUseExtension) {
+                        fileExtension = extension;
+                    }
+                }
+
                 if(name.endsWith("."+fileExtension)) {
                     name = name.substring(0, name.length - (fileExtension.length+1));
                 }
                 FileSystemGUI.requestDirectory()
                 .then((dir)=>{
-                    FileSystem.addFileAtLocation(name+"."+fileExtension, this.editor.getData(), "Text", dir)
+                    FileSystem.addFileAtLocation(name+"."+fileExtension, this.getSerializeableData(), "Text", dir)
                     this.path = dir+name+"."+fileExtension+"/";
-                    this.currentSavedValue = this.editor.getData();
+                    this.currentSavedValue = this.getSerializeableData();
                     this.title = "Documenter - "+name+"."+fileExtension;
                     this.checkIfNeedsToSave();
                 })
@@ -216,11 +222,20 @@ class Documenter {
                 this.win.setTitle(this.title + " *");
                 return true;
             }
-        } else if(this.needsToSave) {
+        } else if(this.needsToSave) {
             this.needsToSave = false;
             this.win.setTitle(this.title);
             return false;
         }
+    }
+
+    getSerializeableData() {
+        let data = this.editor.getData();
+        this.currentSavedValue = data;
+        if(this.extension != "html") {
+            data = this.htmlToTXT(data.replace(/<br>/g, "\n"));
+        }
+        return data;
     }
 
     print() {

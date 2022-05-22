@@ -981,52 +981,94 @@ class FileViewer {
             let content = folders[path].content;
 
             // if text file
-            if(content && (folders[path].extension == "txt" || folders[path].extension == "text")) {
+            if(content && content.length > 3 && (folders[path].extension == "txt" || folders[path].extension == "text" || folders[path].extension == "json")) {
                 // convert content to image
                 let canvas = document.createElement("canvas");
                 var tCtx = canvas.getContext('2d'); // Hidden canvas
 
                 // Text input element
                 tCtx.canvas.width = tCtx.measureText(content).width <= 150 ? tCtx.measureText(content).width : 150;
-                // tCtx.fillText(content, 10, 10);
+                tCtx.font = "14px Arial";
 
-                let lineHeight = 10;
-                let fitWidth = 150;
+                let lineHeight = 15;
+                let fitWidth = canvas.width-6;
 
                 // Wrap text. From https://stackoverflow.com/a/4478894/
                 fitWidth = fitWidth || 0;
-
-                if(fitWidth <= 0) {
-                    tCtx.fillText(content, 10, 10);
-                    return;
-                }
-                var words = content.split(' ');
-                var currentLine = 0;
-                var idx = 1;
-                while(words.length > 0 && idx <= words.length) {
-                    var str = words.slice(0,idx).join(' ');
-                    var w = tCtx.measureText(str).width;
-                    if (w > fitWidth) {
-                        if(idx==1) {
-                            idx=2;
+                function print() {
+                    if(fitWidth <= 0) {
+                        tCtx.fillText(content, 10, 10);
+                        return;
+                    }
+                    var words = content.split(' ');
+                    var currentLine = 0;
+                    var idx = 1;
+                    while(words.length > 0 && idx <= words.length) {
+                        var str = words.slice(0,idx).join(' ');
+                        var w = tCtx.measureText(str).width;
+                        if (w > fitWidth) {
+                            if(idx==1) {
+                                idx=2;
+                            }
+                            tCtx.fillText(words.slice(0,idx-1).join(' '), 10, 16 + (lineHeight*currentLine) );
+                            currentLine++;
+                            words = words.splice(idx-1);
+                            idx = 1;
+                        } else {
+                            idx++;
                         }
-                        tCtx.fillText(words.slice(0,idx-1).join(' '), 10, 10 + (lineHeight*currentLine) );
-                        currentLine++;
-                        words = words.splice(idx-1);
-                        idx = 1;
-                    } else {
-                        idx++;
+                    }
+                    if(idx > 0) {
+                        tCtx.fillText(words.join(' '), 10, 10 + (lineHeight*currentLine));
                     }
                 }
-                if(idx > 0) {
-                    tCtx.fillText(words.join(' '), 10, 10 + (lineHeight*currentLine));
-                }
-                newFile.src = tCtx.canvas.toDataURL();
+                
+                print();
 
                 tCtx.globalCompositeOperation = 'destination-over';
                 // bg color
-                tCtx.fillStyle = "rgba(0,0,0,0.1)";
-                tCtx.fillRect(0, 0, canvas.width, canvas.height);
+                // see https://stackoverflow.com/a/3368118/13608595
+                function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+                    if (typeof stroke === 'undefined') {
+                        stroke = true;
+                    }
+                    if (typeof radius === 'undefined') {
+                        radius = 5;
+                    }
+                    if (typeof radius === 'number') {
+                        radius = {tl: radius, tr: radius, br: radius, bl: radius};
+                    } else {
+                        var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+                        for (var side in defaultRadius) {
+                        radius[side] = radius[side] || defaultRadius[side];
+                        }
+                    }
+                    ctx.beginPath();
+                    ctx.moveTo(x + radius.tl, y);
+                    ctx.lineTo(x + width - radius.tr, y);
+                    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                    ctx.lineTo(x + width, y + height - radius.br);
+                    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                    ctx.lineTo(x + radius.bl, y + height);
+                    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                    ctx.lineTo(x, y + radius.tl);
+                    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                    ctx.closePath();
+                    if (fill) {
+                        ctx.fill();
+                    }
+                    if (stroke) {
+                        ctx.stroke();
+                    }
+                }
+
+                tCtx.fillStyle = "rgba(255, 255, 255, 1)";
+                tCtx.strokeStyle = "rgba(0,0,0,0.5)";
+                tCtx.lineWidth = 2;
+
+                roundRect(tCtx, 3, 1, canvas.width-6, canvas.height-2, 10, true, true);
+
+                newFile.src = tCtx.canvas.toDataURL();
             } else {
                 // if doesn't have content or has content but isn't a txt file
                 newFile.src = "assets/documenter.png";

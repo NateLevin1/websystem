@@ -175,7 +175,7 @@ class Documenter {
         } else {
             let data = this.editor.getData();
             this.currentSavedValue = data;
-            if(this.extension == "txt") {
+            if(this.extension != "html") {
                 data = this.htmlToTXT(data.replace(/<br>/g, "\n"));
             }
             FileSystem.updateContent(this.path, data);
